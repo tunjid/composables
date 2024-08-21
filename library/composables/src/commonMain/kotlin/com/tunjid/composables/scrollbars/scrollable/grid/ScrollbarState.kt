@@ -20,12 +20,14 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import com.tunjid.composables.lazy.grid.interpolatedFirstItemIndex
 import com.tunjid.composables.lazy.itemVisibilityPercentage
 import com.tunjid.composables.scrollbars.Scrollbar
 import com.tunjid.composables.scrollbars.ScrollbarState
+import com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.sumOf
 import com.tunjid.composables.scrollbars.scrollbarStateValue
 import com.tunjid.composables.scrollbars.valueOf
@@ -35,18 +37,19 @@ import kotlin.math.min
 
 /**
  * Remembers a function to react to [Scrollbar] thumb position displacements for a [LazyGridState]
- * @param itemsAvailable the amount of items in the grid.
+ * based on the total items in the list, and [LazyGridState.scrollToItem] for responding to
+ * scrollbar thumb displacements.
+ *
+ * For more customization, including animated scrolling @see [rememberScrollbarThumbMover].
  */
 @Composable
-inline fun LazyGridState.rememberScrollbarThumbMover(
-    itemsAvailable: Int,
-    crossinline scroll: suspend (index: Int) -> Unit = { index ->
-        scrollToItem(index)
-    }
-): (Float) -> Unit = com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover(
-    itemsAvailable = itemsAvailable,
-    scroll = scroll,
-)
+inline fun LazyGridState.rememberBasicScrollbarThumbMover(): (Float) -> Unit =
+    rememberScrollbarThumbMover(
+        itemsAvailable = remember {
+            derivedStateOf { layoutInfo.totalItemsCount }.value
+        },
+        scroll = ::scrollToItem,
+    )
 
 /**
  * Calculates a [ScrollbarState] driven by the changes in a [LazyGridState]

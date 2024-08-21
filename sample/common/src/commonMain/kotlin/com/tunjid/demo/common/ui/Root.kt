@@ -18,11 +18,10 @@ package com.tunjid.demo.common.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import com.tunjid.demo.common.app.ListCollapsingHeader
 
 @Composable
 fun Root() {
 
-    Column {
-
-    }
+    ListCollapsingHeader()
 }

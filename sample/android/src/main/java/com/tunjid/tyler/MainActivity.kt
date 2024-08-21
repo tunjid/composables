@@ -18,6 +18,7 @@ package com.tunjid.tyler
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.tunjid.demo.common.ui.AppTheme
 import com.tunjid.demo.common.ui.Root
@@ -25,6 +26,7 @@ import com.tunjid.demo.common.ui.Root
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             AppTheme {
                 Root()
