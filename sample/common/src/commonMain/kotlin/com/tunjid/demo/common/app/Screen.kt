@@ -1,3 +1,14 @@
 package com.tunjid.demo.common.app
 
-interface Screen
+sealed class Screen(
+    val name: String
+) {
+
+    data object Demos : Screen("Demos")
+
+    data object LazyListDemoScreen: Screen("Lists")
+
+    data object LazyGridDemoScreen: Screen("Grids")
+
+    data object LazyStaggeredGridDemoScreen: Screen("Staggered Grids")
+}

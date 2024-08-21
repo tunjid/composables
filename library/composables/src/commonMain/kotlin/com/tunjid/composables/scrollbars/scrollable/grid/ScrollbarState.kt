@@ -20,8 +20,10 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.tunjid.composables.lazy.grid.interpolatedFirstItemIndex
 import com.tunjid.composables.lazy.itemVisibilityPercentage
@@ -43,13 +45,17 @@ import kotlin.math.min
  * For more customization, including animated scrolling @see [rememberScrollbarThumbMover].
  */
 @Composable
-inline fun LazyGridState.rememberBasicScrollbarThumbMover(): (Float) -> Unit =
-    rememberScrollbarThumbMover(
-        itemsAvailable = remember {
-            derivedStateOf { layoutInfo.totalItemsCount }.value
-        },
+inline fun LazyGridState.rememberBasicScrollbarThumbMover(): (Float) -> Unit {
+    var totalItemsCount by remember { mutableStateOf(0) }
+    LaunchedEffect(this) {
+        snapshotFlow { layoutInfo.totalItemsCount }
+            .collect { totalItemsCount = it }
+    }
+    return rememberScrollbarThumbMover(
+        itemsAvailable = totalItemsCount,
         scroll = ::scrollToItem,
     )
+}
 
 /**
  * Calculates a [ScrollbarState] driven by the changes in a [LazyGridState]
