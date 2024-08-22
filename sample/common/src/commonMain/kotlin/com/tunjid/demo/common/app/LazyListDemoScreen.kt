@@ -3,6 +3,7 @@ package com.tunjid.demo.common.app
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +33,9 @@ import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
 fun LazyListDemoScreen(
     onBackPressed: () -> Unit,
 ) {
-    var selectedColor by mutableStateOf(pastelColors.first().second)
+    var selectedColor by remember {
+        mutableStateOf(pastelColors.first().second)
+    }
     val listState = rememberLazyListState()
     val scrollbarState = listState.scrollbarState(
         itemsAvailable = pastelColors.size
@@ -50,6 +54,7 @@ fun LazyListDemoScreen(
                     horizontal = 8.dp,
                     vertical = 16.dp,
                 ),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
