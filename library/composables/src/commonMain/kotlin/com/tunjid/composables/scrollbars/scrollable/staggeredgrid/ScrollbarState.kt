@@ -61,6 +61,10 @@ inline fun LazyStaggeredGridState.rememberBasicScrollbarThumbMover(): (Float) ->
 /**
  * Remembers a [ScrollbarState] driven by the changes in a [LazyStaggeredGridState]
  *
+ * The calculations for [ScrollbarState] assumes homogeneous items. For heterogeneous items,
+ * the produced state may not change smoothly. If this is the case, you may derive your own
+ * [ScrollbarState] using an algorithm that better fits your list items.
+ *
  * @param itemsAvailable the total amount of items available to scroll in the staggered grid.
  * @param itemIndex a lookup function for index of an item in the staggered grid relative
  * to [itemsAvailable].
