@@ -1,5 +1,6 @@
 package com.tunjid.demo.common.app
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,16 +15,23 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.collapsingheader.CollapsingHeader
 import com.tunjid.composables.collapsingheader.CollapsingHeaderState
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 val pastelColors = (0..<9).map {
@@ -56,11 +64,13 @@ val pastelColors = (0..<9).map {
     )
 }.flatten()
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ColorHeader(
+internal fun DemoCollapsingHeader(
+    title: String,
     selectedColor: Color,
     onBackPressed: () -> Unit,
-    listBody: @Composable (collapsedHeight: Float) -> Unit,
+    body: @Composable (collapsedHeight: Float) -> Unit,
 ) {
     val density = LocalDensity.current
     val collapsedHeight = with(density) { 56.dp.toPx() } +
@@ -73,6 +83,9 @@ internal fun ColorHeader(
             decayAnimationSpec = splineBasedDecay(density)
         )
     }
+    val animatedColor by animateColorAsState(
+        selectedColor.copy(alpha = max(1f - headerState.progress, 0.6f))
+    )
     CollapsingHeader(
         state = headerState,
         headerContent = {
@@ -85,30 +98,35 @@ internal fun ColorHeader(
                                 y = -headerState.translation.roundToInt()
                             )
                         }
-                        .background(selectedColor)
+                        .background(animatedColor)
                 ) {
                     Spacer(Modifier.windowInsetsPadding(WindowInsets.statusBars))
                     Spacer(Modifier.height(300.dp))
                 }
-                Column {
-                    Spacer(
-                        Modifier
-                            .windowInsetsPadding(WindowInsets.statusBars)
-                    )
-                    IconButton(
-                        onClick = onBackPressed,
-                        content = {
-                            Image(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
+                TopAppBar(
+                    title = {
+                        Text(text = title)
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onBackPressed,
+                            content = {
+                                Image(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                    contentDescription = null
+                                )
+                            }
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                    modifier = Modifier.onSizeChanged {
+                        headerState.collapsedHeight = it.height.toFloat()
+                    },
+                )
             }
         },
         body = {
-            listBody(collapsedHeight)
+            body(collapsedHeight)
         }
     )
 }

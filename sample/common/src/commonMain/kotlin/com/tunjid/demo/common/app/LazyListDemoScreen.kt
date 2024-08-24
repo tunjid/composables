@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -50,7 +49,8 @@ fun LazyListDemoScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ColorHeader(
+        DemoCollapsingHeader(
+            title = "List collapsing header with scrollbar demo",
             selectedColor = selectedColor,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->
@@ -58,8 +58,6 @@ fun LazyListDemoScreen(
                 state = listState,
                 contentPadding = remember(density, navigationBarInsets, collapsedHeight) {
                     WindowInsets(
-                        left = 8.dp,
-                        right = 8.dp,
                         top = 16.dp,
                         bottom = 16.dp + with(density) { collapsedHeight.toDp() },
                     )
@@ -76,8 +74,12 @@ fun LazyListDemoScreen(
                             color = color,
                             name = name,
                             modifier = Modifier
-                                .fillParentMaxWidth()
                                 .clickable { selectedColor = color }
+                                .fillParentMaxWidth()
+                                .padding(
+                                    horizontal = 8.dp,
+                                    vertical = 4.dp,
+                                )
                         )
                     }
                 )

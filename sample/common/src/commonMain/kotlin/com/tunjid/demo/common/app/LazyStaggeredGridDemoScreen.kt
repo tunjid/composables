@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
@@ -52,7 +51,8 @@ fun LazyStaggeredGridDemoScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ColorHeader(
+        DemoCollapsingHeader(
+            title = "Staggered grid collapsing header with scrollbar demo",
             selectedColor = selectedColor,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->

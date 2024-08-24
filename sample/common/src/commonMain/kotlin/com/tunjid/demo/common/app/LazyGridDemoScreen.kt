@@ -50,7 +50,8 @@ fun LazyGridDemoScreen(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        ColorHeader(
+        DemoCollapsingHeader(
+            title = "Grid collapsing header with scrollbar demo",
             selectedColor = selectedColor,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->
