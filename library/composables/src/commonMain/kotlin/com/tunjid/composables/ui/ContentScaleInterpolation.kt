@@ -24,7 +24,7 @@ import androidx.compose.ui.layout.lerp
  * [ContentScale.computeScaleFactor] as it changes.
  */
 @Composable
-internal fun ContentScale.interpolate(
+fun ContentScale.interpolate(
     animationSpec: AnimationSpec<Float> = spring(),
 ): ContentScale {
     var interpolation by remember {

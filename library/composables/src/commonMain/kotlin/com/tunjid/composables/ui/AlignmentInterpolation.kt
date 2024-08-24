@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.lerp
  * [Alignment.align] as it changes.
  */
 @Composable
-internal fun Alignment.interpolate(
+fun Alignment.interpolate(
     animationSpec: AnimationSpec<Float> = spring(),
 ): Alignment {
     var interpolation by remember {

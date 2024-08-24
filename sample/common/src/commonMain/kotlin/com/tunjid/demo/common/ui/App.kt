@@ -20,6 +20,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import com.tunjid.demo.common.app.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.DemoSelectionScreen
 import com.tunjid.demo.common.app.DragToDismissDemoScreen
 import com.tunjid.demo.common.app.LazyGridDemoScreen
@@ -43,6 +44,7 @@ fun App() {
             Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
             Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
             Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
+            Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(pop)
         }
     }
 }
