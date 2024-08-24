@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Velocity
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 /**
@@ -48,10 +49,14 @@ class DragToDismissState(
     internal val draggable2DState = Draggable2DState { dragAmount ->
         offset += dragAmount
     }
+
+    internal var startDragImmediately by mutableStateOf(false)
 }
 
 /**
- * A Modifier for
+ * A Modifier for performing the drag to dismiss UI gesture pattern. When the dragged item
+ * is not being dismissed and is being reset into its original position, the reset may be
+ * interrupted by dragging it again.
  */
 @OptIn(ExperimentalFoundationApi::class)
 fun Modifier.dragToDismiss(
@@ -74,7 +79,8 @@ fun Modifier.dragToDismiss(
     onStart: () -> Unit = {},
     /**
      * Called when the composable has settled back into its original position after being displaced
-     * to an [Offset] less than its dismissal threshold.
+     * to an [Offset] less than its dismissal threshold. It will only be called if the reset
+     * animation completes without being cancelled.
      */
     onReset: () -> Unit = {},
     /**
@@ -87,31 +93,42 @@ fun Modifier.dragToDismiss(
     val scope = rememberCoroutineScope()
     draggable2D(
         state = state.draggable2DState,
-        startDragImmediately = false,
+        startDragImmediately = state.startDragImmediately,
         enabled = state.enabled,
         onDragStarted = {
             onStart()
         },
         onDragStopped = { velocity ->
             if (dragThresholdCheck(state.offset, velocity)) {
+                state.startDragImmediately = false
                 onDismissed()
+                // Reset offset back to zero.
                 state.offset = Offset.Zero
             } else scope.launch {
-                state.draggable2DState.drag {
-                    animate(
-                        typeConverter = Offset.VectorConverter,
-                        initialValue = state.offset,
-                        targetValue = Offset.Zero,
-                        initialVelocity = Offset(
-                            x = velocity.x,
-                            y = velocity.y
-                        ),
-                        animationSpec = state.animationSpec,
-                        block = { value, _ ->
-                            dragBy(value - state.offset)
-                        }
-                    )
-                    onReset()
+                try {
+                    state.startDragImmediately = true
+                    state.draggable2DState.drag {
+                        animate(
+                            typeConverter = Offset.VectorConverter,
+                            initialValue = state.offset,
+                            targetValue = Offset.Zero,
+                            initialVelocity = Offset(
+                                x = velocity.x,
+                                y = velocity.y
+                            ),
+                            animationSpec = state.animationSpec,
+                            block = { value, _ ->
+                                dragBy(value - state.offset)
+                            }
+                        )
+                        // Notify that it has been reset.
+                        onReset()
+                    }
+                } finally {
+                    state.startDragImmediately = false
+                    // Reset offset if canceled and modifier is out of the composition, otherwise
+                    // allow user catch the drag as it settles.
+                    if (!scope.isActive) state.offset = Offset.Zero
                 }
             }
         }
