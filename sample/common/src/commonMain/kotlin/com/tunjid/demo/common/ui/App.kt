@@ -29,27 +29,20 @@ import com.tunjid.demo.common.app.Screen
 
 @Composable
 fun App() {
-    val navStack = remember { mutableStateListOf<Screen>(Screen.Demos) }
+    val navStack = remember { mutableStateListOf(Screen.Demos) }
     val pop: () -> Unit = remember { { navStack.removeLast() } }
 
     AnimatedContent(navStack.last()) { currentScreen ->
         when (currentScreen) {
-            is Screen.Demos -> DemoSelectionScreen(
-                screens = remember {
-                    listOf(
-                        Screen.LazyListDemoScreen,
-                        Screen.LazyGridDemoScreen,
-                        Screen.LazyStaggeredGridDemoScreen,
-                        Screen.DragToDismissDemoScreen,
-                    )
-                },
+            Screen.Demos -> DemoSelectionScreen(
+                screens = remember { Screen.entries },
                 onScreenSelected = navStack::add,
             )
 
-            is Screen.LazyGridDemoScreen -> LazyGridDemoScreen(pop)
-            is Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
-            is Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
-            is Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
+            Screen.LazyGridDemoScreen -> LazyGridDemoScreen(pop)
+            Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
+            Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
+            Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
         }
     }
 }

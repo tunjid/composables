@@ -46,8 +46,9 @@ fun DemoSelectionScreen(
                 items = screens,
                 itemContent = { screen ->
                     Text(
-                        text = screen.name,
+                        text = screen.title,
                         modifier = Modifier
+                            .fillParentMaxWidth()
                             .padding(
                                 vertical = 8.dp,
                                 horizontal = 16.dp,
