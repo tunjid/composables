@@ -60,7 +60,7 @@ val pastelColors = (0..<9).map {
 internal fun ColorHeader(
     selectedColor: Color,
     onBackPressed: () -> Unit,
-    listBody: @Composable () -> Unit,
+    listBody: @Composable (collapsedHeight: Float) -> Unit,
 ) {
     val density = LocalDensity.current
     val collapsedHeight = with(density) { 56.dp.toPx() } +
@@ -108,7 +108,7 @@ internal fun ColorHeader(
             }
         },
         body = {
-            listBody()
+            listBody(collapsedHeight)
         }
     )
 }

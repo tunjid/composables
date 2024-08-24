@@ -7,20 +7,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.add
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.rememberBasicScrollbarThumbMover
@@ -44,9 +45,9 @@ fun LazyStaggeredGridDemoScreen(
         mutableStateOf(pastelColors.first().second)
     }
     val staggeredGridState = rememberLazyStaggeredGridState()
-    val scrollbarState = staggeredGridState.scrollbarState(
-        itemsAvailable = pastelColors.size
-    )
+    val scrollbarState = staggeredGridState.scrollbarState(itemsAvailable = pastelColors.size)
+    val density = LocalDensity.current
+    val navigationBarInsets = WindowInsets.navigationBars
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -54,13 +55,19 @@ fun LazyStaggeredGridDemoScreen(
         ColorHeader(
             selectedColor = selectedColor,
             onBackPressed = onBackPressed,
-        ) {
+        ) { collapsedHeight ->
             LazyVerticalStaggeredGrid(
                 state = staggeredGridState,
-                contentPadding = PaddingValues(
-                    horizontal = 8.dp,
-                    vertical = 16.dp,
-                ),
+                contentPadding = remember(density, navigationBarInsets, collapsedHeight) {
+                    WindowInsets(
+                        left = 8.dp,
+                        right = 8.dp,
+                        top = 16.dp,
+                        bottom = 16.dp + with(density) { collapsedHeight.toDp() },
+                    )
+                        .add(navigationBarInsets)
+                }
+                    .asPaddingValues(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalItemSpacing = 8.dp,
                 columns = StaggeredGridCells.Adaptive(100.dp),
@@ -81,6 +88,15 @@ fun LazyStaggeredGridDemoScreen(
             }
             FastScrollbar(
                 modifier = Modifier
+                    .padding(
+                        remember(density, navigationBarInsets, collapsedHeight) {
+                            WindowInsets(
+                                bottom = 16.dp + with(density) { collapsedHeight.toDp() },
+                            )
+                                .add(navigationBarInsets)
+                        }
+                            .asPaddingValues()
+                    )
                     .fillMaxHeight()
                     .width(12.dp)
                     .align(Alignment.TopEnd),
