@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
@@ -104,17 +105,16 @@ private fun GridDemoItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .background(
-                        color = color,
-                    )
-
+                    .background(color = color)
             )
-            Spacer(modifier = Modifier.size(24.dp))
             Text(
-                modifier = Modifier.padding(
-                    horizontal = 4.dp,
-                    vertical = 2.dp,
-                ),
+                modifier = Modifier
+                    .padding(
+                        horizontal = 4.dp,
+                        vertical = 2.dp,
+                    )
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
                 text = name,
             )
         }
