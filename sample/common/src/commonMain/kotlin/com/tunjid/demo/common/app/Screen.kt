@@ -11,4 +11,6 @@ sealed class Screen(
     data object LazyGridDemoScreen: Screen("Grids")
 
     data object LazyStaggeredGridDemoScreen: Screen("Staggered Grids")
+
+    data object DragToDismissDemoScreen: Screen("Drag To Dismiss")
 }

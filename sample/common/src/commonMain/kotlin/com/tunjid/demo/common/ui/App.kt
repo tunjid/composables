@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import com.tunjid.demo.common.app.DemoSelectionScreen
+import com.tunjid.demo.common.app.DragToDismissDemoScreen
 import com.tunjid.demo.common.app.LazyGridDemoScreen
 import com.tunjid.demo.common.app.LazyListDemoScreen
 import com.tunjid.demo.common.app.LazyStaggeredGridDemoScreen
@@ -39,6 +40,7 @@ fun App() {
                         Screen.LazyListDemoScreen,
                         Screen.LazyGridDemoScreen,
                         Screen.LazyStaggeredGridDemoScreen,
+                        Screen.DragToDismissDemoScreen,
                     )
                 },
                 onScreenSelected = navStack::add,
@@ -47,6 +49,7 @@ fun App() {
             is Screen.LazyGridDemoScreen -> LazyGridDemoScreen(pop)
             is Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
             is Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
+            is Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
         }
     }
 }

@@ -24,6 +24,10 @@ import kotlinx.coroutines.launch
 @Stable
 class DragToDismissState(
     /**
+     * The initial enabled state of the [DragToDismissState]
+     */
+    enabled: Boolean = true,
+    /**
      * The animation spec used to reset the dragged item back to its starting [Offset].
      */
     internal val animationSpec: AnimationSpec<Offset> = spring()
@@ -31,7 +35,7 @@ class DragToDismissState(
     /**
      * Whether or not drag to dismiss is available.
      */
-    var enabled by mutableStateOf(false)
+    var enabled by mutableStateOf(enabled)
         internal set
 
     /**
