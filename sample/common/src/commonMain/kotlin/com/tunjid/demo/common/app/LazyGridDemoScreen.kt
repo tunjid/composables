@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,8 +38,8 @@ import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 fun LazyGridDemoScreen(
     onBackPressed: () -> Unit,
 ) {
-    var selectedColor by remember {
-        mutableStateOf(pastelColors.first().second)
+    var selectedItem by remember {
+        mutableStateOf(pastelColors.first())
     }
     val gridState = rememberLazyGridState()
     val scrollbarState = gridState.scrollbarState(itemsAvailable = pastelColors.size)
@@ -52,7 +51,7 @@ fun LazyGridDemoScreen(
     ) {
         DemoCollapsingHeader(
             title = "Grid collapsing header with scrollbar demo",
-            selectedColor = selectedColor,
+            item = selectedItem,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->
             LazyVerticalGrid(
@@ -74,13 +73,12 @@ fun LazyGridDemoScreen(
             ) {
                 items(
                     items = pastelColors,
-                    itemContent = { (name, color) ->
+                    itemContent = { item ->
                         GridDemoItem(
-                            color = color,
-                            name = name,
+                            item = item,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { selectedColor = color }
+                                .clickable { selectedItem = item }
                         )
                     }
                 )
@@ -109,8 +107,7 @@ fun LazyGridDemoScreen(
 
 @Composable
 private fun GridDemoItem(
-    color: Color,
-    name: String,
+    item: ColorItem,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -121,7 +118,7 @@ private fun GridDemoItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .background(color = color)
+                    .background(color = item.color)
             )
             Text(
                 modifier = Modifier
@@ -131,7 +128,7 @@ private fun GridDemoItem(
                     )
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = name,
+                text = item.name,
             )
         }
     }

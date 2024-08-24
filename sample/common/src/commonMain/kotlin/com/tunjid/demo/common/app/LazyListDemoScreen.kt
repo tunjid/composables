@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
@@ -38,8 +37,8 @@ import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
 fun LazyListDemoScreen(
     onBackPressed: () -> Unit,
 ) {
-    var selectedColor by remember {
-        mutableStateOf(pastelColors.first().second)
+    var selectedItem by remember {
+        mutableStateOf(pastelColors.first())
     }
     val listState = rememberLazyListState()
     val scrollbarState = listState.scrollbarState(itemsAvailable = pastelColors.size)
@@ -51,7 +50,7 @@ fun LazyListDemoScreen(
     ) {
         DemoCollapsingHeader(
             title = "List collapsing header with scrollbar demo",
-            selectedColor = selectedColor,
+            item = selectedItem,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->
             LazyColumn(
@@ -69,12 +68,11 @@ fun LazyListDemoScreen(
             ) {
                 items(
                     items = pastelColors,
-                    itemContent = { (name, color) ->
+                    itemContent = { item ->
                         ListDemoItem(
-                            color = color,
-                            name = name,
+                            item = item,
                             modifier = Modifier
-                                .clickable { selectedColor = color }
+                                .clickable { selectedItem = item }
                                 .fillParentMaxWidth()
                                 .padding(
                                     horizontal = 8.dp,
@@ -109,8 +107,7 @@ fun LazyListDemoScreen(
 
 @Composable
 private fun ListDemoItem(
-    color: Color,
-    name: String,
+    item: ColorItem,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -121,12 +118,12 @@ private fun ListDemoItem(
             modifier = Modifier
                 .size(50.dp)
                 .background(
-                    color = color,
+                    color = item.color,
                     shape = RoundedCornerShape(100.dp),
                 )
 
         )
         Spacer(modifier = Modifier.size(24.dp))
-        Text(text = name)
+        Text(text = item.name)
     }
 }

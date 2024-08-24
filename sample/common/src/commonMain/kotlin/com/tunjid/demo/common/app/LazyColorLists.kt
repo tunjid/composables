@@ -34,41 +34,52 @@ import com.tunjid.composables.collapsingheader.CollapsingHeaderState
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-val pastelColors = (0..<9).map {
+data class ColorItem(
+    val name: String,
+    val color: Color,
+    val id: Int,
+)
+
+val pastelColors = (0..<9).map { index ->
     listOf(
-        Pair("Baby Pink", Color(0xFFF4C2C2)),
-        Pair("Lavender", Color(0xFFE6E6FA)),
-        Pair("Mint Green", Color(0xFF98FB98)),
-        Pair("Pale Yellow", Color(0xFFFFFFE0)),
-        Pair("Baby Blue", Color(0xFF89CFF0)),
-        Pair("Peach", Color(0xFFFFDAB9)),
-        Pair("Seafoam Green", Color(0xFFB2FFFF)),
-        Pair("Butter Yellow", Color(0xFFFFFF99)),
-        Pair("Lilac", Color(0xFFC8A2C8)),
-        Pair("Sky Blue", Color(0xFF87CEEB)),
-        Pair("Coral Pink", Color(0xFFF88379)),
-        Pair("Pistachio", Color(0xFFBEF574)),
-        Pair("Periwinkle", Color(0xFFCCCCFF)),
-        Pair("Cream", Color(0xFFFFFDD0)),
-        Pair("Dusky Pink", Color(0xFFCC8899)),
-        Pair("Pale Green", Color(0xFF90EE90)),
-        Pair("Light Aqua", Color(0xFF93FFE8)),
-        Pair("Vanilla", Color(0xFFF3E5AB)),
-        Pair("Mauve", Color(0xFFE0B0FF)),
-        Pair("Powder Blue", Color(0xFFB0E0E6)),
-        Pair("Blush Pink", Color(0xFFFFB6C1)),
-        Pair("Celadon", Color(0xFFACE1AF)),
-        Pair("Wisteria", Color(0xFFC9A0DC)),
-        Pair("Eggshell", Color(0xFFF0EAD6)),
-        Pair("Misty Rose", Color(0xFFFFE4E1)),
+        ColorItem("Baby Pink", Color(0xFFF4C2C2), index),
+        ColorItem("Lavender", Color(0xFFE6E6FA), index),
+        ColorItem("Mint Green", Color(0xFF98FB98), index),
+        ColorItem("Pale Yellow", Color(0xFFFFFFE0), index),
+        ColorItem("Baby Blue", Color(0xFF89CFF0), index),
+        ColorItem("Peach", Color(0xFFFFDAB9), index),
+        ColorItem("Seafoam Green", Color(0xFFB2FFFF), index),
+        ColorItem("Butter Yellow", Color(0xFFFFFF99), index),
+        ColorItem("Lilac", Color(0xFFC8A2C8), index),
+        ColorItem("Sky Blue", Color(0xFF87CEEB), index),
+        ColorItem("Coral Pink", Color(0xFFF88379), index),
+        ColorItem("Pistachio", Color(0xFFBEF574), index),
+        ColorItem("Periwinkle", Color(0xFFCCCCFF), index),
+        ColorItem("Cream", Color(0xFFFFFDD0), index),
+        ColorItem("Dusky Pink", Color(0xFFCC8899), index),
+        ColorItem("Pale Green", Color(0xFF90EE90), index),
+        ColorItem("Light Aqua", Color(0xFF93FFE8), index),
+        ColorItem("Vanilla", Color(0xFFF3E5AB), index),
+        ColorItem("Mauve", Color(0xFFE0B0FF), index),
+        ColorItem("Powder Blue", Color(0xFFB0E0E6), index),
+        ColorItem("Blush Pink", Color(0xFFFFB6C1), index),
+        ColorItem("Celadon", Color(0xFFACE1AF), index),
+        ColorItem("Wisteria", Color(0xFFC9A0DC), index),
+        ColorItem("Eggshell", Color(0xFFF0EAD6), index),
+        ColorItem("Misty Rose", Color(0xFFFFE4E1), index),
     )
-}.flatten()
+}
+    .flatMapIndexed { index: Int, items: List<ColorItem> ->
+        items.mapIndexed { innerIndex, item ->
+            item.copy(id = (index * items.size) + innerIndex)
+        }
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DemoCollapsingHeader(
     title: String,
-    selectedColor: Color,
+    item: ColorItem,
     onBackPressed: () -> Unit,
     body: @Composable (collapsedHeight: Float) -> Unit,
 ) {
@@ -84,7 +95,7 @@ internal fun DemoCollapsingHeader(
         )
     }
     val animatedColor by animateColorAsState(
-        selectedColor.copy(alpha = max(1f - headerState.progress, 0.6f))
+        item.color.copy(alpha = max(1f - headerState.progress, 0.6f))
     )
     CollapsingHeader(
         state = headerState,

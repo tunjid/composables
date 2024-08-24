@@ -15,22 +15,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,35 +52,35 @@ fun DragToDismissDemoScreen(
     SharedTransitionLayout(
         modifier = Modifier.fillMaxSize()
     ) SharedTransitionLayout@{
-        var selectedColor by remember { mutableStateOf<Color?>(null) }
+        var selectedItem by remember { mutableStateOf<ColorItem?>(null) }
         val dragToDismissState = remember { DragToDismissState() }
 
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
             Header(
-                selectedColor = selectedColor,
+                selectedColor = selectedItem?.color,
                 onBackPressed = onBackPressed,
-                onSelectedColorCleared = { selectedColor = null },
+                onSelectedColorCleared = { selectedItem = null },
             )
             AnimatedContent(
-                targetState = selectedColor,
+                targetState = selectedItem,
                 modifier = Modifier.fillMaxSize(),
                 transitionSpec = { fadeIn().togetherWith(fadeOut()) }
-            ) { currentColor ->
-                when (currentColor) {
+            ) { currentItem ->
+                when (currentItem) {
                     null -> ColorSelectionGrid(
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this@AnimatedContent,
-                        onColorSelected = { selectedColor = it }
+                        onItemSelected = { selectedItem = it }
                     )
 
                     else -> DragToDismissContainer(
                         dragToDismissState = dragToDismissState,
-                        color = currentColor,
+                        item = currentItem,
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this@AnimatedContent,
-                        onColorSelected = { selectedColor = it },
+                        onItemSelected = { selectedItem = it },
                     )
                 }
             }
@@ -89,25 +88,29 @@ fun DragToDismissDemoScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Header(
     selectedColor: Color?,
     onBackPressed: () -> Unit,
     onSelectedColorCleared: () -> Unit,
 ) {
-    Spacer(
-        Modifier
-            .windowInsetsPadding(WindowInsets.statusBars)
-    )
-    IconButton(
-        onClick = {
-            if (selectedColor != null) onSelectedColorCleared()
-            else onBackPressed()
+    TopAppBar(
+        title = {
+            Text(text = "Drag to dismiss demo")
         },
-        content = {
-            Image(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = null
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    if (selectedColor != null) onSelectedColorCleared()
+                    else onBackPressed()
+                },
+                content = {
+                    Image(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
             )
         }
     )
@@ -118,7 +121,7 @@ private fun Header(
 private fun ColorSelectionGrid(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onColorSelected: (Color) -> Unit,
+    onItemSelected: (ColorItem) -> Unit,
 ) = with(sharedTransitionScope) {
     LazyVerticalGrid(
         contentPadding = PaddingValues(
@@ -132,19 +135,20 @@ private fun ColorSelectionGrid(
     ) {
         items(
             items = pastelColors,
-            itemContent = { (_, color) ->
+            key = ColorItem::id,
+            itemContent = { item ->
                 DemoItem(
-                    color = color,
+                    item = item,
                     modifier = Modifier
                         .sharedElement(
                             state = sharedTransitionScope.rememberSharedContentState(
-                                key = color
+                                key = item.id
                             ),
                             animatedVisibilityScope = animatedContentScope,
                         )
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .clickable { onColorSelected(color) }
+                        .clickable { onItemSelected(item) }
                 )
             }
         )
@@ -155,21 +159,21 @@ private fun ColorSelectionGrid(
 @Composable
 private fun DragToDismissContainer(
     dragToDismissState: DragToDismissState,
-    color: Color,
+    item: ColorItem,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    onColorSelected: (Color?) -> Unit,
+    onItemSelected: (ColorItem?) -> Unit,
 ) = with(sharedTransitionScope) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
         val density = LocalDensity.current
         DemoItem(
-            color = color,
+            item = item,
             modifier = Modifier
                 .offset { dragToDismissState.offset.round() }
                 .sharedElement(
-                    state = sharedTransitionScope.rememberSharedContentState(key = color),
+                    state = sharedTransitionScope.rememberSharedContentState(key = item.id),
                     animatedVisibilityScope = animatedContentScope,
                 )
                 .align(Alignment.Center)
@@ -184,17 +188,17 @@ private fun DragToDismissContainer(
                         }
                     },
                     onDismissed = {
-                        onColorSelected(null)
+                        onItemSelected(null)
                     },
                 )
-                .clickable { onColorSelected(null) }
+                .clickable { onItemSelected(null) }
         )
     }
 }
 
 @Composable
 private fun DemoItem(
-    color: Color,
+    item: ColorItem,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -203,7 +207,7 @@ private fun DemoItem(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = color)
+                .background(color = item.color)
         )
     }
 }

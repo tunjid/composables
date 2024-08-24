@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,8 +39,8 @@ import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.scrollbarState
 fun LazyStaggeredGridDemoScreen(
     onBackPressed: () -> Unit,
 ) {
-    var selectedColor by remember {
-        mutableStateOf(pastelColors.first().second)
+    var selectedItem by remember {
+        mutableStateOf(pastelColors.first())
     }
     val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollbarState = staggeredGridState.scrollbarState(itemsAvailable = pastelColors.size)
@@ -53,7 +52,7 @@ fun LazyStaggeredGridDemoScreen(
     ) {
         DemoCollapsingHeader(
             title = "Staggered grid collapsing header with scrollbar demo",
-            selectedColor = selectedColor,
+            item = selectedItem,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->
             LazyVerticalStaggeredGrid(
@@ -75,13 +74,12 @@ fun LazyStaggeredGridDemoScreen(
             ) {
                 items(
                     items = pastelColors,
-                    itemContent = { (name, color) ->
+                    itemContent = { item ->
                         StaggeredGridDemoItem(
-                            color = color,
-                            name = name,
+                            item = item,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { selectedColor = color }
+                                .clickable { selectedItem = item }
                         )
                     }
                 )
@@ -111,8 +109,7 @@ fun LazyStaggeredGridDemoScreen(
 
 @Composable
 private fun StaggeredGridDemoItem(
-    color: Color,
-    name: String,
+    item: ColorItem,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -126,7 +123,7 @@ private fun StaggeredGridDemoItem(
                         val step = (0..5).random() * 2
                         1f + (step / 10f)
                     })
-                    .background(color = color)
+                    .background(color = item.color)
             )
             Text(
                 modifier = Modifier
@@ -136,7 +133,7 @@ private fun StaggeredGridDemoItem(
                     )
                     .fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                text = name,
+                text = item.name,
             )
         }
     }
