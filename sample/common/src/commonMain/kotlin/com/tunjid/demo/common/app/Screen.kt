@@ -9,4 +9,5 @@ enum class Screen(
     LazyStaggeredGridDemoScreen("Staggered Grids"),
     DragToDismissDemoScreen("Drag To Dismiss"),
     AlignmentInterpolationDemoScreen("Alignment Interpolation"),
+    ContentScaleInterpolationDemoScreen("ContentScale Interpolation"),
 }
