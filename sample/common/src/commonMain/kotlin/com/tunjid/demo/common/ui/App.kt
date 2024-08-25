@@ -20,13 +20,13 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import com.tunjid.demo.common.app.AlignmentInterpolationDemoScreen
-import com.tunjid.demo.common.app.ContentScaleInterpolationDemoScreen
-import com.tunjid.demo.common.app.DemoSelectionScreen
-import com.tunjid.demo.common.app.DragToDismissDemoScreen
-import com.tunjid.demo.common.app.LazyGridDemoScreen
-import com.tunjid.demo.common.app.LazyListDemoScreen
-import com.tunjid.demo.common.app.LazyStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.DemoSelectionScreen
+import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
+import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
+import com.tunjid.demo.common.app.demos.LazyListDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.Screen
 
 @Composable

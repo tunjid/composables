@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -21,6 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
+import com.tunjid.demo.common.app.FastScrollbar
+import com.tunjid.demo.common.app.Screen
+import com.tunjid.demo.common.app.pastelColors
 
 @Composable
 fun DemoSelectionScreen(

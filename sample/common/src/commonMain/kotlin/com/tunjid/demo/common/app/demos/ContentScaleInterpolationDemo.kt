@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos
 
 //import androidx.compose.ui.graphics.vector.Path
 

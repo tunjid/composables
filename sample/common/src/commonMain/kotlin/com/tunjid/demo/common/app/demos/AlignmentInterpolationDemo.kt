@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.ui.interpolate
+import com.tunjid.demo.common.app.pastelColors
 
 @Composable
 fun AlignmentInterpolationDemoScreen(

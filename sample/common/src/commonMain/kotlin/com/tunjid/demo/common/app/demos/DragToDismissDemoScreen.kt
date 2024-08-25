@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.tunjid.composables.dragtodismiss.DragToDismissState
 import com.tunjid.composables.dragtodismiss.dragToDismiss
+import com.tunjid.demo.common.app.ColorItem
+import com.tunjid.demo.common.app.pastelColors
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,6 +33,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
+import com.tunjid.demo.common.app.ColorItem
+import com.tunjid.demo.common.app.DemoCollapsingHeader
+import com.tunjid.demo.common.app.FastScrollbar
+import com.tunjid.demo.common.app.pastelColors
 
 @Composable
 fun LazyGridDemoScreen(
