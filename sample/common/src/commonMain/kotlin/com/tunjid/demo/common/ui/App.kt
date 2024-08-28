@@ -39,7 +39,7 @@ fun App() {
         when (currentScreen) {
             Screen.Demos -> DemoSelectionScreen(
                 screen = currentScreen,
-                screens = remember { Screen.entries },
+                screens = remember { Screen.entries.filterNot(Screen.Demos::equals) },
                 onScreenSelected = navStack::add,
             )
 

@@ -4,10 +4,10 @@ enum class Screen(
     val title: String
 ) {
     Demos("Demos"),
-    LazyListDemoScreen("Lists"),
     LazyStickyHeaderListDemoScreen("Sticky Header Lists"),
-    LazyGridDemoScreen("Grids"),
-    LazyStaggeredGridDemoScreen("Staggered Grids"),
+    LazyListDemoScreen("Collapsing Header Lists With Scrollbars"),
+    LazyGridDemoScreen("Collapsing Header Grids With Scrollbars"),
+    LazyStaggeredGridDemoScreen("Collapsing Header Staggered Grids With Scrollbars"),
     DragToDismissDemoScreen("Drag To Dismiss"),
     AlignmentInterpolationDemoScreen("Alignment Interpolation"),
     ContentScaleInterpolationDemoScreen("ContentScale Interpolation"),
