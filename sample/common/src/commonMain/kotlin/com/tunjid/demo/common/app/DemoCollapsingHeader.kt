@@ -70,7 +70,7 @@ internal fun DemoCollapsingHeader(
                         .background(animatedColor)
                 ) {
                     Spacer(Modifier.windowInsetsPadding(WindowInsets.statusBars))
-                    Spacer(Modifier.height(300.dp))
+                    Spacer(Modifier.height(200.dp))
                 }
                 DemoTopAppBar(
                     screen = screen,
