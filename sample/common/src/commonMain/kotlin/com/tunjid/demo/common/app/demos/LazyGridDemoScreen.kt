@@ -1,11 +1,9 @@
 package com.tunjid.demo.common.app.demos
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
@@ -19,8 +17,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +25,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
-import com.tunjid.demo.common.app.ColorItem
 import com.tunjid.demo.common.app.DemoCollapsingHeader
 import com.tunjid.demo.common.app.FastScrollbar
 import com.tunjid.demo.common.app.pastelColors
+import com.tunjid.demo.common.ui.GridDemoItem
 
 @Composable
 fun LazyGridDemoScreen(
@@ -82,6 +77,7 @@ fun LazyGridDemoScreen(
                             item = item,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .aspectRatio(1f)
                                 .clickable { selectedItem = item }
                         )
                     }
@@ -104,35 +100,6 @@ fun LazyGridDemoScreen(
                 scrollInProgress = gridState.isScrollInProgress,
                 orientation = Orientation.Vertical,
                 onThumbMoved = gridState.rememberBasicScrollbarThumbMover()
-            )
-        }
-    }
-}
-
-@Composable
-private fun GridDemoItem(
-    item: ColorItem,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .background(color = item.color)
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 4.dp,
-                        vertical = 2.dp,
-                    )
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = item.name,
             )
         }
     }

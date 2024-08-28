@@ -1,11 +1,9 @@
 package com.tunjid.demo.common.app.demos
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
@@ -20,8 +18,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,14 +26,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.scrollbarState
-import com.tunjid.demo.common.app.ColorItem
 import com.tunjid.demo.common.app.DemoCollapsingHeader
 import com.tunjid.demo.common.app.FastScrollbar
 import com.tunjid.demo.common.app.pastelColors
+import com.tunjid.demo.common.ui.GridDemoItem
 
 @Composable
 fun LazyStaggeredGridDemoScreen(
@@ -79,10 +74,14 @@ fun LazyStaggeredGridDemoScreen(
                 items(
                     items = pastelColors,
                     itemContent = { item ->
-                        StaggeredGridDemoItem(
+                        GridDemoItem(
                             item = item,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .aspectRatio(remember {
+                                    val step = (-1..4).random() * 2
+                                    1f + (step / 10f)
+                                })
                                 .clickable { selectedItem = item }
                         )
                     }
@@ -106,38 +105,6 @@ fun LazyStaggeredGridDemoScreen(
                 scrollInProgress = staggeredGridState.isScrollInProgress,
                 orientation = Orientation.Vertical,
                 onThumbMoved = staggeredGridState.rememberBasicScrollbarThumbMover()
-            )
-        }
-    }
-}
-
-@Composable
-private fun StaggeredGridDemoItem(
-    item: ColorItem,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-    ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(remember {
-                        val step = (0..5).random() * 2
-                        1f + (step / 10f)
-                    })
-                    .background(color = item.color)
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        horizontal = 4.dp,
-                        vertical = 2.dp,
-                    )
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = item.name,
             )
         }
     }

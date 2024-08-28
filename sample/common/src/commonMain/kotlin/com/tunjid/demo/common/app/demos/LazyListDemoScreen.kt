@@ -36,6 +36,7 @@ import com.tunjid.demo.common.app.ColorItem
 import com.tunjid.demo.common.app.DemoCollapsingHeader
 import com.tunjid.demo.common.app.FastScrollbar
 import com.tunjid.demo.common.app.pastelColors
+import com.tunjid.demo.common.ui.ListDemoItem
 
 @Composable
 fun LazyListDemoScreen(
@@ -106,28 +107,5 @@ fun LazyListDemoScreen(
                 onThumbMoved = listState.rememberBasicScrollbarThumbMover()
             )
         }
-    }
-}
-
-@Composable
-private fun ListDemoItem(
-    item: ColorItem,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .background(
-                    color = item.color,
-                    shape = RoundedCornerShape(100.dp),
-                )
-
-        )
-        Spacer(modifier = Modifier.size(24.dp))
-        Text(text = item.name)
     }
 }
