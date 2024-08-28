@@ -3,14 +3,12 @@ package com.tunjid.demo.common.app.demos
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,56 +19,65 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
+import com.tunjid.demo.common.app.DemoTopAppBar
 import com.tunjid.demo.common.app.FastScrollbar
 import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.pastelColors
 
 @Composable
 fun DemoSelectionScreen(
+    screen: Screen,
     screens: List<Screen>,
     onScreenSelected: (Screen) -> Unit
 ) {
     val listState = rememberLazyListState()
     val scrollbarState = listState.scrollbarState(itemsAvailable = pastelColors.size)
 
-    Box(
+    Column(
         modifier = Modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.statusBars)
     ) {
-        LazyColumn(
-            state = listState,
-            contentPadding = PaddingValues(
-                horizontal = 8.dp,
-                vertical = 16.dp,
-            ),
+        DemoTopAppBar(
+            screen = screen,
+            onBackPressed = { }
+        )
+        Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            items(
-                items = screens,
-                itemContent = { screen ->
-                    Text(
-                        text = screen.title,
-                        modifier = Modifier
-                            .fillParentMaxWidth()
-                            .padding(
-                                vertical = 8.dp,
-                                horizontal = 16.dp,
-                            )
-                            .clickable { onScreenSelected(screen) }
-                    )
-                }
+            LazyColumn(
+                state = listState,
+                contentPadding = PaddingValues(
+                    horizontal = 8.dp,
+                    vertical = 16.dp,
+                ),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(
+                    items = screens,
+                    itemContent = { screen ->
+                        Text(
+                            text = screen.title,
+                            modifier = Modifier
+                                .fillParentMaxWidth()
+                                .padding(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp,
+                                )
+                                .clickable { onScreenSelected(screen) }
+                        )
+                    }
+                )
+            }
+            FastScrollbar(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(12.dp)
+                    .align(Alignment.TopEnd),
+                state = scrollbarState,
+                scrollInProgress = listState.isScrollInProgress,
+                orientation = Orientation.Vertical,
+                onThumbMoved = listState.rememberBasicScrollbarThumbMover()
             )
         }
-        FastScrollbar(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(12.dp)
-                .align(Alignment.TopEnd),
-            state = scrollbarState,
-            scrollInProgress = listState.isScrollInProgress,
-            orientation = Orientation.Vertical,
-            onThumbMoved = listState.rememberBasicScrollbarThumbMover()
-        )
     }
 
 }

@@ -31,11 +31,13 @@ import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.rememberBasicS
 import com.tunjid.composables.scrollbars.scrollable.staggeredgrid.scrollbarState
 import com.tunjid.demo.common.app.DemoCollapsingHeader
 import com.tunjid.demo.common.app.FastScrollbar
+import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.pastelColors
 import com.tunjid.demo.common.ui.GridDemoItem
 
 @Composable
 fun LazyStaggeredGridDemoScreen(
+    screen: Screen,
     onBackPressed: () -> Unit,
 ) {
     var selectedItem by remember {
@@ -50,7 +52,7 @@ fun LazyStaggeredGridDemoScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         DemoCollapsingHeader(
-            title = "Staggered grid collapsing header with scrollbar demo",
+            screen = screen,
             item = selectedItem,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->

@@ -13,13 +13,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +33,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.ui.interpolate
+import com.tunjid.demo.common.app.DemoTopAppBar
+import com.tunjid.demo.common.app.Screen
 
 @Composable
 fun ContentScaleInterpolationDemoScreen(
+    screen: Screen,
     onBackPressed: () -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Header(
+        DemoTopAppBar(
+            screen = screen,
             onBackPressed = onBackPressed
         )
         Column(
@@ -127,29 +126,6 @@ private fun ContentScaleSelection(
             )
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Header(
-    onBackPressed: () -> Unit,
-) {
-    TopAppBar(
-        title = {
-            Text(text = "ContentScale interpolation demo")
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = onBackPressed,
-                content = {
-                    Image(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            )
-        }
-    )
 }
 
 private val BeachScene: ImageVector = ImageVector.Builder(

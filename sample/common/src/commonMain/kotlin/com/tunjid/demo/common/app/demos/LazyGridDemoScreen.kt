@@ -30,11 +30,13 @@ import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarT
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.DemoCollapsingHeader
 import com.tunjid.demo.common.app.FastScrollbar
+import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.pastelColors
 import com.tunjid.demo.common.ui.GridDemoItem
 
 @Composable
 fun LazyGridDemoScreen(
+    screen: Screen,
     onBackPressed: () -> Unit,
 ) {
     var selectedItem by remember {
@@ -49,7 +51,7 @@ fun LazyGridDemoScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         DemoCollapsingHeader(
-            title = "Grid collapsing header with scrollbar demo",
+            screen = screen,
             item = selectedItem,
             onBackPressed = onBackPressed,
         ) { collapsedHeight ->

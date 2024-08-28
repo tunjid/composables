@@ -34,10 +34,9 @@ import com.tunjid.composables.collapsingheader.CollapsingHeaderState
 import kotlin.math.max
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun DemoCollapsingHeader(
-    title: String,
+    screen: Screen,
     item: ColorItem,
     onBackPressed: () -> Unit,
     body: @Composable (collapsedHeight: Float) -> Unit,
@@ -73,30 +72,44 @@ internal fun DemoCollapsingHeader(
                     Spacer(Modifier.windowInsetsPadding(WindowInsets.statusBars))
                     Spacer(Modifier.height(300.dp))
                 }
-                TopAppBar(
-                    title = {
-                        Text(text = title)
-                    },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = onBackPressed,
-                            content = {
-                                Image(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = null
-                                )
-                            }
-                        )
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+                DemoTopAppBar(
+                    screen = screen,
+                    onBackPressed = onBackPressed,
                     modifier = Modifier.onSizeChanged {
                         headerState.collapsedHeight = it.height.toFloat()
-                    },
+                    }
                 )
             }
         },
         body = {
             body(collapsedHeight)
         }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DemoTopAppBar(
+    screen: Screen,
+    onBackPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TopAppBar(
+        title = {
+            Text(text = screen.title)
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = onBackPressed,
+                content = {
+                    Image(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null
+                    )
+                }
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+        modifier = modifier,
     )
 }

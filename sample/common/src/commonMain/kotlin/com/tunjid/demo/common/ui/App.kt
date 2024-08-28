@@ -38,17 +38,45 @@ fun App() {
     AnimatedContent(navStack.last()) { currentScreen ->
         when (currentScreen) {
             Screen.Demos -> DemoSelectionScreen(
+                screen = currentScreen,
                 screens = remember { Screen.entries },
                 onScreenSelected = navStack::add,
             )
 
-            Screen.LazyGridDemoScreen -> LazyGridDemoScreen(pop)
-            Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
-            Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(pop)
-            Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
-            Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
-            Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(pop)
-            Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(pop)
+            Screen.LazyGridDemoScreen -> LazyGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.LazyListDemoScreen -> LazyListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
         }
     }
 }

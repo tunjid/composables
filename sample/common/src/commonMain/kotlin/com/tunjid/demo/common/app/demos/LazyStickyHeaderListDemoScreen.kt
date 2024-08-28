@@ -1,6 +1,5 @@
 package com.tunjid.demo.common.app.demos
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,12 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.stickyheader.list.StickyHeaderList
 import com.tunjid.demo.common.app.ColorItem
+import com.tunjid.demo.common.app.DemoTopAppBar
+import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.distinctPastelColors
 import com.tunjid.demo.common.app.groupedPastelColors
 import com.tunjid.demo.common.ui.ContentType
@@ -36,6 +31,7 @@ import com.tunjid.demo.common.ui.ListDemoItem
 
 @Composable
 fun LazyStickyHeaderListDemoScreen(
+    screen: Screen,
     onBackPressed: () -> Unit,
 ) {
     var selectedItem by remember {
@@ -45,7 +41,10 @@ fun LazyStickyHeaderListDemoScreen(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        Header(onBackPressed)
+        DemoTopAppBar(
+            screen = screen,
+            onBackPressed = onBackPressed
+        )
         StickyHeaderList(
             state = listState,
             modifier = Modifier.fillMaxSize(),
@@ -98,29 +97,6 @@ fun LazyStickyHeaderListDemoScreen(
 
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Header(
-    onBackPressed: () -> Unit,
-) {
-    TopAppBar(
-        title = {
-            Text(text = "Drag to dismiss demo")
-        },
-        navigationIcon = {
-            IconButton(
-                onClick = onBackPressed,
-                content = {
-                    Image(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            )
-        }
-    )
 }
 
 private fun charFor(
