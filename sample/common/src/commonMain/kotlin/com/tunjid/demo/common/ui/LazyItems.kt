@@ -78,9 +78,10 @@ fun GridDemoItem(
 fun ItemHeader(
     char: Char,
     backgroundColor: Color,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(backgroundColor)
             .padding(

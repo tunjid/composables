@@ -28,7 +28,9 @@ import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.Screen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
 
 @Composable
 fun App() {
@@ -54,6 +56,16 @@ fun App() {
             )
 
             Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.LazyStickyHeaderGridDemoScreen -> LazyStickyHeaderGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop
+            )
+
+            Screen.LazyStickyHeaderStaggeredGridDemoScreen -> LazyStickyHeaderStaggeredGridDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop
             )

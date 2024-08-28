@@ -5,6 +5,8 @@ enum class Screen(
 ) {
     Demos("Demos"),
     LazyStickyHeaderListDemoScreen("Sticky Header Lists"),
+    LazyStickyHeaderGridDemoScreen("Sticky Header Grids"),
+    LazyStickyHeaderStaggeredGridDemoScreen("Sticky Header Staggered Grids"),
     LazyListDemoScreen("Collapsing Header Lists With Scrollbars"),
     LazyGridDemoScreen("Collapsing Header Grids With Scrollbars"),
     LazyStaggeredGridDemoScreen("Collapsing Header Staggered Grids With Scrollbars"),
