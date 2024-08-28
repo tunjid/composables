@@ -61,7 +61,6 @@ fun StickyHeaderList(
         modifier = modifier,
         itemMutationPolicy = itemMutationPolicy,
         viewportStart = { layoutInfo.viewportStartOffset },
-        mainAxisSpacing = { layoutInfo.mainAxisItemSpacing },
         lazyItems = { layoutInfo.visibleItemsInfo },
         lazyItemIndex = { index },
         lazyItemOffset = { offset },

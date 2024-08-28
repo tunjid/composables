@@ -41,7 +41,6 @@ internal inline fun <LazyState : ScrollableState, LazyItem> StickyHeaderLayout(
     modifier: Modifier = Modifier,
     itemMutationPolicy: SnapshotMutationPolicy<LazyItem?>,
     crossinline viewportStart: @DisallowComposableCalls LazyState.() -> Int,
-    crossinline mainAxisSpacing: @DisallowComposableCalls LazyState.() -> Int,
     crossinline lazyItems: @DisallowComposableCalls LazyState.() -> List<LazyItem>,
     crossinline lazyItemIndex: @DisallowComposableCalls LazyItem.() -> Int,
     crossinline lazyItemOffset: @DisallowComposableCalls LazyItem.() -> Int,
@@ -57,13 +56,15 @@ internal inline fun <LazyState : ScrollableState, LazyItem> StickyHeaderLayout(
             snapshotFlow {
                 val startOffset = lazyState.viewportStart()
                 val visibleItems = lazyState.lazyItems()
-                val firstItem = visibleItems.firstOrNull() ?: return@snapshotFlow Int.MIN_VALUE
+                val firstItem = visibleItems.firstOrNull()
+                    ?: return@snapshotFlow Int.MIN_VALUE
 
                 val firstItemIndex = firstItem.lazyItemIndex()
                 val firstItemOffset = firstItem.lazyItemOffset()
 
                 // The first item hast scrolled to the top of the view port yet, show nothing
-                if (firstItemIndex == 0 && firstItemOffset > startOffset) return@snapshotFlow Int.MIN_VALUE
+                if (firstItemIndex == 0 && firstItemOffset > startOffset)
+                    return@snapshotFlow Int.MIN_VALUE
 
                 val firstCompletelyVisibleItem = visibleItems.firstOrNull { lazyItem ->
                     lazyItemOffset(lazyItem) >= startOffset
@@ -72,8 +73,7 @@ internal inline fun <LazyState : ScrollableState, LazyItem> StickyHeaderLayout(
                 when (isStickyHeaderItem(firstCompletelyVisibleItem)) {
                     false -> 0
                     true -> firstCompletelyVisibleItem.lazyItemHeight()
-                        .minus(if (firstItemIndex == 0) 0 else lazyState.mainAxisSpacing())
-                        .minus(firstCompletelyVisibleItem.lazyItemOffset())
+                        .minus(firstCompletelyVisibleItem.lazyItemOffset() - startOffset)
                         .let { difference -> if (difference < 0) 0 else -difference }
                 }
             }

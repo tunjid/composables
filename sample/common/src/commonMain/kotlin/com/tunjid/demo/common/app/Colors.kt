@@ -63,3 +63,11 @@ val pastelColors = (0..<9)
             item.copy(id = (index * items.size) + innerIndex)
         }
     }
+
+val distinctPastelColors = pastelColors
+    .distinctBy(ColorItem::name)
+    .sortedBy(ColorItem::name)
+    .mapIndexed { index, colorItem -> colorItem.copy(id = index) }
+
+val groupedPastelColors = distinctPastelColors
+    .groupBy { it.name.first().uppercaseChar() }
