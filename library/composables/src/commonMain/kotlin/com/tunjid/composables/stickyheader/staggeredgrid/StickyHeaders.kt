@@ -18,27 +18,57 @@ package com.tunjid.composables.stickyheader.staggeredgrid
 
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridItemInfo
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tunjid.composables.stickyheader.StickyHeaderLayout
 
+/**
+ * Provides a layout that allows for placing a sticky header above the [content] Composable.
+ *
+ * @param state The [LazyStaggeredGridState] whose scroll properties will be observed to create a
+ * sticky header for.
+ * @param modifier The modifier to be applied to the layout.
+ * @param itemMutationPolicy the [SnapshotMutationPolicy] for the first item in the staggered grid
+ * that the sticky header is currently drawing over. The default implementation is equivalent on
+ * [LazyStaggeredGridItemInfo.key] and [LazyStaggeredGridItemInfo.contentType].
+ * @param isStickyHeaderItem A lambda for identifying which items in the staggered grid are sticky.
+ * @param stickyHeader A lambda for drawing the sticky header composable. It also receives the
+ * [LazyStaggeredGridItemInfo] for the item in the grid that the sticky header is currently
+ * drawing over.
+ * @param content The content the sticky header will be drawn over. This should be a
+ * [LazyVerticalStaggeredGrid].
+ */
 @Composable
-inline fun StickyHeaderStaggeredGrid(
+fun StickyHeaderStaggeredGrid(
     state: LazyStaggeredGridState,
-    modifier: Modifier,
-    crossinline headerMatcher: @DisallowComposableCalls (LazyStaggeredGridItemInfo) -> Boolean,
-    stickyHeader: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    itemMutationPolicy: SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> = remember {
+        object : SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> {
+            override fun equivalent(
+                a: LazyStaggeredGridItemInfo?,
+                b: LazyStaggeredGridItemInfo?
+            ): Boolean = a != null && b != null && a.key == b.key && a.contentType == b.contentType
+        }
+    },
+    isStickyHeaderItem: @DisallowComposableCalls (LazyStaggeredGridItemInfo) -> Boolean,
+    stickyHeader: @Composable (LazyStaggeredGridItemInfo?) -> Unit,
     content: @Composable () -> Unit
 ) {
     StickyHeaderLayout(
         lazyState = state,
         modifier = modifier,
+        itemMutationPolicy = itemMutationPolicy,
         viewportStart = { layoutInfo.viewportStartOffset },
+        mainAxisSpacing = { layoutInfo.mainAxisItemSpacing },
         lazyItems = { layoutInfo.visibleItemsInfo },
+        lazyItemIndex = { index },
         lazyItemOffset = { offset.y },
         lazyItemHeight = { size.height },
-        headerMatcher = headerMatcher,
+        isStickyHeaderItem = isStickyHeaderItem,
         stickyHeader = stickyHeader,
         content = content,
     )

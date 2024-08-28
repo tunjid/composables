@@ -28,6 +28,7 @@ import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.Screen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
 
 @Composable
 fun App() {
@@ -43,6 +44,7 @@ fun App() {
 
             Screen.LazyGridDemoScreen -> LazyGridDemoScreen(pop)
             Screen.LazyListDemoScreen -> LazyListDemoScreen(pop)
+            Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(pop)
             Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(pop)
             Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(pop)
             Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(pop)
