@@ -1,21 +1,31 @@
 package com.tunjid.demo.common.app.demos
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
@@ -54,15 +64,15 @@ fun DemoSelectionScreen(
                 items(
                     items = screens,
                     itemContent = { screen ->
-                        Text(
-                            text = screen.title,
+                        DemoScreenItem(
+                            screen = screen,
                             modifier = Modifier
                                 .fillParentMaxWidth()
                                 .padding(
                                     vertical = 8.dp,
                                     horizontal = 16.dp,
                                 )
-                                .clickable { onScreenSelected(screen) }
+                                .clickable { onScreenSelected(screen) },
                         )
                     }
                 )
@@ -79,6 +89,54 @@ fun DemoSelectionScreen(
             )
         }
     }
+}
 
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DemoScreenItem(
+    screen: Screen,
+    modifier: Modifier = Modifier,
+) {
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+
+        FlowRow(
+            modifier = Modifier
+                .size(60.dp)
+                .background(
+                    color = remember { pastelColors.random().color },
+                    shape = RoundedCornerShape(60.dp)
+                )
+                .padding(4.dp)
+                .rotate(
+                    if (screen.icons.size == 2) 45f
+                    else 0f
+                ),
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            screen.icons.forEach { icon ->
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(18.dp)
+                        .padding(horizontal = 2.dp)
+                        .rotate(
+                            if (screen.icons.size == 2) -45f
+                            else 0f
+                        )
+                )
+            }
+        }
+        Text(
+            text = screen.title,
+            modifier = Modifier
+        )
+    }
 }
 

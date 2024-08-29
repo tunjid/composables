@@ -43,6 +43,7 @@ kotlin {
                 implementation(libs.jetbrains.compose.foundation.layout)
 
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(compose.materialIconsExtended)
 
                 api(libs.tunjid.mutator.core.common)
                 api(libs.tunjid.mutator.coroutines.common)
