@@ -41,14 +41,15 @@ fun DemoSelectionScreen(
     onScreenSelected: (Screen) -> Unit
 ) {
     val listState = rememberLazyListState()
-    val scrollbarState = listState.scrollbarState(itemsAvailable = pastelColors.size)
+    val scrollbarState = listState.scrollbarState(
+        itemsAvailable = screens.size
+    )
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = { }
         )
         Box(
             modifier = Modifier.fillMaxSize()

@@ -91,7 +91,7 @@ internal fun DemoCollapsingHeader(
 @Composable
 fun DemoTopAppBar(
     screen: Screen,
-    onBackPressed: () -> Unit,
+    onBackPressed: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     TopAppBar(
@@ -99,7 +99,7 @@ fun DemoTopAppBar(
             Text(text = screen.title)
         },
         navigationIcon = {
-            IconButton(
+            if (onBackPressed != null) IconButton(
                 onClick = onBackPressed,
                 content = {
                     Image(
