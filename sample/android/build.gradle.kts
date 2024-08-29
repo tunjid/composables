@@ -48,7 +48,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
 
     implementation(libs.androidx.activity.compose)
-    implementation(libs.jetbrains.compose.material)
+    implementation(libs.jetbrains.compose.material3)
     implementation(libs.jetbrains.compose.animation)
 
     implementation(libs.google.material)

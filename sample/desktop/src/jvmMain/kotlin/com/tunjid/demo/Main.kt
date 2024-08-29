@@ -22,7 +22,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import com.tunjid.demo.common.ui.AppTheme
-import com.tunjid.demo.common.ui.Root
+import com.tunjid.demo.common.ui.App
 
 fun main() {
     application {
@@ -35,7 +35,7 @@ fun main() {
             title = "Tiling Demo"
         ) {
             AppTheme {
-                Root()
+                App()
             }
         }
     }

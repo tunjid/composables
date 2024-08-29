@@ -16,8 +16,9 @@
 
 package com.tunjid.composables.collapsingheader
 
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.DecayAnimationSpec
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -39,7 +40,6 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.util.packFloats
@@ -52,24 +52,39 @@ enum class CollapsingHeaderStatus {
     Collapsed, Expanded
 }
 
+/**
+ * State for managing the [CollapsingHeader] composable.
+ * @param collapsedHeight: The height of the header when collapsed.
+ * @param initialExpandedHeight: The initial expanded height of the expanded header before it is
+ * measured. This should be an estimate, the expanded height is determined by the size of
+ * headerContent in [CollapsingHeader].
+ * @param decayAnimationSpec The animation spec that will be used when flinging with a large enough
+ * velocity to reach or cross between expanded and collapsed states.
+ * @param snapAnimationSpec The animation spec used to animate between collapsed and expanded
+ * states.
+ */
 @Stable
 @OptIn(ExperimentalFoundationApi::class)
 class CollapsingHeaderState(
-    density: Density,
-    initialCollapsedHeight: Float,
+    collapsedHeight: Float,
     initialExpandedHeight: Float,
+    decayAnimationSpec: DecayAnimationSpec<Float>,
+    snapAnimationSpec: AnimationSpec<Float> = tween()
 ) {
 
     private var anchors by mutableLongStateOf(
         Anchors(
-            collapsedHeight = initialCollapsedHeight,
+            collapsedHeight = collapsedHeight,
             expandedHeight = initialExpandedHeight
         ).packedValue
     )
 
-    var expandedHeight
+    /**
+     * The height of the header when it is fully expanded.
+     */
+    var expandedHeight: Float
         get() = Anchors(anchors).expandedHeight
-        set(value) {
+        internal set(value) {
             anchors = Anchors(
                 collapsedHeight = collapsedHeight,
                 expandedHeight = value
@@ -77,7 +92,10 @@ class CollapsingHeaderState(
             updateAnchors()
         }
 
-    var collapsedHeight
+    /**
+     * The height of the header when it is fully collapsed.
+     */
+    var collapsedHeight: Float
         get() = Anchors(anchors).collapsedHeight
         set(value) {
             anchors = Anchors(
@@ -87,16 +105,23 @@ class CollapsingHeaderState(
             updateAnchors()
         }
 
-    val translation get() = expandedHeight - anchoredDraggableState.requireOffset()
+    /**
+     * The distance the header has been collapsed from its expanded height.
+     */
+    val translation: Float get() = expandedHeight - anchoredDraggableState.requireOffset()
 
-    val progress get() = translation / (expandedHeight - collapsedHeight)
+    /**
+     * The progress between the expanded and collapsed states.
+     * It goes from 0F at expanded to 1F at collapsed.
+     */
+    val progress: Float get() = translation / (expandedHeight - collapsedHeight)
 
     internal val anchoredDraggableState = AnchoredDraggableState(
         initialValue = CollapsingHeaderStatus.Collapsed,
         positionalThreshold = { distance: Float -> distance * 0.5f },
         velocityThreshold = { 100f },
-        snapAnimationSpec = tween(),
-        decayAnimationSpec = splineBasedDecay(density),
+        snapAnimationSpec = snapAnimationSpec,
+        decayAnimationSpec = decayAnimationSpec,
         anchors = currentDraggableAnchors()
     )
 
@@ -124,7 +149,6 @@ fun CollapsingHeader(
         consumeScrollDelta = state.anchoredDraggableState::dispatchRawDelta
     )
     Box(
-        // TODO: Make this composable nestable by implementing nested scroll here as well
         modifier = Modifier.scrollable(
             state = scrollableState,
             orientation = Orientation.Vertical,

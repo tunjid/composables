@@ -16,29 +16,56 @@
 
 package com.tunjid.composables.stickyheader.list
 
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
+import androidx.compose.runtime.SnapshotMutationPolicy
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.tunjid.composables.stickyheader.StickyHeaderLayout
 
+/**
+ * Provides a layout that allows for placing a sticky header above the [content] Composable.
+ *
+ * @param state The [LazyListState] whose scroll properties will be observed to create a
+ * sticky header for.
+ * @param modifier The modifier to be applied to the layout.
+ * @param itemMutationPolicy the [SnapshotMutationPolicy] for the first item in the list that
+ * the sticky header is currently drawing over. The default implementation is equivalent on
+ * [LazyListItemInfo.key] and [LazyListItemInfo.contentType].
+ * @param isStickyHeaderItem A lambda for identifying which items in the list are sticky.
+ * @param stickyHeader A lambda for drawing the sticky header composable. It also receives the
+ * [LazyListItemInfo] for the item in the list that the sticky header is currently drawing over.
+ * @param content The content the sticky header will be drawn over. This should be a [LazyColumn].
+ */
 @Composable
-inline fun StickyHeaderList(
+fun StickyHeaderList(
     state: LazyListState,
-    modifier: Modifier,
-    crossinline headerMatcher: @DisallowComposableCalls (LazyListItemInfo) -> Boolean,
-    stickyHeader: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    itemMutationPolicy: SnapshotMutationPolicy<LazyListItemInfo?> = remember {
+        object : SnapshotMutationPolicy<LazyListItemInfo?> {
+            override fun equivalent(
+                a: LazyListItemInfo?,
+                b: LazyListItemInfo?
+            ): Boolean = a != null && b != null && a.key == b.key && a.contentType == b.contentType
+        }
+    },
+    isStickyHeaderItem: @DisallowComposableCalls (LazyListItemInfo) -> Boolean,
+    stickyHeader: @Composable (LazyListItemInfo?) -> Unit,
     content: @Composable () -> Unit
 ) {
     StickyHeaderLayout(
         lazyState = state,
         modifier = modifier,
+        itemMutationPolicy = itemMutationPolicy,
         viewportStart = { layoutInfo.viewportStartOffset },
         lazyItems = { layoutInfo.visibleItemsInfo },
+        lazyItemIndex = { index },
         lazyItemOffset = { offset },
         lazyItemHeight = { size },
-        headerMatcher = headerMatcher,
+        isStickyHeaderItem = isStickyHeaderItem,
         stickyHeader = stickyHeader,
         content = content,
     )

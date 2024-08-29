@@ -20,12 +20,16 @@ import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import com.tunjid.composables.lazy.itemVisibilityPercentage
 import com.tunjid.composables.lazy.list.interpolatedFirstItemIndex
 import com.tunjid.composables.scrollbars.Scrollbar
 import com.tunjid.composables.scrollbars.ScrollbarState
+import com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.sumOf
 import com.tunjid.composables.scrollbars.scrollbarStateValue
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,21 +38,30 @@ import kotlin.math.min
 
 /**
  * Remembers a function to react to [Scrollbar] thumb position displacements for a [LazyListState]
- * @param itemsAvailable the amount of items in the list.
+ * based on the total items in the list, and [LazyListState.scrollToItem] for responding to
+ * scrollbar thumb displacements.
+ *
+ * For more customization, including animated scrolling @see [rememberScrollbarThumbMover].
  */
 @Composable
-inline fun LazyListState.rememberScrollbarThumbMover(
-    itemsAvailable: Int,
-    crossinline scroll: suspend (index: Int) -> Unit = { index ->
-        scrollToItem(index)
+inline fun LazyListState.rememberBasicScrollbarThumbMover(): (Float) -> Unit {
+    var totalItemsCount by remember { mutableStateOf(0) }
+    LaunchedEffect(this) {
+        snapshotFlow { layoutInfo.totalItemsCount }
+            .collect { totalItemsCount = it }
     }
-): (Float) -> Unit = com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover(
-    itemsAvailable = itemsAvailable,
-    scroll = scroll,
-)
+    return rememberScrollbarThumbMover(
+        itemsAvailable = totalItemsCount,
+        scroll = ::scrollToItem,
+    )
+}
 
 /**
  * Calculates a [ScrollbarState] driven by the changes in a [LazyListState].
+ *
+ * The calculations for [ScrollbarState] assumes homogeneous items. For heterogeneous items,
+ * the produced state may not change smoothly. If this is the case, you may derive your own
+ * [ScrollbarState] using an algorithm that better fits your list items.
  *
  * @param itemsAvailable the total amount of items available to scroll in the lazy list.
  * @param itemIndex a lookup function for index of an item in the list relative to [itemsAvailable].
