@@ -37,14 +37,15 @@ fun Alignment.interpolate(
     val currentAlignment by remember {
         mutableStateOf(this)
     }.apply {
-        if (value != this@interpolate) previousAlignment = when {
-            interpolation == 1f -> value
-            else -> CapturedAlignment(
+        if (value != this@interpolate) {
+            previousAlignment = if (interpolation == 1f) value
+            else CapturedAlignment(
                 capturedInterpolation = interpolation,
                 previousAlignment = previousAlignment,
                 currentAlignment = value
             )
-        }.also { interpolation = 0f }
+            interpolation = 0f
+        }
         value = this@interpolate
     }
 

@@ -34,17 +34,16 @@ fun ContentScale.interpolate(
         mutableStateOf(this)
     }
 
-    val currentScale by remember {
-        mutableStateOf(this)
-    }.apply {
-        if (value != this@interpolate) previousScale = when {
-            interpolation == 1f -> value
-            else -> CapturedContentScale(
+    val currentScale by remember { mutableStateOf(this) }.apply {
+        if (value != this@interpolate) {
+            previousScale = if (interpolation == 1f) value
+            else CapturedContentScale(
                 capturedInterpolation = interpolation,
                 previousScale = previousScale,
                 currentScale = value
             )
-        }.also { interpolation = 0f }
+            interpolation = 0f
+        }
         value = this@interpolate
     }
 
