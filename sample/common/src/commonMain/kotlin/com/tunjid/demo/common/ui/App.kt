@@ -31,6 +31,9 @@ import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
 
 @Composable
 fun App() {
@@ -88,6 +91,21 @@ fun App() {
             Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop
+            )
+
+            Screen.PointerOffsetScrollStaggeredGridDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+
+            Screen.PointerOffsetScrollListDemoScreen -> PointerOffsetLazyListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+
+            Screen.PointerOffsetScrollGridDemoScreen -> PointerOffsetLazyGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
             )
         }
     }
