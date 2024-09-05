@@ -7,13 +7,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Draggable2DState
 import androidx.compose.foundation.gestures.draggable2D
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.Velocity
 import kotlinx.coroutines.isActive
@@ -21,16 +21,14 @@ import kotlinx.coroutines.launch
 
 /**
  * State for utilizing [Modifier.dragToDismiss].
+ *
+ * @param enabled The initial enabled state of the [DragToDismissState].
+ * @param animationSpec The animation spec used to reset the dragged item back
+ * to its starting [Offset].
  */
 @Stable
 class DragToDismissState(
-    /**
-     * The initial enabled state of the [DragToDismissState]
-     */
     enabled: Boolean = true,
-    /**
-     * The animation spec used to reset the dragged item back to its starting [Offset].
-     */
     internal val animationSpec: AnimationSpec<Offset> = spring()
 ) {
     /**
@@ -59,6 +57,7 @@ class DragToDismissState(
  * interrupted by dragging it again.
  */
 @OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun Modifier.dragToDismiss(
     /**
      * State controlling the properties of the [Modifier]
@@ -89,9 +88,9 @@ fun Modifier.dragToDismiss(
      * [Offset.Zero] immediately after this is called.
      */
     onDismissed: () -> Unit,
-): Modifier = composed {
+): Modifier {
     val scope = rememberCoroutineScope()
-    draggable2D(
+    return draggable2D(
         state = state.draggable2DState,
         startDragImmediately = state.startDragImmediately,
         enabled = state.enabled,
