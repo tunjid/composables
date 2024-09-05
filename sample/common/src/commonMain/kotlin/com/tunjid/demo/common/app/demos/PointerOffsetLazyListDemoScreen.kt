@@ -10,17 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.add
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -33,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toIntRect
@@ -42,20 +42,20 @@ import com.tunjid.demo.common.app.ColorItem
 import com.tunjid.demo.common.app.DemoTopAppBar
 import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.pastelColors
-import com.tunjid.demo.common.ui.GridDemoItem
+import com.tunjid.demo.common.ui.ListDemoItem
 
 @Composable
-fun PointerOffsetLazyStaggeredGridDemoScreen(
+fun PointerOffsetLazyListDemoScreen(
     screen: Screen,
     onBackPressed: () -> Unit,
 ) {
     var selectedItem by remember {
         mutableStateOf<ColorItem?>(null)
     }
-    val staggeredGridState = rememberLazyStaggeredGridState()
+    val listState = rememberLazyListState()
     val pointerOffsetScrollState = remember {
         PointerOffsetScrollState(
-            scrollableState = staggeredGridState,
+            scrollableState = listState,
             orientation = Orientation.Vertical,
             scrollThresholdFraction = 0.8f,
         )
@@ -64,7 +64,7 @@ fun PointerOffsetLazyStaggeredGridDemoScreen(
     val mutableColors = remember { pastelColors.toMutableStateList() }
     val indexOfItemUnder: (Offset) -> Int? = remember {
         { offset ->
-            staggeredGridState.keyAt(offset)
+            listState.keyAt(offset)
                 ?.let { id -> mutableColors.binarySearch { it.id - id } }
                 ?.takeIf { it >= 0 }
         }
@@ -113,30 +113,29 @@ fun PointerOffsetLazyStaggeredGridDemoScreen(
                     )
                 }
         ) {
-            LazyVerticalStaggeredGrid(
-                state = staggeredGridState,
+            LazyColumn(
+                state = listState,
                 contentPadding = WindowInsets(
                     left = 8.dp,
                     right = 8.dp,
                 )
                     .add(WindowInsets.navigationBars)
                     .asPaddingValues(),
-                columns = StaggeredGridCells.Adaptive(100.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize()
             ) {
                 items(
                     items = mutableColors,
                     key = ColorItem::id,
                     itemContent = { item ->
-                        GridDemoItem(
+                        ListDemoItem(
                             item = item,
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .aspectRatio(remember {
-                                    val step = (-1..4).random() * 2
-                                    1f + (step / 10f)
-                                })
+                                .fillParentMaxWidth()
+                                .padding(
+                                    horizontal = 8.dp,
+                                    vertical = 4.dp,
+                                )
                         )
                     }
                 )
@@ -174,7 +173,8 @@ private fun ColorDot(
     )
 }
 
-private fun LazyStaggeredGridState.keyAt(hitPoint: Offset): Int? =
+private fun LazyListState.keyAt(hitPoint: Offset): Int? =
     layoutInfo.visibleItemsInfo.find { itemInfo ->
-        itemInfo.size.toIntRect().contains(hitPoint.round() - itemInfo.offset)
+        IntSize(width = Int.MAX_VALUE, height = itemInfo.size).toIntRect()
+            .contains(hitPoint.round() - IntOffset(x = 0, y = itemInfo.offset))
     }?.key as? Int

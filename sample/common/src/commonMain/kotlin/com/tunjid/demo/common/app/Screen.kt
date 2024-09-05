@@ -77,9 +77,18 @@ enum class Screen(
             Icons.Default.SpaceDashboard,
         ),
     ),
+    PointerOffsetScrollListDemoScreen(
+        title = "Pointer Offset Scroll List",
+        description = "Drag items to transfer their color while scrolling the list.",
+        icons = listOf(
+            Icons.Default.TouchApp,
+            Icons.Default.OpenWith,
+            Icons.AutoMirrored.Filled.ListAlt,
+        ),
+    ),
     PointerOffsetScrollStaggeredGridDemoScreen(
         title = "Pointer Offset Scroll Staggered Grid",
-        description = "Drag items to transfer their color while scrolling the grid.",
+        description = "Drag items to transfer their color while scrolling the staggered grid.",
         icons = listOf(
             Icons.Default.TouchApp,
             Icons.Default.OpenWith,
