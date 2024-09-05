@@ -18,23 +18,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class Screen(
     val title: String,
+    val description: String,
     val icons: List<ImageVector>,
-
-    ) {
+) {
     Demos(
         title = "Demos",
+        description = "A list of the demos in the app.",
         icons = listOf(Icons.Default.TouchApp),
-    ),
-    PointerOffsetScrollStaggeredGridDemoScreen(
-        title = "Pointer Offset Scroll Staggered Grid",
-        icons = listOf(
-            Icons.Default.TouchApp,
-            Icons.Default.OpenWith,
-            Icons.Default.SpaceDashboard,
-        ),
     ),
     LazyStickyHeaderListDemoScreen(
         title = "Sticky Header Lists",
+        description = "An alphabetical list of colors with sticky headers for each letter.",
         icons = listOf(
             Icons.Default.SortByAlpha,
             Icons.AutoMirrored.Filled.ListAlt,
@@ -42,6 +36,7 @@ enum class Screen(
     ),
     LazyStickyHeaderGridDemoScreen(
         title = "Sticky Header Grids",
+        description = "An alphabetical grid of colors with sticky headers for each letter.",
         icons = listOf(
             Icons.Default.SortByAlpha,
             Icons.Default.GridOn,
@@ -49,6 +44,7 @@ enum class Screen(
     ),
     LazyStickyHeaderStaggeredGridDemoScreen(
         title = "Sticky Header Staggered Grids",
+        description = "An alphabetical staggered grid of colors with sticky headers for each letter.",
         icons = listOf(
             Icons.Default.SortByAlpha,
             Icons.Default.SpaceDashboard,
@@ -56,6 +52,7 @@ enum class Screen(
     ),
     LazyListDemoScreen(
         title = "Collapsing Header Lists With Scrollbars",
+        description = "A large list of colors with a collapsing header that can be scrolled with a scrollbar.",
         icons = listOf(
             Icons.Default.OpenInFull,
             Icons.Default.SwipeVertical,
@@ -64,6 +61,7 @@ enum class Screen(
     ),
     LazyGridDemoScreen(
         title = "Collapsing Header Grids With Scrollbars",
+        description = "A large grid of colors with a collapsing header that can be scrolled with a scrollbar.",
         icons = listOf(
             Icons.Default.OpenInFull,
             Icons.Default.SwipeVertical,
@@ -72,14 +70,25 @@ enum class Screen(
     ),
     LazyStaggeredGridDemoScreen(
         title = "Collapsing Header Staggered Grids With Scrollbars",
+        description = "A large staggered list of colors with a collapsing header that can be scrolled with a scrollbar.",
         icons = listOf(
             Icons.Default.OpenInFull,
             Icons.Default.SwipeVertical,
             Icons.Default.SpaceDashboard,
         ),
     ),
+    PointerOffsetScrollStaggeredGridDemoScreen(
+        title = "Pointer Offset Scroll Staggered Grid",
+        description = "Drag items to transfer their color while scrolling the grid.",
+        icons = listOf(
+            Icons.Default.TouchApp,
+            Icons.Default.OpenWith,
+            Icons.Default.SpaceDashboard,
+        ),
+    ),
     DragToDismissDemoScreen(
         title = "Drag To Dismiss",
+        description = "A gallery of colors. Drag on the detail view of a color to dismiss it.",
         icons = listOf(
             Icons.Default.Swipe,
             Icons.Default.Close,
@@ -87,6 +96,7 @@ enum class Screen(
     ),
     AlignmentInterpolationDemoScreen(
         title = "Alignment Interpolation",
+        description = "Tap on a squircle to align the main sqiricle to it.",
         icons = listOf(
             Icons.Default.Apps,
             Icons.Default.OpenWith,
@@ -95,6 +105,7 @@ enum class Screen(
     ),
     ContentScaleInterpolationDemoScreen(
         title = "ContentScale Interpolation",
+        description = "Tap on a ContentScale to animate the change of the beach scene's display in its frame.",
         icons = listOf(
             Icons.Default.AspectRatio,
             Icons.Default.Animation,

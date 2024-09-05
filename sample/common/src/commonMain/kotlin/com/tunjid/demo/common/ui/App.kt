@@ -91,7 +91,7 @@ fun App() {
                 onBackPressed = pop
             )
 
-            Screen.PointerOffsetScrollDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
+            Screen.PointerOffsetScrollStaggeredGridDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )

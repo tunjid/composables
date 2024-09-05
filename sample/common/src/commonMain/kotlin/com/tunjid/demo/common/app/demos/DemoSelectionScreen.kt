@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -134,10 +135,18 @@ private fun DemoScreenItem(
                 )
             }
         }
-        Text(
-            text = screen.title,
-            modifier = Modifier
-        )
+        Column {
+            Text(
+                text = screen.title,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+            )
+            Text(
+                text = screen.description,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+            )
+        }
     }
 }
 
