@@ -86,6 +86,15 @@ enum class Screen(
             Icons.AutoMirrored.Filled.ListAlt,
         ),
     ),
+    PointerOffsetScrollGridDemoScreen(
+        title = "Pointer Offset Scroll Grid",
+        description = "Drag items to transfer their color while scrolling the grid.",
+        icons = listOf(
+            Icons.Default.TouchApp,
+            Icons.Default.OpenWith,
+            Icons.Default.GridOn,
+        ),
+    ),
     PointerOffsetScrollStaggeredGridDemoScreen(
         title = "Pointer Offset Scroll Staggered Grid",
         description = "Drag items to transfer their color while scrolling the staggered grid.",
