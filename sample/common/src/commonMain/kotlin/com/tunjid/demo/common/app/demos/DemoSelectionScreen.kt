@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
@@ -125,6 +126,7 @@ private fun DemoScreenItem(
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
+                    tint = Color.Black,
                     modifier = Modifier
                         .size(18.dp)
                         .padding(horizontal = 2.dp)

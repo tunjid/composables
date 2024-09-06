@@ -94,7 +94,10 @@ fun ItemHeader(
                 vertical = 4.dp,
             )
     ) {
-        Text(text = char.toString())
+        Text(
+            text = char.toString(),
+            color = Color.Black,
+        )
     }
 }
 

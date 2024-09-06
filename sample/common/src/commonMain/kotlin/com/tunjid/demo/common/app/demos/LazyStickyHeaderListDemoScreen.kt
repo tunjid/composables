@@ -61,7 +61,6 @@ fun LazyStickyHeaderListDemoScreen(
                 ItemHeader(
                     char = distinctPastelColors.charFor(key, contentType),
                     backgroundColor = selectedItem.color,
-                    modifier = Modifier.padding(horizontal = 8.dp),
                 )
             }
         ) {
