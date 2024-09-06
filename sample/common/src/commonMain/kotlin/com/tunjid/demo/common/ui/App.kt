@@ -17,9 +17,12 @@
 package com.tunjid.demo.common.ui
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
@@ -27,7 +30,6 @@ import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
 import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
-import com.tunjid.demo.common.app.Screen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
@@ -40,73 +42,77 @@ fun App() {
     val navStack = remember { mutableStateListOf(Screen.Demos) }
     val pop: () -> Unit = remember { { navStack.removeLast() } }
 
-    AnimatedContent(navStack.last()) { currentScreen ->
-        when (currentScreen) {
-            Screen.Demos -> DemoSelectionScreen(
-                screen = currentScreen,
-                screens = remember { Screen.entries.filterNot(Screen.Demos::equals) },
-                onScreenSelected = navStack::add,
-            )
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AnimatedContent(navStack.last()) { currentScreen ->
+            when (currentScreen) {
+                Screen.Demos -> DemoSelectionScreen(
+                    screen = currentScreen,
+                    screens = remember { Screen.entries.filterNot(Screen.Demos::equals) },
+                    onScreenSelected = navStack::add,
+                )
 
-            Screen.LazyGridDemoScreen -> LazyGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyGridDemoScreen -> LazyGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.LazyListDemoScreen -> LazyListDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyListDemoScreen -> LazyListDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.LazyStickyHeaderGridDemoScreen -> LazyStickyHeaderGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyStickyHeaderGridDemoScreen -> LazyStickyHeaderGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.LazyStickyHeaderStaggeredGridDemoScreen -> LazyStickyHeaderStaggeredGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyStickyHeaderStaggeredGridDemoScreen -> LazyStickyHeaderStaggeredGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop
-            )
+                Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop
+                )
 
-            Screen.PointerOffsetScrollStaggeredGridDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop,
-            )
+                Screen.PointerOffsetScrollStaggeredGridDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop,
+                )
 
-            Screen.PointerOffsetScrollListDemoScreen -> PointerOffsetLazyListDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop,
-            )
+                Screen.PointerOffsetScrollListDemoScreen -> PointerOffsetLazyListDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop,
+                )
 
-            Screen.PointerOffsetScrollGridDemoScreen -> PointerOffsetLazyGridDemoScreen(
-                screen = currentScreen,
-                onBackPressed = pop,
-            )
+                Screen.PointerOffsetScrollGridDemoScreen -> PointerOffsetLazyGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop,
+                )
+            }
         }
     }
 }

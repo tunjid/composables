@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos.utilities
 
 import androidx.compose.ui.graphics.Color
 
@@ -64,10 +64,9 @@ val pastelColors = (0..<9)
         }
     }
 
-val distinctPastelColors = pastelColors
+fun distinctPastelColors() = pastelColors
     .distinctBy(ColorItem::name)
     .sortedBy(ColorItem::name)
     .mapIndexed { index, colorItem -> colorItem.copy(id = index) }
 
-val groupedPastelColors = distinctPastelColors
-    .groupBy { it.name.first().uppercaseChar() }
+fun List<ColorItem>.groupedByFirstLetter() = groupBy { it.name.first().uppercaseChar() }

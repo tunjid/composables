@@ -33,8 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.ui.interpolate
-import com.tunjid.demo.common.app.DemoTopAppBar
-import com.tunjid.demo.common.app.Screen
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun ContentScaleInterpolationDemoScreen(

@@ -35,7 +35,6 @@ class DragToDismissState(
      * Whether or not drag to dismiss is available.
      */
     var enabled by mutableStateOf(enabled)
-        internal set
 
     /**
      * The current [Offset] from the starting position of the drag.
@@ -120,9 +119,9 @@ fun Modifier.dragToDismiss(
                                 dragBy(value - state.offset)
                             }
                         )
-                        // Notify that it has been reset.
-                        onReset()
                     }
+                    // Notify that it has been reset.
+                    onReset()
                 } finally {
                     state.startDragImmediately = false
                     // Reset offset if canceled and modifier is out of the composition, otherwise

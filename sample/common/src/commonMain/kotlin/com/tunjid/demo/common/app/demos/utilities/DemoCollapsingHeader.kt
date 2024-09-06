@@ -1,8 +1,7 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos.utilities
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.splineBasedDecay
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.collapsingheader.CollapsingHeader
 import com.tunjid.composables.collapsingheader.CollapsingHeaderState
+import com.tunjid.demo.common.ui.Screen
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -102,9 +103,9 @@ fun DemoTopAppBar(
             if (onBackPressed != null) IconButton(
                 onClick = onBackPressed,
                 content = {
-                    Image(
+                    Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             )
