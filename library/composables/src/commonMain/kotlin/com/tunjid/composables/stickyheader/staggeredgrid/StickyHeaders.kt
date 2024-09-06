@@ -32,13 +32,11 @@ import com.tunjid.composables.stickyheader.StickyHeaderLayout
  * @param state The [LazyStaggeredGridState] whose scroll properties will be observed to create a
  * sticky header for.
  * @param modifier The modifier to be applied to the layout.
- * @param itemMutationPolicy the [SnapshotMutationPolicy] for the first item in the staggered grid
- * that the sticky header is currently drawing over. The default implementation is equivalent on
  * [LazyStaggeredGridItemInfo.key] and [LazyStaggeredGridItemInfo.contentType].
  * @param isStickyHeaderItem A lambda for identifying which items in the staggered grid are sticky.
  * @param stickyHeader A lambda for drawing the sticky header composable. It also receives the
- * [LazyStaggeredGridItemInfo] for the item in the grid that the sticky header is currently
- * drawing over.
+ * [LazyStaggeredGridItemInfo.key] and [LazyStaggeredGridItemInfo.contentType] for
+ * the item in the grid that the sticky header is currently drawing over.
  * @param content The content the sticky header will be drawn over. This should be a
  * [LazyVerticalStaggeredGrid].
  */
@@ -46,29 +44,29 @@ import com.tunjid.composables.stickyheader.StickyHeaderLayout
 fun StickyHeaderStaggeredGrid(
     state: LazyStaggeredGridState,
     modifier: Modifier = Modifier,
-    itemMutationPolicy: SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> = remember {
-        object : SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> {
-            override fun equivalent(
-                a: LazyStaggeredGridItemInfo?,
-                b: LazyStaggeredGridItemInfo?
-            ): Boolean = a != null && b != null && a.key == b.key && a.contentType == b.contentType
-        }
-    },
     isStickyHeaderItem: @DisallowComposableCalls (LazyStaggeredGridItemInfo) -> Boolean,
-    stickyHeader: @Composable (LazyStaggeredGridItemInfo?) -> Unit,
+    stickyHeader: @Composable (key: Any?, contentType: Any?) -> Unit,
     content: @Composable () -> Unit
 ) {
     StickyHeaderLayout(
         lazyState = state,
         modifier = modifier,
-        itemMutationPolicy = itemMutationPolicy,
+        itemMutationPolicy = remember {
+            object : SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> {
+                override fun equivalent(
+                    a: LazyStaggeredGridItemInfo?,
+                    b: LazyStaggeredGridItemInfo?
+                ): Boolean =
+                    a != null && b != null && a.key == b.key && a.contentType == b.contentType
+            }
+        },
         viewportStart = { layoutInfo.viewportStartOffset },
         lazyItems = { layoutInfo.visibleItemsInfo },
         lazyItemIndex = { index },
         lazyItemOffset = { offset.y },
         lazyItemHeight = { size.height },
         isStickyHeaderItem = isStickyHeaderItem,
-        stickyHeader = stickyHeader,
+        stickyHeader = { itemInfo -> stickyHeader(itemInfo?.key, itemInfo?.contentType) },
         content = content,
     )
 }

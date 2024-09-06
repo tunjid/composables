@@ -26,11 +26,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
-import com.tunjid.demo.common.app.DemoCollapsingHeader
-import com.tunjid.demo.common.app.FastScrollbar
-import com.tunjid.demo.common.app.Screen
-import com.tunjid.demo.common.app.pastelColors
-import com.tunjid.demo.common.ui.ListDemoItem
+import com.tunjid.demo.common.app.demos.utilities.DemoCollapsingHeader
+import com.tunjid.demo.common.app.demos.utilities.FastScrollbar
+import com.tunjid.demo.common.ui.Screen
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.app.demos.utilities.ListDemoItem
 
 @Composable
 fun LazyListDemoScreen(

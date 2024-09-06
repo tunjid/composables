@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.app.demos.utilities
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.splineBasedDecay
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.collapsingheader.CollapsingHeader
 import com.tunjid.composables.collapsingheader.CollapsingHeaderState
+import com.tunjid.demo.common.ui.Screen
 import kotlin.math.max
 import kotlin.math.roundToInt
 

@@ -32,41 +32,39 @@ import com.tunjid.composables.stickyheader.StickyHeaderLayout
  * @param state The [LazyListState] whose scroll properties will be observed to create a
  * sticky header for.
  * @param modifier The modifier to be applied to the layout.
- * @param itemMutationPolicy the [SnapshotMutationPolicy] for the first item in the list that
- * the sticky header is currently drawing over. The default implementation is equivalent on
- * [LazyListItemInfo.key] and [LazyListItemInfo.contentType].
  * @param isStickyHeaderItem A lambda for identifying which items in the list are sticky.
  * @param stickyHeader A lambda for drawing the sticky header composable. It also receives the
- * [LazyListItemInfo] for the item in the list that the sticky header is currently drawing over.
+ * [LazyListItemInfo.key] and [LazyListItemInfo.contentType] for the item in the grid that the
+ * sticky header is currently drawing over.
  * @param content The content the sticky header will be drawn over. This should be a [LazyColumn].
  */
 @Composable
 fun StickyHeaderList(
     state: LazyListState,
     modifier: Modifier = Modifier,
-    itemMutationPolicy: SnapshotMutationPolicy<LazyListItemInfo?> = remember {
-        object : SnapshotMutationPolicy<LazyListItemInfo?> {
-            override fun equivalent(
-                a: LazyListItemInfo?,
-                b: LazyListItemInfo?
-            ): Boolean = a != null && b != null && a.key == b.key && a.contentType == b.contentType
-        }
-    },
     isStickyHeaderItem: @DisallowComposableCalls (LazyListItemInfo) -> Boolean,
-    stickyHeader: @Composable (LazyListItemInfo?) -> Unit,
+    stickyHeader: @Composable (key: Any?, contentType: Any?) -> Unit,
     content: @Composable () -> Unit
 ) {
     StickyHeaderLayout(
         lazyState = state,
         modifier = modifier,
-        itemMutationPolicy = itemMutationPolicy,
+        itemMutationPolicy = remember {
+            object : SnapshotMutationPolicy<LazyListItemInfo?> {
+                override fun equivalent(
+                    a: LazyListItemInfo?,
+                    b: LazyListItemInfo?
+                ): Boolean =
+                    a != null && b != null && a.key == b.key && a.contentType == b.contentType
+            }
+        },
         viewportStart = { layoutInfo.viewportStartOffset },
         lazyItems = { layoutInfo.visibleItemsInfo },
         lazyItemIndex = { index },
         lazyItemOffset = { offset },
         lazyItemHeight = { size },
         isStickyHeaderItem = isStickyHeaderItem,
-        stickyHeader = stickyHeader,
+        stickyHeader = { itemInfo -> stickyHeader(itemInfo?.key, itemInfo?.contentType) },
         content = content,
     )
 }

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -20,21 +19,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.stickyheader.list.StickyHeaderList
-import com.tunjid.demo.common.app.ColorItem
-import com.tunjid.demo.common.app.DemoTopAppBar
-import com.tunjid.demo.common.app.Screen
-import com.tunjid.demo.common.app.distinctPastelColors
-import com.tunjid.demo.common.app.groupedPastelColors
-import com.tunjid.demo.common.ui.ContentType
-import com.tunjid.demo.common.ui.ItemHeader
-import com.tunjid.demo.common.ui.ListDemoItem
+import com.tunjid.demo.common.app.demos.utilities.ColorItem
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
+import com.tunjid.demo.common.ui.Screen
+import com.tunjid.demo.common.app.demos.utilities.distinctPastelColors
+import com.tunjid.demo.common.app.demos.utilities.groupedByFirstLetter
+import com.tunjid.demo.common.app.demos.utilities.ContentType
+import com.tunjid.demo.common.app.demos.utilities.ItemHeader
+import com.tunjid.demo.common.app.demos.utilities.ListDemoItem
+import com.tunjid.demo.common.app.demos.utilities.charFor
 
 @Composable
 fun LazyStickyHeaderListDemoScreen(
     screen: Screen,
     onBackPressed: () -> Unit,
 ) {
-    var selectedItem by remember {
+    val distinctPastelColors = remember {
+        distinctPastelColors()
+    }
+    val groupedPastelColors = remember(distinctPastelColors) {
+        distinctPastelColors.groupedByFirstLetter()
+    }
+    var selectedItem by remember(distinctPastelColors) {
         mutableStateOf(distinctPastelColors.first())
     }
     val listState = rememberLazyListState()
@@ -51,10 +57,11 @@ fun LazyStickyHeaderListDemoScreen(
             isStickyHeaderItem = {
                 it.contentType == ContentType.Header
             },
-            stickyHeader = stickyHeader@{ firstItemInfo ->
+            stickyHeader = stickyHeader@{ key, contentType ->
                 ItemHeader(
-                    charFor(firstItemInfo = firstItemInfo),
-                    selectedItem.color
+                    char = distinctPastelColors.charFor(key, contentType),
+                    backgroundColor = selectedItem.color,
+                    modifier = Modifier.padding(horizontal = 8.dp),
                 )
             }
         ) {
@@ -98,30 +105,3 @@ fun LazyStickyHeaderListDemoScreen(
         }
     }
 }
-
-private fun charFor(
-    firstItemInfo: LazyListItemInfo?
-): Char {
-    return when (firstItemInfo?.contentType) {
-        is ContentType.Header -> {
-            val headerItemKey = firstItemInfo.key as? String
-            headerItemKey?.first() ?: '-'
-        }
-
-        is ContentType.Item -> {
-            val headerItemKey = firstItemInfo.key as? Int
-                ?: return '-'
-            val headerItemIndex = distinctPastelColors
-                .binarySearch { it.id - headerItemKey }
-            if (headerItemIndex >= 0) distinctPastelColors[headerItemIndex].name
-                .first()
-                .uppercaseChar()
-            else '-'
-        }
-
-        else -> '-'
-    }
-}
-
-
-

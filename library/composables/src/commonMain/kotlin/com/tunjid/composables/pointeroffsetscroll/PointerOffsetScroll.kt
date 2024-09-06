@@ -43,7 +43,7 @@ class PointerOffsetScrollState(
      * The current pointer [Offset] in the scrollable container. The closer it is to the extremes,
      * the faster the scroll.
      */
-    var currentOffset by mutableStateOf(Offset.Unspecified)
+    var currentOffset by mutableStateOf(Offset.Zero)
 
     /**
      * Whether or not the [Modifier] is enabled.

@@ -1,4 +1,4 @@
-package com.tunjid.demo.common.app
+package com.tunjid.demo.common.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
@@ -114,7 +114,7 @@ enum class Screen(
     ),
     AlignmentInterpolationDemoScreen(
         title = "Alignment Interpolation",
-        description = "Tap on a squircle to align the main sqiricle to it.",
+        description = "Tap on a rounded rectangle to align the main rounded rectangle to it.",
         icons = listOf(
             Icons.Default.Apps,
             Icons.Default.OpenWith,

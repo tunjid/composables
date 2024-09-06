@@ -1,7 +1,5 @@
 package com.tunjid.demo.common.app.demos
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
@@ -14,15 +12,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,18 +25,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toIntRect
 import com.tunjid.composables.pointeroffsetscroll.PointerOffsetScrollState
 import com.tunjid.composables.pointeroffsetscroll.pointerOffsetScroll
-import com.tunjid.demo.common.app.ColorItem
-import com.tunjid.demo.common.app.DemoTopAppBar
-import com.tunjid.demo.common.app.Screen
-import com.tunjid.demo.common.app.pastelColors
-import com.tunjid.demo.common.ui.GridDemoItem
+import com.tunjid.demo.common.app.demos.utilities.ColorItem
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
+import com.tunjid.demo.common.ui.Screen
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.app.demos.utilities.ColorDot
+import com.tunjid.demo.common.app.demos.utilities.GridDemoItem
 
 @Composable
 fun PointerOffsetLazyGridDemoScreen(
@@ -145,30 +139,6 @@ fun PointerOffsetLazyGridDemoScreen(
             )
         }
     }
-}
-
-@Composable
-private fun ColorDot(
-    color: Color?,
-    offset: Offset,
-) {
-    val currentColor = color ?: return
-
-    Box(
-        modifier = Modifier
-            .size(56.dp)
-            .offset((-28).dp, (-28).dp)
-            .offset { offset.round() }
-            .background(
-                color = currentColor,
-                shape = CircleShape,
-            )
-            .border(
-                width = 2.dp,
-                color = MaterialTheme.colorScheme.onSurface,
-                shape = CircleShape,
-            )
-    )
 }
 
 private fun LazyGridState.keyAt(hitPoint: Offset): Int? =

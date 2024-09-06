@@ -30,10 +30,10 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
-import com.tunjid.demo.common.app.DemoTopAppBar
-import com.tunjid.demo.common.app.FastScrollbar
-import com.tunjid.demo.common.app.Screen
-import com.tunjid.demo.common.app.pastelColors
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
+import com.tunjid.demo.common.app.demos.utilities.FastScrollbar
+import com.tunjid.demo.common.ui.Screen
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
 
 @Composable
 fun DemoSelectionScreen(

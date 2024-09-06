@@ -35,10 +35,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.tunjid.composables.dragtodismiss.DragToDismissState
 import com.tunjid.composables.dragtodismiss.dragToDismiss
-import com.tunjid.demo.common.app.ColorItem
-import com.tunjid.demo.common.app.DemoTopAppBar
-import com.tunjid.demo.common.app.Screen
-import com.tunjid.demo.common.app.pastelColors
+import com.tunjid.demo.common.app.demos.utilities.ColorItem
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
+import com.tunjid.demo.common.ui.Screen
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
