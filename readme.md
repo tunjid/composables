@@ -1,7 +1,7 @@
-# Tiler
+# Composables
 
-[![JVM Tests](https://github.com/tunjid/Tiler/actions/workflows/tests.yml/badge.svg)](https://github.com/tunjid/Tiler/actions/workflows/tests.yml)
-![Tiler](https://img.shields.io/maven-central/v/com.tunjid.tiler/tiler?label=tiler)
+[![JVM Tests](https://github.com/tunjid/Composable/actions/workflows/tests.yml/badge.svg)](https://github.com/tunjid/Tiler/actions/workflows/tests.yml)
+![Composables](https://img.shields.io/maven-central/v/com.tunjid.compsables/compsables?label=compsables)
 
 ![badge][badge-ios]
 ![badge][badge-js]
@@ -12,32 +12,29 @@
 ![badge][badge-tvos]
 ![badge][badge-watchos]
 
-Please note, this is not an official Google repository. It is a Kotlin multiplatform experiment that makes no guarantees
+Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes no guarantees
 about API stability or long term support. None of the works presented here are production tested, and should not be
 taken as anything more than its face value.
 
 ## Introduction
 
-Tiling is a state based paging implementation that presents a sublist of paged dataset in a simple `List`.
-It offers constant time access to items at indices, and the ability to introspect the items paged through.
+Composables are a collection of utility methods that build on the Jetpack Compose UI and Foundation packages.
 
-The following are examples of paged UI/UX paradigms that were built using tiling:
+They offer APIs for common UI interactions that make UI more delightful. They are summarize below
 
-| [Basic pagination](https://tunjid.github.io/Tiler/usecases/basic-example/) | [Pagination with sticky headers](https://tunjid.github.io/Tiler/usecases/compose/#sticky-headers) | [Pagination with search](https://tunjid.github.io/Tiler/usecases/search/) | [Pagination with placeholders](https://tunjid.github.io/Tiler/usecases/placeholders/) |
-|----------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------:|
-| ![Basic pagination](./docs/images/basic.gif)                               | ![Pagination with sticky headers](./docs/images/sticky.gif)                                       |            ![Pagination with search](./docs/images/search.gif)            |            ![Pagination with placeholders](./docs/images/placeholders.gif)            |
+| Composable                             |                                                                                                           |                                                                                                           |                                                                                                                             |
+|----------------------------------------|-----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| Sticky Headers                         | ![list](./docs/images/sticky_header_list_crop.gif)                                                        | ![grid](./docs/images/sticky_header_grid_crop.gif)                                                        | ![staggered_grid](./docs/images/sticky_header_staggered_grid_crop.gif)                                                      |
+| Collapsing Headers and Scrollbars      | ![collapsing header with scrollbars in a list](./docs/images/collapsing_header_fast_scroll_list_crop.gif) | ![collapsing header with scrollbars in a grid](./docs/images/collapsing_header_fast_scroll_grid_crop.gif) | ![collapsing header with scrollbars in staggered_grid](./docs/images/collapsing_header_fast_scroll_staggered_grid_crop.gif) |
+| Pointer Offset Scroll                  | ![pointer offset list scroll](./docs/images/pointer_offset_list_crop.gif)                                 | ![pointer offset grid scroll](./docs/images/pointer_offset_grid_crop.gif)                                 | ![pointer offset staggered grid](./docs/images/pointer_offset_staggered_grid_crop.gif)                                      |
+| Drag To Dismiss                        | ![color drag to dismiss](./docs/images/drag_to_dismiss_crop.gif)                                          | ![image drag to dismiss](./docs/images/drag_to_dismiss_app_image.gif)                                     | ![video drag to dismiss](./docs/images/drag_to_dismiss_app_video.gif)                                                       |
+| Alignment / ContentScale Interpolation | ![rounded rect interpolation](./docs/images/alignment_interpolation_crop.gif)                             | ![beach scene interpolation](./docs/images/content_scale_interpolation_crop.gif)                          |                                                                                                                             |
 
-For large screened devices:
-
-| [Pagination with adaptive layouts](https://tunjid.github.io/Tiler/usecases/adaptive-paging/) | [Pagination with adaptive layouts, search and placeholders](https://tunjid.github.io/Tiler/usecases/complex-tiling/) |
-|:--------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------:|
-|               ![Pagination with adaptive layouts](./docs/images/adaptive.gif)                |               ![Pagination with adaptive layouts, search and placeholders](./docs/images/complex.gif)                |
-
-Please see the [documentation](https://tunjid.github.io/Tiler/) for more details.
+Please see the [documentation](https://tunjid.github.io/Composables/) for more details.
 
 ## License
 
-    Copyright 2021 Google LLC
+    Copyright 2023 Adetunji Dahunsi
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
