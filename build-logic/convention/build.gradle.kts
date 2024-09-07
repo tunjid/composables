@@ -18,7 +18,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.tunjid.tiler.buildlogic"
+group = "com.tunjid.composables.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
