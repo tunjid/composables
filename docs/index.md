@@ -1,16 +1,10 @@
 # Composables
 
-[![JVM Tests](https://github.com/tunjid/Composable/actions/workflows/tests.yml/badge.svg)](https://github.com/tunjid/Tiler/actions/workflows/tests.yml)
-![Composables](https://img.shields.io/maven-central/v/com.tunjid.compsables/compsables?label=compsables)
+![Composables](https://img.shields.io/maven-central/v/com.tunjid.composables/composables?label=compsables)
 
 ![badge][badge-ios]
 ![badge][badge-js]
 ![badge][badge-jvm]
-![badge][badge-linux]
-![badge][badge-windows]
-![badge][badge-mac]
-![badge][badge-tvos]
-![badge][badge-watchos]
 
 Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes no guarantees
 about API stability or long term support. None of the works presented here are production tested, and should not be
@@ -30,7 +24,6 @@ They offer APIs for common UI interactions that make UI more delightful. They ar
 | Drag To Dismiss                        | ![color drag to dismiss](./images/drag_to_dismiss_crop.gif)                                          | ![image drag to dismiss](./images/drag_to_dismiss_app_image.gif)                                     | ![video drag to dismiss](./images/drag_to_dismiss_app_video.gif)                                                       |
 | Alignment / ContentScale Interpolation | ![rounded rect interpolation](./images/alignment_interpolation_crop.gif)                             | ![beach scene interpolation](./images/content_scale_interpolation_crop.gif)                          |                                                                                                                        |
 
-Please see the [documentation](https://tunjid.github.io/Composables/) for more details.
 
 ## License
 
