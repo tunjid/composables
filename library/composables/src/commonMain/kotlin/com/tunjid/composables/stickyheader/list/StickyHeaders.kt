@@ -43,7 +43,7 @@ fun StickyHeaderList(
     state: LazyListState,
     modifier: Modifier = Modifier,
     isStickyHeaderItem: @DisallowComposableCalls (LazyListItemInfo) -> Boolean,
-    stickyHeader: @Composable (key: Any?, contentType: Any?) -> Unit,
+    stickyHeader: @Composable (index: Int, key: Any?, contentType: Any?) -> Unit,
     content: @Composable () -> Unit
 ) {
     StickyHeaderLayout(
@@ -55,7 +55,10 @@ fun StickyHeaderList(
                     a: LazyListItemInfo?,
                     b: LazyListItemInfo?
                 ): Boolean =
-                    a != null && b != null && a.key == b.key && a.contentType == b.contentType
+                    a != null && b != null &&
+                            a.key == b.key &&
+                            a.contentType == b.contentType &&
+                            a.index == b.index
             }
         },
         viewportStart = { layoutInfo.viewportStartOffset },
@@ -64,7 +67,13 @@ fun StickyHeaderList(
         lazyItemOffset = { offset },
         lazyItemHeight = { size },
         isStickyHeaderItem = isStickyHeaderItem,
-        stickyHeader = { itemInfo -> stickyHeader(itemInfo?.key, itemInfo?.contentType) },
+        stickyHeader = { itemInfo ->
+            if (itemInfo != null) stickyHeader(
+                itemInfo.index,
+                itemInfo.key,
+                itemInfo.contentType
+            )
+        },
         content = content,
     )
 }

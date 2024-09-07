@@ -8,7 +8,7 @@ fun StickyHeader_(
     state: Lazy_State,
     modifier: Modifier = Modifier,
     isStickyHeaderItem: @DisallowComposableCalls (Lazy_ItemInfo) -> Boolean,
-    stickyHeader: @Composable (key: Any?, contentType: Any?) -> Unit,
+    stickyHeader: @Composable (index: Int, key: Any?, contentType: Any?) -> Unit,
     content: @Composable () -> Unit
 ) {
     ...
