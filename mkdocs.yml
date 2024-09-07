@@ -1,10 +1,10 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 
 # General setup
-site_name: Tiler
-site_url: https://tunjid.github.io/Tiler/
+site_name: Composables
+site_url: https://tunjid.github.io/Composable/
 site_author: Adetunji Dahunsi
-site_description: A reactive state based pagination library
+site_description: A collection of utility composable functions
 
 theme:
   name: material
@@ -34,24 +34,15 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
-repo_url: https://github.com/tunjid/Tiler
+repo_url: https://github.com/tunjid/Composables
 nav:
   - Home: index.md
-  - Tiled lists: implementation/tiledlist.md
-  - Tiling use cases and examples:
-      - Overview: usecases/overview.md
-      - Basic Example: usecases/basic-example.md
-      - Placeholders: usecases/placeholders.md
-      - Search: usecases/search.md
-      - Adaptive Paging: usecases/adaptive-paging.md
-      - Adaptive Paged Search with Placeholders: usecases/complex-tiling.md
-      - Transformations: usecases/transformations.md
-      - Jetpack Compose: usecases/compose.md
-  - How tiling works:
-      - Primitives: implementation/primitives.md
-      - Pivoting: implementation/pivoted-tiling.md
-      - Pagination types and Tiling: implementation/pagination-types.md
-      - Performance: implementation/performance.md
+  - Sticky Headers: implementation/sticky_headers.md
+  - Collapsing Headers: implementation/collapsing_headers.md
+  - Pointer Offset Scroll: implementation/pointer_offset.md
+  - Scrollbars: implementation/scrollbars.md
+  - Drag To Dismiss: implementation/drag_to_dismiss.md
+  - Alignment / Content Scale Interpolation: implementation/interpolation.md
 markdown_extensions:
   - admonition
   - pymdownx.highlight:
