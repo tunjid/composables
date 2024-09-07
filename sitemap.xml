@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://tunjid.github.io/Composable/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/collapsing_headers/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/drag_to_dismiss/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/interpolation/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/pointer_offset/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/scrollbars/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+    <url>
+         <loc>https://tunjid.github.io/Composable/implementation/sticky_headers/</loc>
+         <lastmod>2024-09-07</lastmod>
+    </url>
+</urlset>
