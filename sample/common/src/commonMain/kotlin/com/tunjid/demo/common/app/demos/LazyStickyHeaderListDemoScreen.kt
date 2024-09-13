@@ -57,7 +57,7 @@ fun LazyStickyHeaderListDemoScreen(
             isStickyHeaderItem = {
                 it.contentType == ContentType.Header
             },
-            stickyHeader = stickyHeader@{ key, contentType ->
+            stickyHeader = stickyHeader@{ _, key, contentType ->
                 ItemHeader(
                     char = distinctPastelColors.charFor(key, contentType),
                     backgroundColor = selectedItem.color,
