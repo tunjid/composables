@@ -20,24 +20,28 @@ import kotlinx.coroutines.delay
 /**
  * State for utilizing [Modifier.pointerOffsetScroll].
  *
- * @param enabled The initial enabled state of the [PointerOffsetScrollState].
  *
- * @param scrollThresholdFraction The fraction that when crossed by
- * [PointerOffsetScrollState.currentOffset], will trigger a scroll. It is relative to the center of
- * the bound of the Composable [Modifier.pointerOffsetScroll] is attached to.
- *
- * @param scrollableState The scrollable state that will be scrolled when the offset threshold
+ * @param scrollableState the scrollable state that will be scrolled when the offset threshold
  * is crossed.
  *
  * @param orientation the [Orientation] used to determine the scroll speed when scrolling the
  * [ScrollableState].
+ * @param enabled the initial enabled state of the [PointerOffsetScrollState].
+ *
+ * @param scrollThresholdFraction the fraction of the length of the side of the
+ * container by its [orientation], that when crossed by [PointerOffsetScrollState.currentOffset],
+ * will trigger a scroll. It is measured  relative to the center of the bounds of the Composable
+ * [Modifier.pointerOffsetScroll] is attached to.
+ *
+ * @param scrollAmountMultiplier a multiplier for how quickly the pointer offset should scroll.
  */
 @Stable
 class PointerOffsetScrollState(
-    enabled: Boolean = true,
-    scrollThresholdFraction: Float = 0.5f,
     internal val scrollableState: ScrollableState,
     internal val orientation: Orientation,
+    enabled: Boolean = true,
+    scrollThresholdFraction: Float = 0.5f,
+    scrollAmountMultiplier: Float = 1f,
 ) {
     /**
      * The current pointer [Offset] in the scrollable container. The closer it is to the extremes,
@@ -51,10 +55,17 @@ class PointerOffsetScrollState(
     var enabled by mutableStateOf(enabled)
 
     /**
-     * The fraction over which when crossed, scrolling will begin. The position is relative to
-     * the center of the bounding container.
+     * The fraction of the length of the side of the container by its [orientation],
+     * that when crossed by [PointerOffsetScrollState.currentOffset], scrolling will begin.
+     * It is measured  relative to the center of the bounds of the Composable
+     * [Modifier.pointerOffsetScroll] is attached to
      */
     var scrollThresholdFraction by mutableFloatStateOf(scrollThresholdFraction)
+
+    /**
+     * A multiplier for how quickly the pointer offset should scroll the [scrollableState].
+     */
+    var scrollAmountMultiplier by mutableFloatStateOf(scrollAmountMultiplier)
 
     internal var bottomEnd by mutableStateOf(Offset.Zero)
     internal var scrollAmount by mutableFloatStateOf(0f)
@@ -87,11 +98,13 @@ fun Modifier.pointerOffsetScroll(
             else -> 0f
         }
     }
-    LaunchedEffect(state.scrollAmount, state.enabled) {
+    LaunchedEffect(state.scrollAmount, state.enabled, state.scrollAmountMultiplier) {
         if (state.scrollAmount == 0f || !state.enabled) return@LaunchedEffect
 
         while (true) {
-            state.scrollableState.scrollBy(state.scrollAmount)
+            state.scrollableState.scrollBy(
+                value = state.scrollAmount * state.scrollAmountMultiplier
+            )
             delay(POINTER_SCROLL_DELAY_MS)
         }
     }

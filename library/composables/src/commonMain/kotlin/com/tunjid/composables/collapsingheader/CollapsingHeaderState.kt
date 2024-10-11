@@ -24,8 +24,10 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -54,13 +56,16 @@ enum class CollapsingHeaderStatus {
 
 /**
  * State for managing the [CollapsingHeader] composable.
- * @param collapsedHeight: The height of the header when collapsed.
- * @param initialExpandedHeight: The initial expanded height of the expanded header before it is
+ * @param collapsedHeight: the height of the header when collapsed.
+ * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
  * measured. This should be an estimate, the expanded height is determined by the size of
  * headerContent in [CollapsingHeader].
- * @param decayAnimationSpec The animation spec that will be used when flinging with a large enough
+ * @param thresholdFraction the fraction of the distance that must be covered between the
+ * [CollapsingHeaderStatus.Collapsed] and [CollapsingHeaderStatus.Expanded] states after which
+ * the header should transition to the next state.
+ * @param decayAnimationSpec the animation spec that will be used when flinging with a large enough
  * velocity to reach or cross between expanded and collapsed states.
- * @param snapAnimationSpec The animation spec used to animate between collapsed and expanded
+ * @param snapAnimationSpec the animation spec used to animate between collapsed and expanded
  * states.
  */
 @Stable
@@ -68,8 +73,10 @@ enum class CollapsingHeaderStatus {
 class CollapsingHeaderState(
     collapsedHeight: Float,
     initialExpandedHeight: Float,
+    thresholdFraction: Float = 0.5f,
     decayAnimationSpec: DecayAnimationSpec<Float>,
-    snapAnimationSpec: AnimationSpec<Float> = tween()
+    snapAnimationSpec: AnimationSpec<Float> = tween(),
+    initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
 ) {
 
     private var anchors by mutableLongStateOf(
@@ -117,21 +124,37 @@ class CollapsingHeaderState(
     val progress: Float get() = translation / (expandedHeight - collapsedHeight)
 
     internal val anchoredDraggableState = AnchoredDraggableState(
-        initialValue = CollapsingHeaderStatus.Collapsed,
-        positionalThreshold = { distance: Float -> distance * 0.5f },
+        initialValue = initialStatus,
+        positionalThreshold = { distance: Float -> distance * thresholdFraction },
         velocityThreshold = { 100f },
         snapAnimationSpec = snapAnimationSpec,
         decayAnimationSpec = decayAnimationSpec,
         anchors = currentDraggableAnchors()
     )
 
+    /**
+     * Animate to the specified [status].
+     * @param status the status to animate to.
+     */
+    suspend fun animateTo(status: CollapsingHeaderStatus) {
+        anchoredDraggableState.animateTo(status)
+    }
+
+    /**
+     * Snap to the specified [status].
+     * @param status the status to snap to.
+     */
+    suspend fun snapTo(status: CollapsingHeaderStatus) {
+        anchoredDraggableState.snapTo(status)
+    }
+
     private fun updateAnchors() = anchoredDraggableState.updateAnchors(
         currentDraggableAnchors()
     )
 
     private fun currentDraggableAnchors() = DraggableAnchors {
-        CollapsingHeaderStatus.Collapsed at expandedHeight
-        CollapsingHeaderStatus.Expanded at collapsedHeight
+        CollapsingHeaderStatus.Collapsed at collapsedHeight
+        CollapsingHeaderStatus.Expanded at expandedHeight
     }
 }
 

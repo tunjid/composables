@@ -3,8 +3,8 @@ package com.tunjid.demo.common.app.demos.utilities
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +23,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
@@ -31,7 +32,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.collapsingheader.CollapsingHeader
 import com.tunjid.composables.collapsingheader.CollapsingHeaderState
+import com.tunjid.composables.collapsingheader.CollapsingHeaderStatus
 import com.tunjid.demo.common.ui.Screen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -56,12 +60,34 @@ internal fun DemoCollapsingHeader(
     val animatedColor by animateColorAsState(
         item.color.copy(alpha = max(1f - headerState.progress, 0.6f))
     )
+    val scope = rememberCoroutineScope { Dispatchers.Main.immediate }
     CollapsingHeader(
         state = headerState,
         headerContent = {
-            Box {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
+            Box(
+                modifier = Modifier.combinedClickable(
+                    onClick = {
+                        scope.launch {
+                            headerState.animateTo(
+                                if (headerState.progress > 0.5f) CollapsingHeaderStatus.Expanded
+                                else CollapsingHeaderStatus.Collapsed
+                            )
+                        }
+                    },
+                    onDoubleClick = {
+                        scope.launch {
+                            headerState.snapTo(
+                                if (headerState.progress > 0.5f) CollapsingHeaderStatus.Expanded
+                                else CollapsingHeaderStatus.Collapsed
+                            )
+                        }
+                    },
+                )
+            ) {
+                Spacer(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
                         .offset {
                             IntOffset(
                                 x = 0,
@@ -69,10 +95,7 @@ internal fun DemoCollapsingHeader(
                             )
                         }
                         .background(animatedColor)
-                ) {
-                    Spacer(Modifier.windowInsetsPadding(WindowInsets.statusBars))
-                    Spacer(Modifier.height(200.dp))
-                }
+                )
                 DemoTopAppBar(
                     screen = screen,
                     onBackPressed = onBackPressed,

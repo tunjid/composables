@@ -51,7 +51,8 @@ fun PointerOffsetLazyGridDemoScreen(
         PointerOffsetScrollState(
             scrollableState = gridState,
             orientation = Orientation.Vertical,
-            scrollThresholdFraction = 0.8f,
+            scrollThresholdFraction = 0.2f,
+            scrollAmountMultiplier = 0.2f,
         )
     }
 

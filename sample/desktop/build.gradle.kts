@@ -37,6 +37,7 @@ kotlin {
 
                 implementation(libs.jetbrains.compose.material3)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.coroutines.swing)
 
                 implementation(libs.tunjid.mutator.core.jvm)
                 implementation(libs.tunjid.mutator.coroutines.jvm)
