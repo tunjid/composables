@@ -19,6 +19,7 @@ package com.tunjid.composables.lazy.grid
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.runtime.LaunchedEffect
 import com.tunjid.composables.lazy.interpolatedFirstItemIndex
 import com.tunjid.composables.scrollbars.valueOf
 
@@ -29,7 +30,7 @@ import com.tunjid.composables.scrollbars.valueOf
  * Note that the value returned is observable and is updated after every scroll or remeasure.
  * If you use it in the composable function it will be recomposed on every change causing
  * potential performance issues including infinity recomposition loop.
- * Therefore, avoid using it in the composition.
+ * Therefore, avoid using it in the composition and instead in a [LaunchedEffect].
  * */
 fun LazyGridState.interpolatedFirstItemIndex(
     itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,

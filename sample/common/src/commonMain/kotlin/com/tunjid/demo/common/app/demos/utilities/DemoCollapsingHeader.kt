@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,7 +29,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.collapsingheader.CollapsingHeader
+import com.tunjid.composables.collapsingheader.CollapsingHeaderLayout
 import com.tunjid.composables.collapsingheader.CollapsingHeaderState
 import com.tunjid.composables.collapsingheader.CollapsingHeaderStatus
 import com.tunjid.demo.common.ui.Screen
@@ -61,7 +60,7 @@ internal fun DemoCollapsingHeader(
         item.color.copy(alpha = max(1f - headerState.progress, 0.6f))
     )
     val scope = rememberCoroutineScope { Dispatchers.Main.immediate }
-    CollapsingHeader(
+    CollapsingHeaderLayout(
         state = headerState,
         headerContent = {
             Box(

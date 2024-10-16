@@ -22,6 +22,8 @@ import androidx.compose.ui.layout.lerp
  *
  * @param animationSpec the animation spec used to animate the [ScaleFactor] returned by
  * [ContentScale.computeScaleFactor] as it changes.
+ *
+ * @sample com.tunjid.demo.common.app.demos.BeachScene
  */
 @Composable
 fun ContentScale.interpolate(

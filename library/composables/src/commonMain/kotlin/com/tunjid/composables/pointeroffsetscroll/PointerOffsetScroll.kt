@@ -78,6 +78,8 @@ class PointerOffsetScrollState(
  * [PointerOffsetScrollState.scrollThresholdFraction].
  *
  * @param state the state managing the [Modifier].
+ *
+ * @sample com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
  */
 @Composable
 fun Modifier.pointerOffsetScroll(

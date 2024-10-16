@@ -5,7 +5,7 @@ layout.
 
 ```kotlin
 @Composable
-fun CollapsingHeader(
+fun CollapsingHeaderLayout(
     state: CollapsingHeaderState,
     headerContent: @Composable () -> Unit,
     body: @Composable () -> Unit,

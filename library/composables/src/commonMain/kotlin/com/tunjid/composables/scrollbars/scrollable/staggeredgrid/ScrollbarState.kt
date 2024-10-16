@@ -68,6 +68,8 @@ inline fun LazyStaggeredGridState.rememberBasicScrollbarThumbMover(): (Float) ->
  * @param itemsAvailable the total amount of items available to scroll in the staggered grid.
  * @param itemIndex a lookup function for index of an item in the staggered grid relative
  * to [itemsAvailable].
+ *
+ * @sample com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
  */
 @Composable
 fun LazyStaggeredGridState.scrollbarState(

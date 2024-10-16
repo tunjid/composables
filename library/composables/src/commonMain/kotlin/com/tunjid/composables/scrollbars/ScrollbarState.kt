@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -44,6 +45,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -72,6 +74,7 @@ private const val SCROLLBAR_PRESS_DELAY_MS = 10L
  */
 private const val SCROLLBAR_PRESS_DELTA_PCT = 0.02f
 
+@Stable
 class ScrollbarState {
     private var packedValue by mutableLongStateOf(0L)
 
@@ -223,7 +226,7 @@ fun Scrollbar(
                     Orientation.Horizontal -> withHover.fillMaxWidth()
                 }
             }
-            .onGloballyPositioned { coordinates ->
+            .onPlaced { coordinates ->
                 val scrollbarStartCoordinate = orientation.valueOf(coordinates.positionInRoot())
                 track = ScrollbarTrack(
                     max = scrollbarStartCoordinate,

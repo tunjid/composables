@@ -1,7 +1,5 @@
 package com.tunjid.demo.common.app.demos
 
-//import androidx.compose.ui.graphics.vector.Path
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
