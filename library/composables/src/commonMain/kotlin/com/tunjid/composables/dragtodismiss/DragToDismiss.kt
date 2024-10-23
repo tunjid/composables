@@ -54,38 +54,31 @@ class DragToDismissState(
  * A Modifier for performing the drag to dismiss UI gesture pattern. When the dragged item
  * is not being dismissed and is being reset into its original position, the reset may be
  * interrupted by dragging it again.
+ *
+ * @param state state controlling the properties of the [Modifier].
+ * @param dragThresholdCheck a lambda for checking if the threshold for the drag offset for
+ * dismissal has been reached.
+ * It provides two arguments, the current displacement [Offset], and the [Velocity] at which
+ * the drag was stopped. Return true if the offset has been reached and the composable should be
+ * dismissed, else false for the composable to be animated back to its starting position.
+ * @param onStart called when the drag commences and the composable has been displaced
+ * from its original position.
+ * @param onReset called when the composable has settled back into its original position after
+ * being displaced to an [Offset] less than its dismissal threshold.
+ * It will only be called if the reset animation completes without being cancelled.
+ * @param onDismissed called when the composable has been dragged past its dismissal
+ * threshold and should be dismissed. Note that the Composable will have its displacement
+ * [Offset] reset to [Offset.Zero] immediately after this is called.
+ *
+ * @sample com.tunjid.demo.common.app.demos.DragToDismissContainer
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Modifier.dragToDismiss(
-    /**
-     * State controlling the properties of the [Modifier]
-     */
     state: DragToDismissState,
-    /**
-     * A lambda for checking if the threshold for the drag offset for dismissal has been reached.
-     * It provides two arguments, the current displacement [Offset], and the [Velocity] at which
-     * the drag was stopped.
-     * Return true if the offset has been reached and the composable should be dismissed, else
-     * false for the composable to be animated back to its starting position.
-     */
     dragThresholdCheck: (Offset, Velocity) -> Boolean,
-    /**
-     * Called when the drag commences and the composable has been displaced from its original
-     * position.
-     */
     onStart: () -> Unit = {},
-    /**
-     * Called when the composable has settled back into its original position after being displaced
-     * to an [Offset] less than its dismissal threshold. It will only be called if the reset
-     * animation completes without being cancelled.
-     */
     onReset: () -> Unit = {},
-    /**
-     * Called when the composable has been dragged pass its dismissal threshold and should be
-     * dismissed. Not that the Composable will have its displacement [Offset] reset to
-     * [Offset.Zero] immediately after this is called.
-     */
     onDismissed: () -> Unit,
 ): Modifier {
     val scope = rememberCoroutineScope()

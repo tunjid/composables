@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.lerp
  *
  * @param animationSpec the animation spec used to animate the [IntOffset] returned by
  * [Alignment.align] as it changes.
+ *
+ * @sample com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
  */
 @Composable
 fun Alignment.interpolate(

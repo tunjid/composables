@@ -65,6 +65,8 @@ inline fun LazyListState.rememberBasicScrollbarThumbMover(): (Float) -> Unit {
  *
  * @param itemsAvailable the total amount of items available to scroll in the lazy list.
  * @param itemIndex a lookup function for index of an item in the list relative to [itemsAvailable].
+ *
+ * @sample com.tunjid.demo.common.app.demos.LazyListDemoScreen
  */
 @Composable
 fun LazyListState.scrollbarState(

@@ -39,6 +39,9 @@ import com.tunjid.composables.stickyheader.StickyHeaderLayout
  * the item in the grid that the sticky header is currently drawing over.
  * @param content The content the sticky header will be drawn over. This should be a
  * [LazyVerticalStaggeredGrid].
+ *
+ * @sample com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
+ *
  */
 @Composable
 fun StickyHeaderStaggeredGrid(

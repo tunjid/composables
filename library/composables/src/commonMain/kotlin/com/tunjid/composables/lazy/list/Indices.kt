@@ -18,6 +18,7 @@ package com.tunjid.composables.lazy.list
 
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.LaunchedEffect
 import com.tunjid.composables.lazy.interpolatedFirstItemIndex
 
 /**
@@ -27,7 +28,7 @@ import com.tunjid.composables.lazy.interpolatedFirstItemIndex
  * Note that the value returned is observable and is updated after every scroll or remeasure.
  * If you use it in the composable function it will be recomposed on every change causing
  * potential performance issues including infinity recomposition loop.
- * Therefore, avoid using it in the composition.
+ * Therefore, avoid using it in the composition and instead in a [LaunchedEffect].
  * */
 fun LazyListState.interpolatedFirstItemIndex(
     itemIndex: (LazyListItemInfo) -> Int = LazyListItemInfo::index,

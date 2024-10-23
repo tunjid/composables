@@ -55,11 +55,11 @@ enum class CollapsingHeaderStatus {
 }
 
 /**
- * State for managing the [CollapsingHeader] composable.
+ * State for managing the [CollapsingHeaderLayout] composable.
  * @param collapsedHeight: the height of the header when collapsed.
  * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
  * measured. This should be an estimate, the expanded height is determined by the size of
- * headerContent in [CollapsingHeader].
+ * headerContent in [CollapsingHeaderLayout].
  * @param thresholdFraction the fraction of the distance that must be covered between the
  * [CollapsingHeaderStatus.Collapsed] and [CollapsingHeaderStatus.Expanded] states after which
  * the header should transition to the next state.
@@ -159,12 +159,25 @@ class CollapsingHeaderState(
 }
 
 /**
- * A collapsing header implementation that has anchored positions.
+ * A layout that allows for the collapsing header pattern with the [headerContent] Composable
+ * by placing the [body] Composable underneath it.
+ *
+ * - Scroll events on the [headerContent] are scroll to the [body] and update the [state].
+ * - Scroll events DO NOT automatically scroll the header. This is to allow functionality like
+ * pinning. To scroll the header, apply the offset from [CollapsingHeaderState.translation] to
+ * it using [Modifier.offset] as seen in the sample below.
+ *
+ * @param state the backing [CollapsingHeaderState]
+ * @param modifier the modifier for the layout.
+ * @param headerContent the composable to render in the header.
+ * @param body the composable to render in the body. It should support nested scrolling.
+ * @sample com.tunjid.demo.common.app.demos.utilities.DemoCollapsingHeader
  */
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
-fun CollapsingHeader(
+fun CollapsingHeaderLayout(
     state: CollapsingHeaderState,
+    modifier: Modifier = Modifier,
     headerContent: @Composable () -> Unit,
     body: @Composable () -> Unit,
 ) {
@@ -172,7 +185,7 @@ fun CollapsingHeader(
         consumeScrollDelta = state.anchoredDraggableState::dispatchRawDelta
     )
     Box(
-        modifier = Modifier.scrollable(
+        modifier = modifier.scrollable(
             state = scrollableState,
             orientation = Orientation.Vertical,
         )
