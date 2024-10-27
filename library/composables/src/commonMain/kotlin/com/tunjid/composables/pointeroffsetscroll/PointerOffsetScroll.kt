@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onPlaced
-import com.tunjid.composables.scrollbars.valueOf
+import com.tunjid.composables.valueOf
 import kotlinx.coroutines.delay
 
 /**

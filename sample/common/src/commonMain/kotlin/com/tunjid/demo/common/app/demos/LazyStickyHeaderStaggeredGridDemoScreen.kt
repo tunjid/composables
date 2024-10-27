@@ -25,14 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.stickyheader.staggeredgrid.StickyHeaderStaggeredGrid
 import com.tunjid.demo.common.app.demos.utilities.ColorItem
-import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
-import com.tunjid.demo.common.ui.Screen
-import com.tunjid.demo.common.app.demos.utilities.distinctPastelColors
-import com.tunjid.demo.common.app.demos.utilities.groupedByFirstLetter
 import com.tunjid.demo.common.app.demos.utilities.ContentType
+import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.app.demos.utilities.GridDemoItem
 import com.tunjid.demo.common.app.demos.utilities.ItemHeader
 import com.tunjid.demo.common.app.demos.utilities.charFor
+import com.tunjid.demo.common.app.demos.utilities.distinctPastelColors
+import com.tunjid.demo.common.app.demos.utilities.groupedByFirstLetter
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun LazyStickyHeaderStaggeredGridDemoScreen(

@@ -37,8 +37,8 @@ import com.tunjid.composables.dragtodismiss.DragToDismissState
 import com.tunjid.composables.dragtodismiss.dragToDismiss
 import com.tunjid.demo.common.app.demos.utilities.ColorItem
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
-import com.tunjid.demo.common.ui.Screen
 import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.ui.Screen
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

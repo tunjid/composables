@@ -28,9 +28,9 @@ import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarT
 import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoCollapsingHeader
 import com.tunjid.demo.common.app.demos.utilities.FastScrollbar
-import com.tunjid.demo.common.ui.Screen
-import com.tunjid.demo.common.app.demos.utilities.pastelColors
 import com.tunjid.demo.common.app.demos.utilities.ListDemoItem
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun LazyListDemoScreen(

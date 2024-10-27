@@ -6,13 +6,16 @@
 ![badge][badge-js]
 ![badge][badge-jvm]
 
-Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes no guarantees
-about API stability or long term support. None of the works presented here are production tested, and should not be
+Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes
+no guarantees
+about API stability or long term support. None of the works presented here are production tested,
+and should not be
 taken as anything more than its face value.
 
 ## Introduction
 
-Composables are a collection of utility methods that build on the Jetpack Compose UI and Foundation packages.
+Composables are a collection of utility methods that build on the Jetpack Compose UI and Foundation
+packages.
 
 They offer APIs for common UI interactions that make UI more delightful. They are summarize below
 
@@ -23,7 +26,6 @@ They offer APIs for common UI interactions that make UI more delightful. They ar
 | Pointer Offset Scroll                  | ![pointer offset list scroll](./images/pointer_offset_list_crop.gif)                                 | ![pointer offset grid scroll](./images/pointer_offset_grid_crop.gif)                                 | ![pointer offset staggered grid](./images/pointer_offset_staggered_grid_crop.gif)                                      |
 | Drag To Dismiss                        | ![color drag to dismiss](./images/drag_to_dismiss_crop.gif)                                          | ![image drag to dismiss](./images/drag_to_dismiss_app_image.gif)                                     | ![video drag to dismiss](./images/drag_to_dismiss_app_video.gif)                                                       |
 | Alignment / ContentScale Interpolation | ![rounded rect interpolation](./images/alignment_interpolation_crop.gif)                             | ![beach scene interpolation](./images/content_scale_interpolation_crop.gif)                          |                                                                                                                        |
-
 
 ## License
 

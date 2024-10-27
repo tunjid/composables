@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.tunjid.demo.common.ui.AppTheme
 import com.tunjid.demo.common.ui.App
+import com.tunjid.demo.common.ui.AppTheme
 
 fun main() {
     application {

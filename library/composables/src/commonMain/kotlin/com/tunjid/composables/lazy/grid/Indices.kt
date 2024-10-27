@@ -21,7 +21,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.LaunchedEffect
 import com.tunjid.composables.lazy.interpolatedFirstItemIndex
-import com.tunjid.composables.scrollbars.valueOf
+import com.tunjid.composables.valueOf
 
 /**
  * Linearly interpolates the index for the first item to smoothly match the
