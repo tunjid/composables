@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,12 +31,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.scrollbars.scrollable.list.rememberBasicScrollbarThumbMover
-import com.tunjid.composables.scrollbars.scrollable.list.scrollbarState
+import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
+import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.app.demos.utilities.FastScrollbar
-import com.tunjid.demo.common.ui.Screen
 import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun DemoSelectionScreen(
@@ -42,8 +44,8 @@ fun DemoSelectionScreen(
     screens: List<Screen>,
     onScreenSelected: (Screen) -> Unit
 ) {
-    val listState = rememberLazyListState()
-    val scrollbarState = listState.scrollbarState(
+    val gridState = rememberLazyGridState()
+    val scrollbarState = gridState.scrollbarState(
         itemsAvailable = screens.size
     )
 
@@ -56,12 +58,13 @@ fun DemoSelectionScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                state = listState,
+            LazyVerticalGrid(
+                state = gridState,
                 contentPadding = PaddingValues(
                     horizontal = 8.dp,
                     vertical = 16.dp,
                 ),
+                columns = GridCells.Adaptive(400.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
@@ -70,7 +73,7 @@ fun DemoSelectionScreen(
                         DemoScreenItem(
                             screen = screen,
                             modifier = Modifier
-                                .fillParentMaxWidth()
+                                .fillMaxWidth()
                                 .padding(
                                     vertical = 8.dp,
                                     horizontal = 16.dp,
@@ -86,9 +89,9 @@ fun DemoSelectionScreen(
                     .width(12.dp)
                     .align(Alignment.TopEnd),
                 state = scrollbarState,
-                scrollInProgress = listState.isScrollInProgress,
+                scrollInProgress = gridState.isScrollInProgress,
                 orientation = Orientation.Vertical,
-                onThumbMoved = listState.rememberBasicScrollbarThumbMover()
+                onThumbMoved = gridState.rememberBasicScrollbarThumbMover()
             )
         }
     }

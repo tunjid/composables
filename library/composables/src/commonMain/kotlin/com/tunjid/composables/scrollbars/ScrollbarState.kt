@@ -44,16 +44,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.packFloats
 import androidx.compose.ui.util.unpackFloat1
 import androidx.compose.ui.util.unpackFloat2
+import com.tunjid.composables.valueOf
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
@@ -160,30 +158,6 @@ fun scrollbarStateValue(
         val2 = thumbMovedPercent,
     ),
 )
-
-/**
- * Returns the value of [offset] along the axis specified by [this]
- */
-internal fun Orientation.valueOf(offset: Offset) = when (this) {
-    Orientation.Horizontal -> offset.x
-    Orientation.Vertical -> offset.y
-}
-
-/**
- * Returns the value of [intSize] along the axis specified by [this]
- */
-internal fun Orientation.valueOf(intSize: IntSize) = when (this) {
-    Orientation.Horizontal -> intSize.width
-    Orientation.Vertical -> intSize.height
-}
-
-/**
- * Returns the value of [intOffset] along the axis specified by [this]
- */
-internal fun Orientation.valueOf(intOffset: IntOffset) = when (this) {
-    Orientation.Horizontal -> intOffset.x
-    Orientation.Vertical -> intOffset.y
-}
 
 /**
  * A Composable for drawing a scrollbar

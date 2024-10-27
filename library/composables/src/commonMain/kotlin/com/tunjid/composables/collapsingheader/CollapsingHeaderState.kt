@@ -41,6 +41,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
@@ -199,6 +200,15 @@ fun CollapsingHeaderLayout(
         )
         Box(
             modifier = Modifier
+                .layout { measurable, constraints ->
+                    val adjustedConstraints = constraints.copy(
+                        maxHeight = constraints.maxHeight - state.collapsedHeight.roundToInt()
+                    )
+                    val placeable = measurable.measure(adjustedConstraints)
+                    layout(placeable.width, placeable.height) {
+                        placeable.place(x = 0, y = 0)
+                    }
+                }
                 .offset {
                     IntOffset(
                         x = 0,

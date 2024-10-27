@@ -32,7 +32,7 @@ import com.tunjid.composables.scrollbars.ScrollbarState
 import com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.sumOf
 import com.tunjid.composables.scrollbars.scrollbarStateValue
-import com.tunjid.composables.scrollbars.valueOf
+import com.tunjid.composables.valueOf
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlin.math.min

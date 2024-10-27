@@ -26,6 +26,40 @@ enum class Screen(
         description = "A list of the demos in the app.",
         icons = listOf(Icons.Default.TouchApp),
     ),
+    SplitLayoutDemoScreen(
+        title = "Split Layouts",
+        description = "Drag dividers to dynamically resize layouts",
+        icons = listOf(
+            Icons.Default.Swipe,
+            Icons.Default.SwipeVertical,
+            Icons.Default.SpaceDashboard,
+        ),
+    ),
+    DragToDismissDemoScreen(
+        title = "Drag To Dismiss",
+        description = "A gallery of colors. Drag on the detail view of a color to dismiss it.",
+        icons = listOf(
+            Icons.Default.Swipe,
+            Icons.Default.Close,
+        ),
+    ),
+    ContentScaleInterpolationDemoScreen(
+        title = "ContentScale Interpolation",
+        description = "Tap on a ContentScale to animate the change of the beach scene's display in its frame.",
+        icons = listOf(
+            Icons.Default.AspectRatio,
+            Icons.Default.Animation,
+        ),
+    ),
+    AlignmentInterpolationDemoScreen(
+        title = "Alignment Interpolation",
+        description = "Tap on a rounded rectangle to align the main rounded rectangle to it.",
+        icons = listOf(
+            Icons.Default.Apps,
+            Icons.Default.OpenWith,
+            Icons.Default.Animation,
+        ),
+    ),
     LazyStickyHeaderListDemoScreen(
         title = "Sticky Header Lists",
         description = "An alphabetical list of colors with sticky headers for each letter.",
@@ -102,31 +136,6 @@ enum class Screen(
             Icons.Default.TouchApp,
             Icons.Default.OpenWith,
             Icons.Default.SpaceDashboard,
-        ),
-    ),
-    DragToDismissDemoScreen(
-        title = "Drag To Dismiss",
-        description = "A gallery of colors. Drag on the detail view of a color to dismiss it.",
-        icons = listOf(
-            Icons.Default.Swipe,
-            Icons.Default.Close,
-        ),
-    ),
-    AlignmentInterpolationDemoScreen(
-        title = "Alignment Interpolation",
-        description = "Tap on a rounded rectangle to align the main rounded rectangle to it.",
-        icons = listOf(
-            Icons.Default.Apps,
-            Icons.Default.OpenWith,
-            Icons.Default.Animation,
-        ),
-    ),
-    ContentScaleInterpolationDemoScreen(
-        title = "ContentScale Interpolation",
-        description = "Tap on a ContentScale to animate the change of the beach scene's display in its frame.",
-        icons = listOf(
-            Icons.Default.AspectRatio,
-            Icons.Default.Animation,
         ),
     ),
 }

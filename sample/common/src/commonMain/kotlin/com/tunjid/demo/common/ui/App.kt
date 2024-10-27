@@ -36,6 +36,7 @@ import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.SplitLayoutDemoScreen
 
 @Composable
 fun App() {
@@ -109,6 +110,11 @@ fun App() {
                 )
 
                 Screen.PointerOffsetScrollGridDemoScreen -> PointerOffsetLazyGridDemoScreen(
+                    screen = currentScreen,
+                    onBackPressed = pop,
+                )
+
+                Screen.SplitLayoutDemoScreen -> SplitLayoutDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop,
                 )
