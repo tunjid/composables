@@ -17,6 +17,6 @@ fun StickyHeader_(
 
 They are implemented for lists, grids and staggered grids.
 
-| Composable                        |                                                   |                                                   |                                                                       |
-|-----------------------------------|---------------------------------------------------|---------------------------------------------------|-----------------------------------------------------------------------|
-| Sticky Headers                    | ![list](../../images/sticky_header_list_crop.gif) | ![grid](../../images/sticky_header_grid_crop.gif) | ![staggered_grid](../../images/sticky_header_staggered_grid_crop.gif) |
+| Composable     |                                                   |                                                   |                                                                       |
+|----------------|---------------------------------------------------|---------------------------------------------------|-----------------------------------------------------------------------|
+| Sticky Headers | ![list](../../images/sticky_header_list_crop.gif) | ![grid](../../images/sticky_header_grid_crop.gif) | ![staggered_grid](../../images/sticky_header_staggered_grid_crop.gif) |

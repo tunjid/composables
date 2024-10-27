@@ -6,13 +6,16 @@
 ![badge][badge-js]
 ![badge][badge-jvm]
 
-Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes no guarantees
-about API stability or long term support. None of the works presented here are production tested, and should not be
+Please note, this is an experimental repository. It is a Kotlin multiplatform experiment that makes
+no guarantees
+about API stability or long term support. None of the works presented here are production tested,
+and should not be
 taken as anything more than its face value.
 
 ## Introduction
 
-Composables are a collection of utility methods that build on the Jetpack Compose UI and Foundation packages.
+Composables are a collection of utility methods that build on the Jetpack Compose UI and Foundation
+packages.
 
 They offer APIs for common UI interactions that make UI more delightful. They are summarize below
 

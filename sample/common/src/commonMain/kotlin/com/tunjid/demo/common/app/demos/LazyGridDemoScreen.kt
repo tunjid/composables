@@ -30,9 +30,9 @@ import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarT
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoCollapsingHeader
 import com.tunjid.demo.common.app.demos.utilities.FastScrollbar
-import com.tunjid.demo.common.ui.Screen
-import com.tunjid.demo.common.app.demos.utilities.pastelColors
 import com.tunjid.demo.common.app.demos.utilities.GridDemoItem
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun LazyGridDemoScreen(

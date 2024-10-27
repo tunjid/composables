@@ -1,4 +1,4 @@
- # Drag To Dismiss
+# Drag To Dismiss
 
 Used for easily implementing the drag to dismiss pattern for media.
 
@@ -23,7 +23,6 @@ fun ParentLayout() {
 }
 ```
 
-
-| Composable                        |                                                                                      |                                                                                                   |                                                                                            |
-|-----------------------------------|--------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| Drag To Dismiss                   | ![color drag to dismiss](../../images/drag_to_dismiss_crop.gif)                      | ![image drag to dismiss](../../images/drag_to_dismiss_app_image.gif)                              | ![video drag to dismiss](../../images/drag_to_dismiss_app_video.gif)                       |
+| Composable      |                                                                 |                                                                      |                                                                      |
+|-----------------|-----------------------------------------------------------------|----------------------------------------------------------------------|----------------------------------------------------------------------|
+| Drag To Dismiss | ![color drag to dismiss](../../images/drag_to_dismiss_crop.gif) | ![image drag to dismiss](../../images/drag_to_dismiss_app_image.gif) | ![video drag to dismiss](../../images/drag_to_dismiss_app_video.gif) |

@@ -1,4 +1,4 @@
- # Interpolation
+# Interpolation
 
 `Alignment` and `ContentScale` are used to help in the layout of composables, however it can be
 necessary to interpolate between them when they change. `interpolate()` Composable extension
@@ -19,6 +19,6 @@ fun ParentLayout(
 }
 ```
 
-| Composable                             |                                                                                          |                                                                                 |
-|----------------------------------------|------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
-| Alignment / ContentScale Interpolation | ![rounded rect interpolation](../../images/alignment_interpolation_crop.gif)             | ![beach scene interpolation](../../images/content_scale_interpolation_crop.gif) |                     
+| Composable                             |                                                                              |                                                                                 |
+|----------------------------------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------------|
+| Alignment / ContentScale Interpolation | ![rounded rect interpolation](../../images/alignment_interpolation_crop.gif) | ![beach scene interpolation](../../images/content_scale_interpolation_crop.gif) |                     

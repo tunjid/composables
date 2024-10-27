@@ -31,12 +31,12 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.toIntRect
 import com.tunjid.composables.pointeroffsetscroll.PointerOffsetScrollState
 import com.tunjid.composables.pointeroffsetscroll.pointerOffsetScroll
+import com.tunjid.demo.common.app.demos.utilities.ColorDot
 import com.tunjid.demo.common.app.demos.utilities.ColorItem
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
-import com.tunjid.demo.common.ui.Screen
-import com.tunjid.demo.common.app.demos.utilities.pastelColors
-import com.tunjid.demo.common.app.demos.utilities.ColorDot
 import com.tunjid.demo.common.app.demos.utilities.GridDemoItem
+import com.tunjid.demo.common.app.demos.utilities.pastelColors
+import com.tunjid.demo.common.ui.Screen
 
 @Composable
 fun PointerOffsetLazyGridDemoScreen(
