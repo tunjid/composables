@@ -63,7 +63,16 @@ class SplitLayoutState(
     var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
         internal set
 
+    private val weightMap = mutableStateMapOf<Int, Float>().apply {
+        (0..<maxCount).forEach { index -> put(index, 1f / maxCount) }
+    }
+
     private val weightSum by derivedStateOf {
+        checkVisibleCount()
+        (0..<maxCount).sumOf { weightAt(it).toDouble() }.toFloat()
+    }
+
+    private val visibleWeightSum by derivedStateOf {
         checkVisibleCount()
         (0..<visibleCount).sumOf { weightAt(it).toDouble() }.toFloat()
     }
@@ -72,14 +81,10 @@ class SplitLayoutState(
         (0..<visibleCount).map { index ->
             val previousIndexOffset =
                 if (index == 0) 0.dp
-                else (weightAt(index - 1) / weightSum) * size
-            val indexOffset = (weightAt(index) / weightSum) * size
+                else (weightAt(index - 1) / visibleWeightSum) * size
+            val indexOffset = (weightAt(index) / visibleWeightSum) * size
             previousIndexOffset + indexOffset
         }
-    }
-
-    private val weightMap = mutableStateMapOf<Int, Float>().apply {
-        (0..<maxCount).forEach { index -> put(index, 1f / maxCount) }
     }
 
     init {

@@ -5,6 +5,7 @@ import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -116,6 +117,7 @@ fun DemoTopAppBar(
     screen: Screen,
     onBackPressed: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = {
@@ -133,6 +135,7 @@ fun DemoTopAppBar(
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+        actions = actions,
         modifier = modifier,
     )
 }
