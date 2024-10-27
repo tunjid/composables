@@ -20,8 +20,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -130,12 +128,6 @@ class SplitLayoutState(
     }
 
     /**
-     * Returns if the child at this index is currently visible.
-     * @param index The index whose status is being reported.
-     */
-    fun isVisibleAt(index: Int) = index < visibleCount
-
-    /**
      * Attempts to resize the child at the specified index by the specified delta and returns the
      * status of the attempt.
      *
@@ -208,14 +200,13 @@ fun SplitLayout(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.maxCount) {
-                    if (state.isVisibleAt(index)) Box(
+                for (index in 0..<state.visibleCount) {
+                    Box(
                         modifier = Modifier
                             .weight(state.weightAt(index))
                     ) {
                         itemContent(index)
                     }
-                    else Spacer(Modifier.size(0.dp))
                 }
             }
 
@@ -223,14 +214,13 @@ fun SplitLayout(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.maxCount) {
-                    if (state.isVisibleAt(index)) Box(
+                for (index in 0..<state.visibleCount) {
+                    Box(
                         modifier = Modifier
                             .weight(state.weightAt(index))
                     ) {
                         itemContent(index)
                     }
-                    else Spacer(Modifier.size(0.dp))
                 }
             }
         }

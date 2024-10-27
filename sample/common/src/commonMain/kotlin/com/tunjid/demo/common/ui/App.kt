@@ -19,17 +19,21 @@ package com.tunjid.demo.common.ui
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
@@ -46,6 +50,8 @@ import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.demos.SplitLayoutDemoScreen
+import com.tunjid.demo.common.app.demos.utilities.PaneSeparator
+import com.tunjid.demo.common.app.demos.utilities.isActive
 import com.tunjid.demo.common.ui.DemoAppState.Companion.rememberPanedNavHostState
 import com.tunjid.treenav.StackNav
 import com.tunjid.treenav.compose.PaneState
@@ -77,7 +83,8 @@ fun App() {
             val splitLayoutState = remember {
                 SplitLayoutState(
                     orientation = Orientation.Horizontal,
-                    maxCount = 3,
+                    maxCount = PANE_COUNT,
+                    minSize = 120.dp,
                 )
             }
             val movableSharedElementHostState = remember {
@@ -85,6 +92,13 @@ fun App() {
                     sharedTransitionScope = this,
                     canAnimateOnStartingFrames = PaneState<ThreePane, Screen>::canAnimateOnStartingFrames
                 )
+            }
+            var canAnimatePanes by remember { mutableStateOf(true) }
+            val interactingWithPanes = (0..<PANE_COUNT).any {
+                appState.paneInteractionSourceAt(it).isActive()
+            }
+            LaunchedEffect(interactingWithPanes) {
+                canAnimatePanes = !interactingWithPanes
             }
             PanedNavHost(
                 modifier = Modifier
@@ -109,7 +123,7 @@ fun App() {
                                     ThreePane.Primary,
                                     ThreePane.TransientPrimary,
                                     ThreePane.Secondary,
-                                    ThreePane.Tertiary -> true
+                                    ThreePane.Tertiary -> canAnimatePanes
 
                                     null,
                                     ThreePane.Overlay -> false
@@ -137,13 +151,12 @@ fun App() {
                             then movableSharedElementHostState.modifier
                             then sharedTransitionModifier,
                     itemSeparators = { paneIndex, offset ->
-//                        PaneSeparator(
-//                            segmentedLayoutState = segmentedLayoutState,
-//                            interactionSource = appState.paneInteractionSourceAt(paneIndex),
-//                            index = paneIndex,
-//                            density = density,
-//                            xOffset = offset,
-//                        )
+                        PaneSeparator(
+                            splitLayoutState = splitLayoutState,
+                            interactionSource = appState.paneInteractionSourceAt(paneIndex),
+                            index = paneIndex,
+                            xOffset = offset,
+                        )
                     },
                     itemContent = { index ->
                         val pane = filteredOrder[index]
@@ -164,6 +177,7 @@ class DemoAppState {
             children = listOf(Screen.Demos)
         )
     )
+    private val paneInteractionSourceList = mutableStateListOf<MutableInteractionSource>()
 
     private val panedNavHostConfiguration = demoAppNavHostConfiguration(
         stackNavState = navigationState,
@@ -174,6 +188,13 @@ class DemoAppState {
             navigationState.value = navigationState.value.pop()
         },
     )
+
+    fun paneInteractionSourceAt(index: Int): MutableInteractionSource {
+        while (paneInteractionSourceList.lastIndex < index) {
+            paneInteractionSourceList.add(MutableInteractionSource())
+        }
+        return paneInteractionSourceList[index]
+    }
 
     companion object {
         @Composable
@@ -319,7 +340,9 @@ private fun demoAppStrategy(
             ThreePane.Secondary to Screen.Demos.takeUnless(destination::equals),
         )
     },
-    render = { destination ->
+    render = {
         demoComposable()
     },
 )
+
+private const val PANE_COUNT = 2
