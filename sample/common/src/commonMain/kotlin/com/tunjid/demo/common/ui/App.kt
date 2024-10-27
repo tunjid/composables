@@ -16,13 +16,22 @@
 
 package com.tunjid.demo.common.ui
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import com.tunjid.composables.splitlayout.SplitLayout
+import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
@@ -37,88 +46,280 @@ import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
 import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
 import com.tunjid.demo.common.app.demos.SplitLayoutDemoScreen
+import com.tunjid.demo.common.ui.DemoAppState.Companion.rememberPanedNavHostState
+import com.tunjid.treenav.StackNav
+import com.tunjid.treenav.compose.PaneState
+import com.tunjid.treenav.compose.PanedNavHost
+import com.tunjid.treenav.compose.PanedNavHostConfiguration
+import com.tunjid.treenav.compose.SavedStatePanedNavHostState
+import com.tunjid.treenav.compose.configurations.animatePaneBoundsConfiguration
+import com.tunjid.treenav.compose.configurations.paneModifierConfiguration
+import com.tunjid.treenav.compose.moveablesharedelement.MovableSharedElementHostState
+import com.tunjid.treenav.compose.panedNavHostConfiguration
+import com.tunjid.treenav.compose.threepane.ThreePane
+import com.tunjid.treenav.compose.threepane.configurations.canAnimateOnStartingFrames
+import com.tunjid.treenav.compose.threepane.configurations.threePanedMovableSharedElementConfiguration
+import com.tunjid.treenav.compose.threepane.configurations.threePanedNavHostConfiguration
+import com.tunjid.treenav.compose.threepane.threePaneListDetailStrategy
+import com.tunjid.treenav.current
+import com.tunjid.treenav.pop
+import com.tunjid.treenav.push
+import kotlin.math.roundToInt
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App() {
-    val navStack = remember { mutableStateListOf(Screen.Demos) }
-    val pop: () -> Unit = remember { { navStack.removeLast() } }
-
+    val appState = remember { DemoAppState() }
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
-        AnimatedContent(navStack.last()) { currentScreen ->
-            when (currentScreen) {
-                Screen.Demos -> DemoSelectionScreen(
+        SharedTransitionScope { sharedTransitionModifier ->
+            val splitLayoutState = remember {
+                SplitLayoutState(
+                    orientation = Orientation.Horizontal,
+                    maxCount = 3,
+                )
+            }
+            val movableSharedElementHostState = remember {
+                MovableSharedElementHostState(
+                    sharedTransitionScope = this,
+                    canAnimateOnStartingFrames = PaneState<ThreePane, Screen>::canAnimateOnStartingFrames
+                )
+            }
+            PanedNavHost(
+                modifier = Modifier
+                    .fillMaxSize(),
+                state = appState.rememberPanedNavHostState {
+                    this
+                        .paneModifierConfiguration {
+                            Modifier.fillMaxSize()
+                        }
+                        .threePanedNavHostConfiguration(
+                            windowWidthDpState = derivedStateOf {
+                                splitLayoutState.size.value.roundToInt()
+                            }
+                        )
+                        .threePanedMovableSharedElementConfiguration(
+                            movableSharedElementHostState = movableSharedElementHostState
+                        )
+                        .animatePaneBoundsConfiguration(
+                            lookaheadScope = this@SharedTransitionScope,
+                            shouldAnimatePane = {
+                                when (paneState.pane) {
+                                    ThreePane.Primary,
+                                    ThreePane.TransientPrimary,
+                                    ThreePane.Secondary,
+                                    ThreePane.Tertiary -> true
+
+                                    null,
+                                    ThreePane.Overlay -> false
+                                }
+                            }
+                        )
+                },
+            ) {
+                val order = remember {
+                    listOf(
+                        ThreePane.Tertiary,
+                        ThreePane.Secondary,
+                        ThreePane.Primary,
+                    )
+                }
+                val filteredOrder by remember {
+                    derivedStateOf { order.filter { nodeFor(it) != null } }
+                }
+                splitLayoutState.visibleCount = filteredOrder.size
+
+                SplitLayout(
+                    state = splitLayoutState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                            then movableSharedElementHostState.modifier
+                            then sharedTransitionModifier,
+                    itemSeparators = { paneIndex, offset ->
+//                        PaneSeparator(
+//                            segmentedLayoutState = segmentedLayoutState,
+//                            interactionSource = appState.paneInteractionSourceAt(paneIndex),
+//                            index = paneIndex,
+//                            density = density,
+//                            xOffset = offset,
+//                        )
+                    },
+                    itemContent = { index ->
+                        val pane = filteredOrder[index]
+                        Destination(pane)
+                        if (pane == ThreePane.Primary) Destination(ThreePane.TransientPrimary)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Stable
+class DemoAppState {
+    private val navigationState = mutableStateOf(
+        StackNav(
+            name = "demo app",
+            children = listOf(Screen.Demos)
+        )
+    )
+
+    private val panedNavHostConfiguration = demoAppNavHostConfiguration(
+        stackNavState = navigationState,
+        push = { screen ->
+            navigationState.value = navigationState.value.push(screen)
+        },
+        pop = {
+            navigationState.value = navigationState.value.pop()
+        },
+    )
+
+    companion object {
+        @Composable
+        fun DemoAppState.rememberPanedNavHostState(
+            configurationBlock: PanedNavHostConfiguration<
+                    ThreePane,
+                    StackNav,
+                    Screen
+                    >.() -> PanedNavHostConfiguration<ThreePane, StackNav, Screen>
+        ): SavedStatePanedNavHostState<ThreePane, Screen> {
+            val panedNavHostState = remember {
+                SavedStatePanedNavHostState(
+                    panes = ThreePane.entries.toList(),
+                    configuration = panedNavHostConfiguration.configurationBlock(),
+                )
+            }
+            return panedNavHostState
+        }
+    }
+}
+
+private fun demoAppNavHostConfiguration(
+    stackNavState: State<StackNav>,
+    push: (Screen) -> Unit,
+    pop: () -> Unit,
+) = panedNavHostConfiguration(
+    navigationState = stackNavState,
+    destinationTransform = { multiStackNav ->
+        multiStackNav.current as? Screen ?: throw IllegalArgumentException(
+            "MultiStackNav leaf node ${multiStackNav.current} must be a Screen"
+        )
+    },
+    strategyTransform = { currentScreen ->
+        when (currentScreen) {
+            Screen.Demos -> demoAppStrategy {
+                DemoSelectionScreen(
                     screen = currentScreen,
                     screens = remember { Screen.entries.filterNot(Screen.Demos::equals) },
-                    onScreenSelected = navStack::add,
+                    onScreenSelected = push,
                 )
+            }
 
-                Screen.LazyGridDemoScreen -> LazyGridDemoScreen(
+            Screen.LazyGridDemoScreen -> demoAppStrategy {
+                LazyGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.LazyListDemoScreen -> LazyListDemoScreen(
+            Screen.LazyListDemoScreen -> demoAppStrategy {
+                LazyListDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.LazyStickyHeaderListDemoScreen -> LazyStickyHeaderListDemoScreen(
+            Screen.LazyStickyHeaderListDemoScreen -> demoAppStrategy {
+                LazyStickyHeaderListDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.LazyStickyHeaderGridDemoScreen -> LazyStickyHeaderGridDemoScreen(
+            Screen.LazyStickyHeaderGridDemoScreen -> demoAppStrategy {
+                LazyStickyHeaderGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.LazyStickyHeaderStaggeredGridDemoScreen -> LazyStickyHeaderStaggeredGridDemoScreen(
+            Screen.LazyStickyHeaderStaggeredGridDemoScreen -> demoAppStrategy {
+                LazyStickyHeaderStaggeredGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.LazyStaggeredGridDemoScreen -> LazyStaggeredGridDemoScreen(
+            Screen.LazyStaggeredGridDemoScreen -> demoAppStrategy {
+                LazyStaggeredGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.DragToDismissDemoScreen -> DragToDismissDemoScreen(
+            Screen.DragToDismissDemoScreen -> demoAppStrategy {
+                DragToDismissDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.AlignmentInterpolationDemoScreen -> AlignmentInterpolationDemoScreen(
+            Screen.AlignmentInterpolationDemoScreen -> demoAppStrategy {
+                AlignmentInterpolationDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.ContentScaleInterpolationDemoScreen -> ContentScaleInterpolationDemoScreen(
+            Screen.ContentScaleInterpolationDemoScreen -> demoAppStrategy {
+                ContentScaleInterpolationDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop
                 )
+            }
 
-                Screen.PointerOffsetScrollStaggeredGridDemoScreen -> PointerOffsetLazyStaggeredGridDemoScreen(
+            Screen.PointerOffsetScrollStaggeredGridDemoScreen -> demoAppStrategy {
+                PointerOffsetLazyStaggeredGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop,
                 )
+            }
 
-                Screen.PointerOffsetScrollListDemoScreen -> PointerOffsetLazyListDemoScreen(
+            Screen.PointerOffsetScrollListDemoScreen -> demoAppStrategy {
+                PointerOffsetLazyListDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop,
                 )
+            }
 
-                Screen.PointerOffsetScrollGridDemoScreen -> PointerOffsetLazyGridDemoScreen(
+            Screen.PointerOffsetScrollGridDemoScreen -> demoAppStrategy {
+                PointerOffsetLazyGridDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop,
                 )
+            }
 
-                Screen.SplitLayoutDemoScreen -> SplitLayoutDemoScreen(
+            Screen.SplitLayoutDemoScreen -> demoAppStrategy {
+                SplitLayoutDemoScreen(
                     screen = currentScreen,
                     onBackPressed = pop,
                 )
             }
         }
     }
-}
+)
+
+private fun demoAppStrategy(
+    demoComposable: @Composable () -> Unit
+) = threePaneListDetailStrategy<Screen>(
+    paneMapping = { destination ->
+        mapOf(
+            ThreePane.Primary to destination,
+            ThreePane.Secondary to Screen.Demos.takeUnless(destination::equals),
+        )
+    },
+    render = { destination ->
+        demoComposable()
+    },
+)

@@ -48,7 +48,8 @@ kotlin {
                 api(libs.tunjid.mutator.core.common)
                 api(libs.tunjid.mutator.coroutines.common)
 
-                api(libs.tunjid.treenav.common)
+                api(libs.tunjid.treenav)
+                api(libs.tunjid.treenav.compose)
             }
         }
         named("androidMain") {
@@ -64,10 +65,6 @@ kotlin {
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
-        }
-        val jsMain by getting {
-            dependencies {
-            }
         }
     }
 }

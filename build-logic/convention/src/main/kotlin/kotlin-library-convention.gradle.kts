@@ -40,11 +40,6 @@ plugins {
 kotlin {
     android()
     jvm("desktop")
-    js(IR) {
-        browser()
-        nodejs()
-        binaries.executable()
-    }
     sourceSets {
         all {
             languageSettings.apply {
