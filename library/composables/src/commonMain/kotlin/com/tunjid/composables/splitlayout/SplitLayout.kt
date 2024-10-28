@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.unit.toSize
 import com.tunjid.composables.valueOf
+import kotlin.math.abs
 
 /**
  * State describing the behavior for [SplitLayout].
@@ -75,16 +76,6 @@ class SplitLayoutState(
     var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
         internal set
 
-    private val offsetLookup by derivedStateOf {
-        (0..<visibleCount).map { index ->
-            val previousIndexOffset =
-                if (index == 0) 0.dp
-                else weightAt(index - 1) * size
-            val indexOffset = weightAt(index) * size
-            previousIndexOffset + indexOffset
-        }
-    }
-
     init {
         checkVisibleCount()
     }
@@ -111,15 +102,19 @@ class SplitLayoutState(
 
         val oldWeight = weightMap.getValue(index)
         val weightDifference = oldWeight - weight
-        val adjustedIndex = (0..<maxCount).firstNotNullOfOrNull search@{ i ->
-            val searchIndex = (index + i) % maxCount
-            if (searchIndex == index) return@search null
+
+        var adjustedIndex = -1
+        for (i in 0..<maxCount) {
+            val searchIndex = abs(index + i) % maxCount
+            if (searchIndex == index) continue
 
             val adjustedWidth = (weightMap.getValue(searchIndex) + weightDifference) * size
-            if (adjustedWidth < minSize) return@search null
+            if (adjustedWidth < minSize) continue
 
-            searchIndex
-        } ?: return false
+            adjustedIndex = searchIndex
+            break
+        }
+        if (adjustedIndex < 0) return false
 
         weightMap[index] = weight
         weightMap[adjustedIndex] = weightMap.getValue(adjustedIndex) + weightDifference
@@ -144,6 +139,15 @@ class SplitLayoutState(
         )
     }
 
+    private fun offsetAt(index: Int): Dp {
+        var offset = 0.dp
+        var start = -1
+        while (++start <= index) {
+            offset += weightAt(start) * size
+        }
+        return offset
+    }
+
     private fun checkVisibleCount() {
         check(visibleCount <= maxCount) {
             "initialVisibleCount must be less than or equal to maxCount."
@@ -159,7 +163,7 @@ class SplitLayoutState(
             if (visibleCount > 1)
                 for (index in 0..<visibleCount)
                     if (index != visibleCount - 1)
-                        separator(index, offsetLookup[index])
+                        separator(index, offsetAt(index))
         }
 
         fun SplitLayoutState.updateSize(size: IntSize, density: Density) {
