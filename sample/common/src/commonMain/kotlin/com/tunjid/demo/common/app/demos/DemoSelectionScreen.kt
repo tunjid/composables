@@ -73,6 +73,7 @@ fun DemoSelectionScreen(
                         DemoScreenItem(
                             screen = screen,
                             modifier = Modifier
+                                .animateItem()
                                 .fillMaxWidth()
                                 .padding(
                                     vertical = 8.dp,

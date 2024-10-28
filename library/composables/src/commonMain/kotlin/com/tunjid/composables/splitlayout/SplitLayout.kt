@@ -20,8 +20,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
@@ -41,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.unit.toSize
 import com.tunjid.composables.valueOf
+import kotlin.math.abs
 
 /**
  * State describing the behavior for [SplitLayout].
@@ -58,29 +57,24 @@ class SplitLayoutState(
     minSize: Dp = 80.dp,
 ) {
 
-    var visibleCount by mutableIntStateOf(initialVisibleCount)
-    var minSize by mutableStateOf(minSize)
-    var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
-        internal set
-
-    private val weightSum by derivedStateOf {
-        checkVisibleCount()
-        (0..<visibleCount).sumOf { weightAt(it).toDouble() }.toFloat()
-    }
-
-    private val offsetLookup by derivedStateOf {
-        (0..<visibleCount).map { index ->
-            val previousIndexOffset =
-                if (index == 0) 0.dp
-                else (weightAt(index - 1) / weightSum) * size
-            val indexOffset = (weightAt(index) / weightSum) * size
-            previousIndexOffset + indexOffset
-        }
-    }
-
     private val weightMap = mutableStateMapOf<Int, Float>().apply {
         (0..<maxCount).forEach { index -> put(index, 1f / maxCount) }
     }
+
+    /**
+     * Th sum of the weights of the visible children in the layout
+     */
+    val weightSum by derivedStateOf {
+        checkVisibleCount()
+        (0..<visibleCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
+    }
+
+    var visibleCount by mutableIntStateOf(initialVisibleCount)
+
+    var minSize by mutableStateOf(minSize)
+
+    var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
+        internal set
 
     init {
         checkVisibleCount()
@@ -90,45 +84,42 @@ class SplitLayoutState(
      * Returns the weight of the child at the specified index.
      * @param index The index whose weight should be returned.
      */
-    fun weightAt(index: Int): Float = weightMap.getValue(index)
+    fun weightAt(index: Int): Float = weightMap.getValue(index) / weightSum
 
     /**
      * Attempts to set the weight at [index] and returns the status of the attempt. Reasons
      * for failure include:
      * - Negative weights
      * - Weights that would violate [minSize].
-     * - Weights that are greater than 1/maxCount
+     * - Weights that are greater than the weight sum.
      *
      * @param index The index to set the weight at.
-     * @param weight The weight of this index relative to the weight sum of all the layout. It
-     * should be less that 1/maxCount.
+     * @param weight The weight of this index relative to the [weightSum] of the layout.
      */
     fun setWeightAt(index: Int, weight: Float): Boolean {
-        if (weight <= 0f) return false
+        if (weight <= 0f || weight > weightSum) return false
         if (weight * size < minSize) return false
 
         val oldWeight = weightMap.getValue(index)
         val weightDifference = oldWeight - weight
-        val adjustedIndex = (0..<maxCount).firstNotNullOfOrNull search@{ i ->
-            val searchIndex = (index + i) % maxCount
-            if (searchIndex == index) return@search null
+
+        var adjustedIndex = -1
+        for (i in 0..<maxCount) {
+            val searchIndex = abs(index + i) % maxCount
+            if (searchIndex == index) continue
 
             val adjustedWidth = (weightMap.getValue(searchIndex) + weightDifference) * size
-            if (adjustedWidth < minSize) return@search null
+            if (adjustedWidth < minSize) continue
 
-            searchIndex
-        } ?: return false
+            adjustedIndex = searchIndex
+            break
+        }
+        if (adjustedIndex < 0) return false
 
         weightMap[index] = weight
         weightMap[adjustedIndex] = weightMap.getValue(adjustedIndex) + weightDifference
         return true
     }
-
-    /**
-     * Returns if the child at this index is currently visible.
-     * @param index The index whose status is being reported.
-     */
-    fun isVisibleAt(index: Int) = index < visibleCount
 
     /**
      * Attempts to resize the child at the specified index by the specified delta and returns the
@@ -148,6 +139,15 @@ class SplitLayoutState(
         )
     }
 
+    private fun offsetAt(index: Int): Dp {
+        var offset = 0.dp
+        var start = -1
+        while (++start <= index) {
+            offset += weightAt(start) * size
+        }
+        return offset
+    }
+
     private fun checkVisibleCount() {
         check(visibleCount <= maxCount) {
             "initialVisibleCount must be less than or equal to maxCount."
@@ -163,7 +163,7 @@ class SplitLayoutState(
             if (visibleCount > 1)
                 for (index in 0..<visibleCount)
                     if (index != visibleCount - 1)
-                        separator(index, offsetLookup[index])
+                        separator(index, offsetAt(index))
         }
 
         fun SplitLayoutState.updateSize(size: IntSize, density: Density) {
@@ -203,14 +203,13 @@ fun SplitLayout(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.maxCount) {
-                    if (state.isVisibleAt(index)) Box(
+                for (index in 0..<state.visibleCount) {
+                    Box(
                         modifier = Modifier
                             .weight(state.weightAt(index))
                     ) {
                         itemContent(index)
                     }
-                    else Spacer(Modifier.size(0.dp))
                 }
             }
 
@@ -218,14 +217,13 @@ fun SplitLayout(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.maxCount) {
-                    if (state.isVisibleAt(index)) Box(
+                for (index in 0..<state.visibleCount) {
+                    Box(
                         modifier = Modifier
                             .weight(state.weightAt(index))
                     ) {
                         itemContent(index)
                     }
-                    else Spacer(Modifier.size(0.dp))
                 }
             }
         }

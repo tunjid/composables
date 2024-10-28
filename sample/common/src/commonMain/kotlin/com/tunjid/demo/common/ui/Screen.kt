@@ -15,12 +15,13 @@ import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.tunjid.treenav.Node
 
 enum class Screen(
     val title: String,
     val description: String,
     val icons: List<ImageVector>,
-) {
+): Node {
     Demos(
         title = "Demos",
         description = "A list of the demos in the app.",
@@ -137,5 +138,8 @@ enum class Screen(
             Icons.Default.OpenWith,
             Icons.Default.SpaceDashboard,
         ),
-    ),
+    ),;
+
+    override val id: String
+        get() = title
 }
