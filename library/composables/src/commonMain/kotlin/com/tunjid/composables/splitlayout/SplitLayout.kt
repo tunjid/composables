@@ -67,12 +67,12 @@ class SplitLayoutState(
 
     private val weightSum by derivedStateOf {
         checkVisibleCount()
-        (0..<maxCount).sumOf { weightAt(it).toDouble() }.toFloat()
+        (0..<maxCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
 
     private val visibleWeightSum by derivedStateOf {
         checkVisibleCount()
-        (0..<visibleCount).sumOf { weightAt(it).toDouble() }.toFloat()
+        (0..<visibleCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
 
     private val offsetLookup by derivedStateOf {
@@ -135,10 +135,10 @@ class SplitLayoutState(
      * @param delta The amount to resize [index] by.
      */
     fun dragBy(index: Int, delta: Dp): Boolean {
-        val oldWeight = weightAt(index)
+        val oldWeight = weightAt(index) * (weightSum / visibleWeightSum)
         val currentSize = oldWeight * size
         val newSize = currentSize + delta
-        val newWeight = (newSize / size) * weightSum
+        val newWeight = (newSize / size) * visibleWeightSum
         return setWeightAt(
             index = index,
             weight = newWeight
