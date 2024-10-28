@@ -56,11 +56,6 @@ class SplitLayoutState(
     minSize: Dp = 80.dp,
 ) {
 
-    var visibleCount by mutableIntStateOf(initialVisibleCount)
-    var minSize by mutableStateOf(minSize)
-    var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
-        internal set
-
     private val weightMap = mutableStateMapOf<Int, Float>().apply {
         (0..<maxCount).forEach { index -> put(index, 1f / maxCount) }
     }
@@ -70,10 +65,17 @@ class SplitLayoutState(
         (0..<maxCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
 
-    private val visibleWeightSum by derivedStateOf {
+    val visibleWeightSum by derivedStateOf {
         checkVisibleCount()
         (0..<visibleCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
+
+    var visibleCount by mutableIntStateOf(initialVisibleCount)
+
+    var minSize by mutableStateOf(minSize)
+
+    var size by mutableStateOf(orientation.valueOf(DpSize.Zero))
+        internal set
 
     private val offsetLookup by derivedStateOf {
         (0..<visibleCount).map { index ->
@@ -100,14 +102,13 @@ class SplitLayoutState(
      * for failure include:
      * - Negative weights
      * - Weights that would violate [minSize].
-     * - Weights that are greater than 1/maxCount
+     * - Weights that are greater than the weight sum.
      *
      * @param index The index to set the weight at.
-     * @param weight The weight of this index relative to the weight sum of all the layout. It
-     * should be less that 1/maxCount.
+     * @param weight The weight of this index relative to the [visibleWeightSum] of the layout.
      */
     fun setWeightAt(index: Int, weight: Float): Boolean {
-        if (weight <= 0f) return false
+        if (weight <= 0f || weight > visibleWeightSum) return false
         if (weight * size < minSize) return false
 
         val oldWeight = weightMap.getValue(index)
@@ -135,7 +136,7 @@ class SplitLayoutState(
      * @param delta The amount to resize [index] by.
      */
     fun dragBy(index: Int, delta: Dp): Boolean {
-        val oldWeight = weightAt(index) * (weightSum / visibleWeightSum)
+        val oldWeight = weightMap.getValue(index) * (weightSum / visibleWeightSum)
         val currentSize = oldWeight * size
         val newSize = currentSize + delta
         val newWeight = (newSize / size) * visibleWeightSum
