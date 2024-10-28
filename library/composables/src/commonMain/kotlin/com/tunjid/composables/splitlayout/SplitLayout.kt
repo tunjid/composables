@@ -60,12 +60,10 @@ class SplitLayoutState(
         (0..<maxCount).forEach { index -> put(index, 1f / maxCount) }
     }
 
-    private val weightSum by derivedStateOf {
-        checkVisibleCount()
-        (0..<maxCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
-    }
-
-    val visibleWeightSum by derivedStateOf {
+    /**
+     * Th sum of the weights of the visible children in the layout
+     */
+    val weightSum by derivedStateOf {
         checkVisibleCount()
         (0..<visibleCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
@@ -81,8 +79,8 @@ class SplitLayoutState(
         (0..<visibleCount).map { index ->
             val previousIndexOffset =
                 if (index == 0) 0.dp
-                else (weightAt(index - 1) / visibleWeightSum) * size
-            val indexOffset = (weightAt(index) / visibleWeightSum) * size
+                else weightAt(index - 1) * size
+            val indexOffset = weightAt(index) * size
             previousIndexOffset + indexOffset
         }
     }
@@ -95,7 +93,7 @@ class SplitLayoutState(
      * Returns the weight of the child at the specified index.
      * @param index The index whose weight should be returned.
      */
-    fun weightAt(index: Int): Float = weightMap.getValue(index)
+    fun weightAt(index: Int): Float = weightMap.getValue(index) / weightSum
 
     /**
      * Attempts to set the weight at [index] and returns the status of the attempt. Reasons
@@ -105,10 +103,10 @@ class SplitLayoutState(
      * - Weights that are greater than the weight sum.
      *
      * @param index The index to set the weight at.
-     * @param weight The weight of this index relative to the [visibleWeightSum] of the layout.
+     * @param weight The weight of this index relative to the [weightSum] of the layout.
      */
     fun setWeightAt(index: Int, weight: Float): Boolean {
-        if (weight <= 0f || weight > visibleWeightSum) return false
+        if (weight <= 0f || weight > weightSum) return false
         if (weight * size < minSize) return false
 
         val oldWeight = weightMap.getValue(index)
@@ -136,10 +134,10 @@ class SplitLayoutState(
      * @param delta The amount to resize [index] by.
      */
     fun dragBy(index: Int, delta: Dp): Boolean {
-        val oldWeight = weightMap.getValue(index) * (weightSum / visibleWeightSum)
+        val oldWeight = weightAt(index)
         val currentSize = oldWeight * size
         val newSize = currentSize + delta
-        val newWeight = (newSize / size) * visibleWeightSum
+        val newWeight = (newSize / size) * weightSum
         return setWeightAt(
             index = index,
             weight = newWeight
