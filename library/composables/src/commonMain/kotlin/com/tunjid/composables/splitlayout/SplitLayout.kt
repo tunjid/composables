@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +49,8 @@ import kotlin.math.abs
  * @param maxCount The maximum number of children in the layout.
  * @param initialVisibleCount The initial amount of children visible in the layout.
  * @param minSize The minimum size of a child in the layout.
+ * @param keyAtIndex Provides a key for the item at an index to identify its position in the
+ * case of visibility changes of other indices. Defaults to the index of the item.
  */
 @Stable
 class SplitLayoutState(
@@ -55,6 +58,7 @@ class SplitLayoutState(
     val maxCount: Int,
     initialVisibleCount: Int = maxCount,
     minSize: Dp = 80.dp,
+    internal val keyAtIndex: SplitLayoutState.(Int) -> Any = { it },
 ) {
 
     private val weightMap = mutableStateMapOf<Int, Float>().apply {
@@ -204,11 +208,13 @@ fun SplitLayout(
                     .matchParentSize(),
             ) {
                 for (index in 0..<state.visibleCount) {
-                    Box(
-                        modifier = Modifier
-                            .weight(state.weightAt(index))
-                    ) {
-                        itemContent(index)
+                    key(state.keyAtIndex(state, index)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(state.weightAt(index))
+                        ) {
+                            itemContent(index)
+                        }
                     }
                 }
             }
@@ -218,11 +224,13 @@ fun SplitLayout(
                     .matchParentSize(),
             ) {
                 for (index in 0..<state.visibleCount) {
-                    Box(
-                        modifier = Modifier
-                            .weight(state.weightAt(index))
-                    ) {
-                        itemContent(index)
+                    key(state.keyAtIndex(state, index)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(state.weightAt(index))
+                        ) {
+                            itemContent(index)
+                        }
                     }
                 }
             }
