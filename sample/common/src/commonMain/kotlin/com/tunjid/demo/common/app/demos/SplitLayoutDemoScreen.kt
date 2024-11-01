@@ -22,14 +22,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,6 +51,9 @@ fun SplitLayoutDemoScreen(
 ) {
     var columnCount by remember { mutableIntStateOf(SPLIT_COUNT) }
     var rowCount by remember { mutableIntStateOf(SPLIT_COUNT) }
+    val columnKeys = remember { mutableStateListOf(0, 1, 2) }
+    val rowKeys = remember { mutableStateListOf(0, 1, 2) }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -61,7 +68,7 @@ fun SplitLayoutDemoScreen(
                 Spacer(Modifier.size(16.dp))
                 AssistChip(
                     label = { Text("Columns: $columnCount") },
-                    onClick = { columnCount = toggleSplitCount(columnCount)},
+                    onClick = { columnCount = toggleSplitCount(columnCount) },
                 )
             }
         )
@@ -75,6 +82,7 @@ fun SplitLayoutDemoScreen(
                 SplitLayoutState(
                     maxCount = SPLIT_COUNT,
                     orientation = Orientation.Horizontal,
+                    keyAtIndex = { columnKeys[it] },
                 )
             }
             LaunchedEffect(columnCount) {
@@ -90,11 +98,12 @@ fun SplitLayoutDemoScreen(
                         offset = offset,
                     )
                 },
-                itemContent = { outerIndex ->
+                itemContent = { columnIndex ->
                     val rowSplitLayoutState = remember {
                         SplitLayoutState(
                             maxCount = SPLIT_COUNT,
                             orientation = Orientation.Vertical,
+                            keyAtIndex = { rowKeys[it] },
                         )
                     }
                     LaunchedEffect(rowCount) {
@@ -110,12 +119,36 @@ fun SplitLayoutDemoScreen(
                                 offset = offset,
                             )
                         },
-                        itemContent = { innerIndex ->
+                        itemContent = { rowIndex ->
+                            var clickCount by remember { mutableIntStateOf(0) }
                             Box(
                                 modifier = Modifier
-                                    .background(color = pickColor(outerIndex, innerIndex))
+                                    .background(
+                                        color = pickColor(
+                                            outerIndex = columnKeys[columnIndex],
+                                            innerIndex = rowKeys[rowIndex],
+                                        )
+                                    )
                                     .fillMaxSize()
-                            )
+                                    .clickable(
+                                        indication = ripple(),
+                                        interactionSource = remember {
+                                            MutableInteractionSource()
+                                        },
+                                        onClick = {
+                                            ++clickCount
+                                            columnKeys.shuffle()
+                                            rowKeys.shuffle()
+                                        },
+                                    )
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .align(Alignment.Center),
+                                    text = "$clickCount",
+                                    color = Color.Black,
+                                )
+                            }
                         }
                     )
                 }

@@ -80,11 +80,21 @@ fun App() {
         modifier = Modifier.fillMaxSize()
     ) {
         SharedTransitionScope { sharedTransitionModifier ->
+            val order = remember {
+                listOf(
+                    ThreePane.Secondary,
+                    ThreePane.Primary,
+                )
+            }
             val splitLayoutState = remember {
                 SplitLayoutState(
                     orientation = Orientation.Horizontal,
-                    maxCount = PANE_COUNT,
+                    maxCount = order.size,
                     minSize = 120.dp,
+                    keyAtIndex = { index ->
+                        val indexDiff = order.size - visibleCount
+                        order[index + indexDiff]
+                    }
                 )
             }
             val movableSharedElementHostState = remember {
@@ -94,7 +104,7 @@ fun App() {
                 )
             }
             var canAnimatePanes by remember { mutableStateOf(true) }
-            val interactingWithPanes = (0..<PANE_COUNT).any {
+            val interactingWithPanes = (0..<splitLayoutState.visibleCount).any {
                 appState.paneInteractionSourceAt(it).isActive()
             }
             LaunchedEffect(interactingWithPanes) {
@@ -132,13 +142,6 @@ fun App() {
                         )
                 },
             ) {
-                val order = remember {
-                    listOf(
-                        ThreePane.Tertiary,
-                        ThreePane.Secondary,
-                        ThreePane.Primary,
-                    )
-                }
                 val filteredOrder by remember {
                     derivedStateOf { order.filter { nodeFor(it) != null } }
                 }
@@ -344,5 +347,3 @@ private fun demoAppStrategy(
         demoComposable()
     },
 )
-
-private const val PANE_COUNT = 2
