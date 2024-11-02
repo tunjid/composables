@@ -63,8 +63,13 @@ class DragToDismissState(
  * dismissed, else false for the composable to be animated back to its starting position.
  * @param onStart called when the drag commences and the composable has been displaced
  * from its original position.
- * @param onReset called when the composable has settled back into its original position after
- * being displaced to an [Offset] less than its dismissal threshold.
+ * @param onCancelled called when the drag to dismiss gesture has been cancelled because the drag
+ * gesture stopped and the [dragThresholdCheck] returned false. It may be invoked up to twice
+ * per session, with each invocation guaranteed to have different arguments:
+ * - First: Invoked with false, signifying the cancellation of the gesture, but that the
+ * Composable is not yet back at its starting position.
+ * - Second: Invoked with true, signifying the Composable has settled back into its original
+ * position.
  * It will only be called if the reset animation completes without being cancelled.
  * @param onDismissed called when the composable has been dragged past its dismissal
  * threshold and should be dismissed. Note that the Composable will have its displacement
@@ -78,7 +83,7 @@ fun Modifier.dragToDismiss(
     state: DragToDismissState,
     dragThresholdCheck: (Offset, Velocity) -> Boolean,
     onStart: () -> Unit = {},
-    onReset: () -> Unit = {},
+    onCancelled: (reset: Boolean) -> Unit = {},
     onDismissed: () -> Unit,
 ): Modifier {
     val scope = rememberCoroutineScope()
@@ -95,31 +100,34 @@ fun Modifier.dragToDismiss(
                 onDismissed()
                 // Reset offset back to zero.
                 state.offset = Offset.Zero
-            } else scope.launch {
-                try {
-                    state.startDragImmediately = true
-                    state.draggable2DState.drag {
-                        animate(
-                            typeConverter = Offset.VectorConverter,
-                            initialValue = state.offset,
-                            targetValue = Offset.Zero,
-                            initialVelocity = Offset(
-                                x = velocity.x,
-                                y = velocity.y
-                            ),
-                            animationSpec = state.animationSpec,
-                            block = { value, _ ->
-                                dragBy(value - state.offset)
-                            }
-                        )
+            } else {
+                onCancelled(false)
+                scope.launch {
+                    try {
+                        state.startDragImmediately = true
+                        state.draggable2DState.drag {
+                            animate(
+                                typeConverter = Offset.VectorConverter,
+                                initialValue = state.offset,
+                                targetValue = Offset.Zero,
+                                initialVelocity = Offset(
+                                    x = velocity.x,
+                                    y = velocity.y
+                                ),
+                                animationSpec = state.animationSpec,
+                                block = { value, _ ->
+                                    dragBy(value - state.offset)
+                                }
+                            )
+                        }
+                        // Notify that it has been reset.
+                        onCancelled(true)
+                    } finally {
+                        state.startDragImmediately = false
+                        // Reset offset if canceled and modifier is out of the composition, otherwise
+                        // allow user catch the drag as it settles.
+                        if (!scope.isActive) state.offset = Offset.Zero
                     }
-                    // Notify that it has been reset.
-                    onReset()
-                } finally {
-                    state.startDragImmediately = false
-                    // Reset offset if canceled and modifier is out of the composition, otherwise
-                    // allow user catch the drag as it settles.
-                    if (!scope.isActive) state.offset = Offset.Zero
                 }
             }
         }
