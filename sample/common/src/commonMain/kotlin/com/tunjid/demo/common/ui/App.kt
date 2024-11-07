@@ -119,8 +119,8 @@ fun App() {
                             Modifier.fillMaxSize()
                         }
                         .threePanedNavHostConfiguration(
-                            windowWidthDpState = derivedStateOf {
-                                splitLayoutState.size.value.roundToInt()
+                            windowWidthState = derivedStateOf {
+                                splitLayoutState.size
                             }
                         )
                         .threePanedMovableSharedElementConfiguration(
