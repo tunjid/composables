@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.ui.interpolate
+import com.tunjid.composables.ui.animate
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.ui.Screen
 
@@ -83,7 +83,7 @@ private fun BeachScene(
     Image(
         imageVector = BeachScene,
         contentDescription = null,
-        contentScale = contentScale.interpolate(),
+        contentScale = contentScale.animate(),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)

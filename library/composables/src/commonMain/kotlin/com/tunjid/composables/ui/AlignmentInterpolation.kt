@@ -1,6 +1,7 @@
 package com.tunjid.composables.ui
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
@@ -9,27 +10,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.lerp
 
 /**
- * Creates a [Alignment] instance that interpolates the result of
- * [Alignment.align] as the value of [this] changes. This allows for preserving
+ * Returns a [Alignment] that animates smoothly between the initial value this method
+ * was composed with and subsequent invocations. This allows for preserving
  * visual continuity across dynamic contexts like shared elements.
  *
- * @param animationSpec the animation spec used to animate the [IntOffset] returned by
- * [Alignment.align] as it changes.
- *
- * @sample com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
+ * @param animationSpec The [FiniteAnimationSpec] to be used for the animation.
+ * Note that changes to [animationSpec] while the animation is in progress have no effect.
+ * They will only be applied on the next [Alignment] change to preserve animation smoothness.
  */
 @Composable
-fun Alignment.interpolate(
+fun Alignment.animate(
     animationSpec: AnimationSpec<Float> = spring(),
 ): Alignment {
+    val updatedAnimationSpec by rememberUpdatedState(animationSpec)
     var interpolation by remember {
         mutableFloatStateOf(1f)
     }
@@ -39,23 +38,31 @@ fun Alignment.interpolate(
     val currentAlignment by remember {
         mutableStateOf(this)
     }.apply {
-        if (value != this@interpolate) {
-            previousAlignment = if (interpolation == 1f) value
-            else CapturedAlignment(
-                capturedInterpolation = interpolation,
-                previousAlignment = previousAlignment,
-                currentAlignment = value
-            )
+        if (value != this@animate) {
+            previousAlignment = if (interpolation == 1f) {
+                // Value has changed, trigger an animation
+                value
+            } else {
+                // A previous animation has been interrupted. Capture the present state,
+                // and restart the animation.
+                lerp(
+                    fraction = interpolation,
+                    start = previousAlignment,
+                    stop = value,
+                )
+            }
+            // Reset the interpolation
             interpolation = 0f
         }
-        value = this@interpolate
+        // Set the current value, this will also stop any call to lerp above from recomposing
+        value = this@animate
     }
 
     LaunchedEffect(currentAlignment) {
         animate(
             initialValue = 0f,
             targetValue = 1f,
-            animationSpec = animationSpec,
+            animationSpec = updatedAnimationSpec,
             block = { progress, _ ->
                 interpolation = progress
             },
@@ -75,37 +82,53 @@ fun Alignment.interpolate(
                 layoutDirection = layoutDirection,
             )
 
-            if (start == stop) stop
-            else lerp(
-                start = start,
-                stop = stop,
-                fraction = interpolation
-            )
+            if (start == stop) {
+                stop
+            } else {
+                lerp(
+                    start = start,
+                    stop = stop,
+                    fraction = interpolation,
+                )
+            }
         }
     }
 }
 
-private class CapturedAlignment(
-    private val capturedInterpolation: Float,
-    private val previousAlignment: Alignment,
-    private val currentAlignment: Alignment,
-) : Alignment {
-
-    override fun align(
-        size: IntSize,
-        space: IntSize,
-        layoutDirection: LayoutDirection
-    ): IntOffset = lerp(
-        start = previousAlignment.align(
-            size = size,
-            space = space,
-            layoutDirection = layoutDirection,
-        ),
-        stop = currentAlignment.align(
-            size = size,
-            space = space,
-            layoutDirection = layoutDirection,
-        ),
-        fraction = capturedInterpolation
-    )
+/**
+ * Linearly interpolate between two [Alignment] parameters
+ *
+ * The [fraction] argument represents position on the timeline, with 0.0 meaning
+ * that the interpolation has not started, returning [start] (or something
+ * equivalent to [start]), 1.0 meaning that the interpolation has finished,
+ * returning [stop] (or something equivalent to [stop]), and values in between
+ * meaning that the interpolation is at the relevant point on the timeline
+ * between [start] and [stop]. The interpolation can be extrapolated beyond 0.0 and
+ * 1.0, so negative values and values greater than 1.0 are valid (and can
+ * easily be generated by curves).
+ */
+@Composable
+fun lerp(
+    start: Alignment,
+    stop: Alignment,
+    fraction: Float,
+): Alignment {
+    val updatedFraction by rememberUpdatedState(fraction)
+    return remember {
+        Alignment { size, space, layoutDirection ->
+            lerp(
+                start = start.align(
+                    size = size,
+                    space = space,
+                    layoutDirection = layoutDirection,
+                ),
+                stop = stop.align(
+                    size = size,
+                    space = space,
+                    layoutDirection = layoutDirection,
+                ),
+                fraction = updatedFraction,
+            )
+        }
+    }
 }
