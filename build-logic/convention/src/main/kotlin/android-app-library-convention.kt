@@ -42,7 +42,7 @@ fun org.gradle.api.Project.androidConfiguration(
     extension: CommonExtension<*, *, *, *, *, *>
 ) = extension.apply {
     namespace = "com.tunjid.composables.${project.name}"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 23
