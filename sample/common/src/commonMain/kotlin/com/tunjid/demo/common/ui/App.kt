@@ -37,7 +37,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
-import com.tunjid.composables.ui.skippable
+import com.tunjid.composables.ui.skipIf
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
@@ -127,7 +127,7 @@ fun App() {
                             lookaheadScope = this@SharedTransitionScope,
                             paneBoundsTransform = {
                                 BoundsTransform { _, _ ->
-                                    spring<Rect>().skippable {
+                                    spring<Rect>().skipIf {
                                         when (paneState.pane) {
                                             ThreePane.Primary,
                                             ThreePane.TransientPrimary,

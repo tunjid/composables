@@ -19,7 +19,7 @@ import androidx.compose.runtime.Stable
  * the animation is still running.
  */
 @Stable
-fun <T> FiniteAnimationSpec<T>.skippable(
+fun <T> FiniteAnimationSpec<T>.skipIf(
     shouldSkipToEnd: () -> Boolean,
 ): FiniteAnimationSpec<T> = SkipSpec(
     backing = this,
