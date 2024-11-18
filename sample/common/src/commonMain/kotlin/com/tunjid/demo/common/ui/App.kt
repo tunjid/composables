@@ -16,14 +16,15 @@
 
 package com.tunjid.demo.common.ui
 
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -31,11 +32,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
+import com.tunjid.composables.ui.skipIf
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
@@ -70,7 +72,6 @@ import com.tunjid.treenav.compose.threepane.threePaneListDetailStrategy
 import com.tunjid.treenav.current
 import com.tunjid.treenav.pop
 import com.tunjid.treenav.push
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -103,12 +104,8 @@ fun App() {
                     canAnimateOnStartingFrames = PaneState<ThreePane, Screen>::canAnimateOnStartingFrames
                 )
             }
-            var canAnimatePanes by remember { mutableStateOf(true) }
             val interactingWithPanes = (0..<splitLayoutState.visibleCount).any {
                 appState.paneInteractionSourceAt(it).isActive()
-            }
-            LaunchedEffect(interactingWithPanes) {
-                canAnimatePanes = !interactingWithPanes
             }
             PanedNavHost(
                 modifier = Modifier
@@ -128,17 +125,21 @@ fun App() {
                         )
                         .animatePaneBoundsConfiguration(
                             lookaheadScope = this@SharedTransitionScope,
-                            shouldAnimatePane = {
-                                when (paneState.pane) {
-                                    ThreePane.Primary,
-                                    ThreePane.TransientPrimary,
-                                    ThreePane.Secondary,
-                                    ThreePane.Tertiary -> canAnimatePanes
+                            paneBoundsTransform = {
+                                BoundsTransform { _, _ ->
+                                    spring<Rect>().skipIf {
+                                        when (paneState.pane) {
+                                            ThreePane.Primary,
+                                            ThreePane.TransientPrimary,
+                                            ThreePane.Secondary,
+                                            ThreePane.Tertiary -> interactingWithPanes
 
-                                    null,
-                                    ThreePane.Overlay -> false
+                                            null,
+                                            ThreePane.Overlay -> true
+                                        }
+                                    }
                                 }
-                            }
+                            },
                         )
                 },
             ) {

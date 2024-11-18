@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.ui.interpolate
+import com.tunjid.composables.ui.animate
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.app.demos.utilities.pastelColors
 import com.tunjid.demo.common.ui.Screen
@@ -76,7 +76,7 @@ fun AlignmentInterpolationDemoScreen(
                 color = pastelColors.last().color,
                 modifier = Modifier
                     .align(
-                        selectedAlignment.interpolate(
+                        selectedAlignment.animate(
                             spring(
                                 dampingRatio = Spring.DampingRatioHighBouncy,
                                 stiffness = Spring.StiffnessVeryLow,
