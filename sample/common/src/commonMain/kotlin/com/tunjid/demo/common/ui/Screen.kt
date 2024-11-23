@@ -14,18 +14,44 @@ import androidx.compose.material.icons.filled.SpaceDashboard
 import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.DemoSelectionScreen
+import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
+import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
+import com.tunjid.demo.common.app.demos.LazyListDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderGridDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
+import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
+import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
+import com.tunjid.demo.common.app.demos.SplitLayoutDemoScreen
 import com.tunjid.treenav.Node
 
 enum class Screen(
     val title: String,
     val description: String,
     val icons: List<ImageVector>,
-): Node {
+    val demoUI: @Composable (currentScreen: Screen, push: (Screen) -> Unit, pop: () -> Unit) -> Unit,
+) : Node {
     Demos(
         title = "Demos",
         description = "A list of the demos in the app.",
         icons = listOf(Icons.Default.TouchApp),
+        demoUI = { currentScreen, push, _ ->
+            DemoSelectionScreen(
+                screen = currentScreen,
+                screens = remember {
+                    Screen.entries.filterNot(Demos::equals)
+                },
+                onScreenSelected = push,
+            )
+        },
     ),
     SplitLayoutDemoScreen(
         title = "Split Layouts",
@@ -35,6 +61,12 @@ enum class Screen(
             Icons.Default.SwipeVertical,
             Icons.Default.SpaceDashboard,
         ),
+        demoUI = { currentScreen, _, pop ->
+            SplitLayoutDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     DragToDismissDemoScreen(
         title = "Drag To Dismiss",
@@ -43,6 +75,12 @@ enum class Screen(
             Icons.Default.Swipe,
             Icons.Default.Close,
         ),
+        demoUI = { currentScreen, _, pop ->
+            DragToDismissDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     ContentScaleInterpolationDemoScreen(
         title = "ContentScale Interpolation",
@@ -51,6 +89,12 @@ enum class Screen(
             Icons.Default.AspectRatio,
             Icons.Default.Animation,
         ),
+        demoUI = { currentScreen, _, pop ->
+            ContentScaleInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     AlignmentInterpolationDemoScreen(
         title = "Alignment Interpolation",
@@ -60,6 +104,12 @@ enum class Screen(
             Icons.Default.OpenWith,
             Icons.Default.Animation,
         ),
+        demoUI = { currentScreen, _, pop ->
+            AlignmentInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyStickyHeaderListDemoScreen(
         title = "Sticky Header Lists",
@@ -68,6 +118,12 @@ enum class Screen(
             Icons.Default.SortByAlpha,
             Icons.AutoMirrored.Filled.ListAlt,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyStickyHeaderListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyStickyHeaderGridDemoScreen(
         title = "Sticky Header Grids",
@@ -76,6 +132,12 @@ enum class Screen(
             Icons.Default.SortByAlpha,
             Icons.Default.GridOn,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyStickyHeaderGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyStickyHeaderStaggeredGridDemoScreen(
         title = "Sticky Header Staggered Grids",
@@ -84,6 +146,12 @@ enum class Screen(
             Icons.Default.SortByAlpha,
             Icons.Default.SpaceDashboard,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyStickyHeaderStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyListDemoScreen(
         title = "Collapsing Header Lists With Scrollbars",
@@ -93,6 +161,12 @@ enum class Screen(
             Icons.Default.SwipeVertical,
             Icons.AutoMirrored.Filled.ListAlt,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyGridDemoScreen(
         title = "Collapsing Header Grids With Scrollbars",
@@ -102,6 +176,12 @@ enum class Screen(
             Icons.Default.SwipeVertical,
             Icons.Default.GridOn,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     LazyStaggeredGridDemoScreen(
         title = "Collapsing Header Staggered Grids With Scrollbars",
@@ -111,6 +191,12 @@ enum class Screen(
             Icons.Default.SwipeVertical,
             Icons.Default.SpaceDashboard,
         ),
+        demoUI = { currentScreen, _, pop ->
+            LazyStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     PointerOffsetScrollListDemoScreen(
         title = "Pointer Offset Scroll List",
@@ -120,6 +206,12 @@ enum class Screen(
             Icons.Default.OpenWith,
             Icons.AutoMirrored.Filled.ListAlt,
         ),
+        demoUI = { currentScreen, _, pop ->
+            PointerOffsetLazyListDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     PointerOffsetScrollGridDemoScreen(
         title = "Pointer Offset Scroll Grid",
@@ -129,6 +221,12 @@ enum class Screen(
             Icons.Default.OpenWith,
             Icons.Default.GridOn,
         ),
+        demoUI = { currentScreen, _, pop ->
+            PointerOffsetLazyGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
     ),
     PointerOffsetScrollStaggeredGridDemoScreen(
         title = "Pointer Offset Scroll Staggered Grid",
@@ -138,7 +236,13 @@ enum class Screen(
             Icons.Default.OpenWith,
             Icons.Default.SpaceDashboard,
         ),
-    ),;
+        demoUI = { currentScreen, _, pop ->
+            PointerOffsetLazyStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ), ;
 
     override val id: String
         get() = title
