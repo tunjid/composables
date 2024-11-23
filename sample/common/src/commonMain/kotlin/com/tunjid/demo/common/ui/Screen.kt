@@ -1,6 +1,7 @@
 package com.tunjid.demo.common.ui
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Apps
@@ -14,10 +15,12 @@ import androidx.compose.material.icons.filled.SpaceDashboard
 import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.BackPreviewDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
 import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
@@ -106,6 +109,20 @@ enum class Screen(
         ),
         demoUI = { currentScreen, _, pop ->
             AlignmentInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ),
+    BackPreviewDemoScreen(
+        title = "Back Preview Modifier",
+        description = "Preview previous navigation destinations according to the material spec.",
+        icons = listOf(
+            Icons.Default.Visibility,
+            Icons.AutoMirrored.Filled.ArrowBack,
+        ),
+        demoUI = { currentScreen, _, pop ->
+            BackPreviewDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )
@@ -242,7 +259,8 @@ enum class Screen(
                 onBackPressed = pop,
             )
         },
-    ), ;
+    ),
+    ;
 
     override val id: String
         get() = title
