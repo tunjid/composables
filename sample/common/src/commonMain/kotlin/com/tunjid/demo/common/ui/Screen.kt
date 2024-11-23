@@ -118,8 +118,8 @@ enum class Screen(
         title = "Back Preview Modifier",
         description = "Preview previous navigation destinations according to the material spec.",
         icons = listOf(
-            Icons.Default.Visibility,
             Icons.AutoMirrored.Filled.ArrowBack,
+            Icons.Default.Visibility,
         ),
         demoUI = { currentScreen, _, pop ->
             BackPreviewDemoScreen(

@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
+import com.tunjid.composables.constrainedsize.constrainedSizePlacement
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.composables.ui.skipIf
@@ -99,7 +100,13 @@ fun App() {
                 state = appState.rememberPanedNavHostState {
                     this
                         .paneModifierConfiguration {
-                            Modifier.fillMaxSize()
+                            Modifier
+                                .fillMaxSize()
+                                .constrainedSizePlacement(
+                                    orientation = Orientation.Horizontal,
+                                    minSize = 200.dp,
+                                    atStart = paneState.pane == ThreePane.Secondary,
+                                )
                         }
                         .threePanedNavHostConfiguration(
                             windowWidthState = derivedStateOf {

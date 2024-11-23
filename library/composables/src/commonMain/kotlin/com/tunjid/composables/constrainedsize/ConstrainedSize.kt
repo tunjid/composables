@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.Dp
  * - [Orientation.Vertical]: [atStart] of true means shifting towards the top of the layout,
  * else its shifts towards the bottom.
  */
-internal fun Modifier.constrainedSizePlacement(
+fun Modifier.constrainedSizePlacement(
     orientation: Orientation,
     minSize: Dp,
     atStart: Boolean,
