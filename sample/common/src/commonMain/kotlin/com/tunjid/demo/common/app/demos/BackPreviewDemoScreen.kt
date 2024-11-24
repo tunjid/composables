@@ -1,9 +1,8 @@
 package com.tunjid.demo.common.app.demos
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.draggable2D
+import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -18,11 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import androidx.compose.ui.util.fastRoundToInt
 import com.tunjid.composables.backpreview.BackPreviewState
 import com.tunjid.composables.backpreview.backPreview
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
@@ -53,7 +50,7 @@ fun BackPreviewDemoScreen(
                     .fillMaxSize()
                     .onSizeChanged { layoutSize = it }
                     .backPreview(state = backPreviewState)
-                    .background(pastelColors.first().color)
+                    .background(pastelColors.first().color.copy(alpha = 0.6f))
             )
             MockPredictiveBackGestureArea(
                 backPreviewState = backPreviewState,
@@ -77,19 +74,16 @@ private fun BoxScope.MockPredictiveBackGestureArea(
 ) {
     Box(
         modifier = Modifier
+            .background(pastelColors.first().color.copy(alpha = 0.4f))
             .align(
                 if (reverseDirection) Alignment.TopEnd
                 else Alignment.TopStart
             )
             .fillMaxHeight()
-            .width(24.dp)
-            .draggable(
-                orientation = Orientation.Horizontal,
-                state = rememberDraggableState {
-                    backPreviewState.pointerOffset += IntOffset(
-                        x = it.fastRoundToInt(),
-                        y = 0,
-                    )
+            .width(60.dp)
+            .draggable2D(
+                state = rememberDraggable2DState {
+                    backPreviewState.pointerOffset += it.round()
                     backPreviewState.progress =
                         backPreviewState.pointerOffset.x / layoutSize.width.toFloat()
                 },

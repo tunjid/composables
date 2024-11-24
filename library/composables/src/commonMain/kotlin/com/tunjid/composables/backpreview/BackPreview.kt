@@ -19,17 +19,22 @@ import kotlin.math.roundToInt
  * @param progress The current progress of the gesture:
  * - [Float.NaN] when the gesture is not in progress
  * - Values between 0f and 1f otherwise
+ * @param minScale The minimum scale the layout reaches as [progress] goes from [0f -1f].
  * @param atStart true if the gesture started at the start of the screen, false if from the end.
  */
 @Stable
 class BackPreviewState(
     pointerOffset: IntOffset = IntOffset.Zero,
     progress: Float = Float.NaN,
+    minScale: Float = 0.9f,
     atStart: Boolean = false,
 ) {
     var pointerOffset by mutableStateOf(pointerOffset)
     var progress by mutableFloatStateOf(progress)
+    var minScale by mutableFloatStateOf(minScale)
     var atStart by mutableStateOf(atStart)
+
+    internal var initialPointerOffset by mutableStateOf(IntOffset.Zero)
 }
 
 /**
@@ -43,7 +48,11 @@ fun Modifier.backPreview(
 ): Modifier = layout { measurable, constraints ->
     val touchOffset = state.pointerOffset
     val progress = state.progress
-    val scale = 1f - (progress * 0.15F)
+    val scale = 1f - (progress * (1 - state.minScale))
+
+    if (progress.isNaN()) state.initialPointerOffset = IntOffset.Zero
+    if (state.initialPointerOffset == IntOffset.Zero && !progress.isNaN()) state.initialPointerOffset =
+        state.pointerOffset
 
     val placeable = measurable.measure(
         if (progress.isNaN()) constraints
@@ -76,15 +85,19 @@ fun Modifier.backPreview(
         isOrientedHorizontally -> paneWidth
         else -> paneHeight
     }.dp.roundToPx()
+    val initialTouchPoint = when {
+        isOrientedHorizontally -> state.initialPointerOffset.x
+        else -> state.initialPointerOffset.y
+    }
     val touchPoint = when {
         isOrientedHorizontally -> touchOffset.x
         else -> touchOffset.y
     }
-    val verticalProgress = (touchPoint / screenSize) - 0.5f
+    val verticalProgress = (touchPoint - initialTouchPoint) / screenSize.toFloat()
     val yOffset = (verticalProgress * maxYShift).fastRoundToInt()
 
     layout(placeable.width, placeable.height) {
-        placeable.placeRelative(x = xOffset, y = -yOffset)
+        placeable.placeRelative(x = xOffset, y = yOffset)
     }
 }
 
