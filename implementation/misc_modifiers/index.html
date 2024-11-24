@@ -12,13 +12,11 @@
         <meta name="author" content="Adetunji Dahunsi">
       
       
-        <link rel="canonical" href="https://tunjid.github.io/Composable/implementation/pointer_offset/">
+        <link rel="canonical" href="https://tunjid.github.io/Composable/implementation/misc_modifiers/">
       
       
-        <link rel="prev" href="../collapsing_headers/">
+        <link rel="prev" href="../interpolation/">
       
-      
-        <link rel="next" href="../scrollbars/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -26,7 +24,7 @@
     
     
       
-        <title>Pointer Offset Scroll - Composables</title>
+        <title>Miscellaneous Modifiers - Composables</title>
       
     
     
@@ -78,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#pointer-offset-scroll-header" class="md-skip">
+        <a href="#miscellaneous-modifiers" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Pointer Offset Scroll
+              Miscellaneous Modifiers
             
           </span>
         </div>
@@ -332,19 +330,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../pointer_offset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -353,7 +342,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -422,10 +410,19 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../misc_modifiers/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -434,6 +431,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -474,16 +472,12 @@
   
 
 
-<h1 id="pointer-offset-scroll-header">Pointer Offset Scroll Header</h1>
-<p>Pointer offsets are useful for manually scrolling containers with [ScrollableState], when the
-pointer is already involved in another interaction. For example drag and drop or a long press.</p>
-<div class="language-kotlin highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nd">@Composable</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kd">fun</span><span class="w"> </span><span class="n">Modifier</span><span class="p">.</span><span class="nf">pointerOffsetScroll</span><span class="p">(</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="n">state</span><span class="p">:</span><span class="w"> </span><span class="n">PointerOffsetScrollState</span><span class="p">,</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="p">...</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
-</span></code></pre></div>
+<h1 id="miscellaneous-modifiers">Miscellaneous Modifiers</h1>
+<p>The library also offers miscellaneous modifiers for a myriad of use cases:</p>
+<ul>
+<li><code>Modifier.backPreview</code>: An implementation of the <a href="https://developer.android.com/design/ui/mobile/guides/patterns/predictive-back#motion-specs">material back preview motion spec</a>.</li>
+<li><code>Modifier.constrainedSizePlacement</code>: Shifts layouts out of frame when placed in containers smaller than their minimum allowed size.</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -495,10 +489,10 @@ pointer is already involved in another interaction. For example drag and drop or
 </thead>
 <tbody>
 <tr>
-<td>Pointer Offset Scroll</td>
-<td><img alt="pointer offset list scroll" src="../../images/pointer_offset_list_crop.gif" /></td>
-<td><img alt="pointer offset grid scroll" src="../../images/pointer_offset_grid_crop.gif" /></td>
-<td><img alt="pointer offset staggered grid" src="../../images/pointer_offset_staggered_grid_crop.gif" /></td>
+<td>Miscellaneous Modifiers</td>
+<td><img alt="Back Preview" src="../../images/predictive_back.gif" /></td>
+<td><img alt="Constrained Size Placement" src="../../images/constrained_placement.gif" /></td>
+<td></td>
 </tr>
 </tbody>
 </table>
