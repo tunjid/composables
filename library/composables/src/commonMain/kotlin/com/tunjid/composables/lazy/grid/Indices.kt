@@ -18,26 +18,38 @@ package com.tunjid.composables.lazy.grid
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
+import androidx.compose.foundation.lazy.grid.LazyGridLayoutInfo
 import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.runtime.LaunchedEffect
-import com.tunjid.composables.lazy.interpolatedFirstItemIndex
+import androidx.compose.runtime.snapshotFlow
 import com.tunjid.composables.valueOf
 
 /**
- * Linearly interpolates the index for the first item to smoothly match the
- * scroll rate in [this].
+ * Linearly interpolates the index for the item at [index] in [LazyGridLayoutInfo.visibleItemsInfo]
+ * to smoothly match the scroll rate of this [LazyGridState].
  *
- * Note that the value returned is observable and is updated after every scroll or remeasure.
- * If you use it in the composable function it will be recomposed on every change causing
- * potential performance issues including infinity recomposition loop.
- * Therefore, avoid using it in the composition and instead in a [LaunchedEffect].
+ * This method should not be read in composition as it changes frequently with scroll state.
+ * Instead it should be read in an in effect block inside of a [snapshotFlow].
+ *
+ * @param index the index for which its interpolated index in [LazyGridLayoutInfo.visibleItemsInfo]
+ * should be returned.
+ *
+ * @param itemIndex a look up for the index for the item in [LazyGridLayoutInfo.visibleItemsInfo].
+ * It defaults to [LazyGridItemInfo.index].
+ *
+ * @return a [Float] in the range [firstItemPosition..nextItemPosition)
+ * in [LazyGridLayoutInfo.visibleItemsInfo] or [Float.NaN] if:
+ * - [LazyGridLayoutInfo.visibleItemsInfo] is empty.
+ * - [LazyGridLayoutInfo.visibleItemsInfo] does not have an item at [index].
  * */
-fun LazyGridState.interpolatedFirstItemIndex(
+fun LazyGridState.interpolatedIndexOfVisibleItemAt(
+    index: Int,
     itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,
 ): Float {
     val visibleItemsInfo = layoutInfo.visibleItemsInfo
-    return interpolatedFirstItemIndex(
+    return com.tunjid.composables.lazy.interpolatedIndexOfVisibleItemAt(
+        lazyState = this,
         visibleItems = visibleItemsInfo,
+        index = index,
         itemSize = { layoutInfo.orientation.valueOf(it.size) },
         offset = { layoutInfo.orientation.valueOf(it.offset) },
         nextItemOnMainAxis = nextItem@{ first ->
@@ -54,3 +66,27 @@ fun LazyGridState.interpolatedFirstItemIndex(
         itemIndex = itemIndex,
     )
 }
+
+/**
+ * Linearly interpolates the index for the first item in [LazyGridLayoutInfo.visibleItemsInfo]
+ * to smoothly match the scroll rate of this [LazyGridState].
+ *
+ * This method should not be read in composition as it changes frequently with scroll state.
+ * Instead it should be read in an in effect block inside of a [snapshotFlow].
+ *
+ * @param itemIndex a look up for the index for the item in [LazyGridLayoutInfo.visibleItemsInfo].
+ * It defaults to [LazyGridItemInfo.index].
+ *
+ * @see [LazyGridState.interpolatedIndexOfVisibleItemAt]
+ *
+ * @return a [Float] in the range [firstItemPosition..nextItemPosition)
+ * in [LazyGridLayoutInfo.visibleItemsInfo] or [Float.NaN] if:
+ * - [LazyGridLayoutInfo.visibleItemsInfo] is empty.
+ * - [LazyGridLayoutInfo.visibleItemsInfo] does not have an item at the first visible index.
+ * */
+fun LazyGridState.interpolatedFirstItemIndex(
+    itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,
+): Float = interpolatedIndexOfVisibleItemAt(
+    index = 0,
+    itemIndex = itemIndex,
+)

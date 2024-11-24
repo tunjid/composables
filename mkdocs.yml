@@ -37,12 +37,14 @@ theme:
 repo_url: https://github.com/tunjid/Composables
 nav:
   - Home: index.md
+  - Split Layouts: implementation/split_layouts.md
   - Sticky Headers: implementation/sticky_headers.md
   - Collapsing Headers: implementation/collapsing_headers.md
   - Pointer Offset Scroll: implementation/pointer_offset.md
   - Scrollbars: implementation/scrollbars.md
   - Drag To Dismiss: implementation/drag_to_dismiss.md
   - Alignment / Content Scale Interpolation: implementation/interpolation.md
+  - Miscellaneous Modifiers: implementation/misc_modifiers.md
 markdown_extensions:
   - admonition
   - pymdownx.highlight:

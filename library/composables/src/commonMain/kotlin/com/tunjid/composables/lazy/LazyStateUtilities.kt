@@ -18,6 +18,7 @@ package com.tunjid.composables.lazy
 
 
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.runtime.snapshotFlow
 import kotlin.math.abs
 
 /**
@@ -62,6 +63,54 @@ inline fun <LazyState : ScrollableState, LazyStateItem> LazyState.interpolatedFi
     return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
 }
 
+
+/**
+ * Linearly interpolates the index for the item at [index] in [visibleItems] to smoothly match the
+ * scroll rate of the backing [ScrollableState].
+ *
+ * This method should not be read in composition as it changes frequently with scroll state.
+ * Instead it should be read in an in effect block inside of a [snapshotFlow].
+ *
+ * @param visibleItems a list of items currently visible in the layout.
+ * @param itemSize a lookup function for the size of an item in the layout.
+ * @param offset a lookup function for the offset of an item relative to the start of the view port.
+ * @param nextItemOnMainAxis a lookup function for the next item on the main axis in the direction
+ * of the scroll.
+ * @param itemIndex a lookup function for index of an item in the layout relative to
+ * the total amount of items available.
+ *
+ * @return a [Float] in the range [firstItemPosition..nextItemPosition) or [Float.NaN] if:
+ * - [visibleItems] returns an empty [List].
+ * - [visibleItems] does not have an item at [index].
+ * */
+internal inline fun <LazyState : ScrollableState, LazyStateItem> interpolatedIndexOfVisibleItemAt(
+    lazyState: LazyState,
+    visibleItems: List<LazyStateItem>,
+    index: Int,
+    crossinline itemSize: LazyState.(LazyStateItem) -> Int,
+    crossinline offset: LazyState.(LazyStateItem) -> Int,
+    crossinline nextItemOnMainAxis: LazyState.(LazyStateItem) -> LazyStateItem?,
+    crossinline itemIndex: (LazyStateItem) -> Int,
+): Float {
+    if (visibleItems.isEmpty()) return Float.NaN
+
+    val item = visibleItems.getOrNull(index) ?: return Float.NaN
+    val firstItemIndex = itemIndex(item)
+
+    if (firstItemIndex < 0) return Float.NaN
+
+    val firstItemSize = lazyState.itemSize(item)
+    if (firstItemSize == 0) return Float.NaN
+
+    val itemOffset = lazyState.offset(item).toFloat()
+    val offsetPercentage = abs(itemOffset) / firstItemSize
+
+    val nextItem = lazyState.nextItemOnMainAxis(item) ?: return firstItemIndex + offsetPercentage
+
+    val nextItemIndex = itemIndex(nextItem)
+
+    return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
+}
 /**
  * Returns the percentage of an item that is currently visible in the view port.
  * @param itemSize the size of the item

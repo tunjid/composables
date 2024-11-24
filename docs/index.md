@@ -27,6 +27,7 @@ They offer APIs for common UI interactions that make UI more delightful. They ar
 | Pointer Offset Scroll                  | ![pointer offset list scroll](./images/pointer_offset_list_crop.gif)                                 | ![pointer offset grid scroll](./images/pointer_offset_grid_crop.gif)                                 | ![pointer offset staggered grid](./images/pointer_offset_staggered_grid_crop.gif)                                      |
 | Drag To Dismiss                        | ![color drag to dismiss](./images/drag_to_dismiss_crop.gif)                                          | ![image drag to dismiss](./images/drag_to_dismiss_app_image.gif)                                     | ![video drag to dismiss](./images/drag_to_dismiss_app_video.gif)                                                       |
 | Alignment / ContentScale Interpolation | ![rounded rect interpolation](./images/alignment_interpolation_crop.gif)                             | ![beach scene interpolation](./images/content_scale_interpolation_crop.gif)                          |                                                                                                                        |
+| Miscellaneous Modifiers                | ![Back Preview](./images/predictive_back.gif)                                                        | ![Constrained Size Placement](./images/constrained_placement.gif)                                    |                                                                                                                        |
 
 ## License
 

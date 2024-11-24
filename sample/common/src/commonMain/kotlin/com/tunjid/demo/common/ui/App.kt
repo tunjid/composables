@@ -35,23 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.unit.dp
+import com.tunjid.composables.constrainedsize.constrainedSizePlacement
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.composables.ui.skipIf
-import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
-import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
-import com.tunjid.demo.common.app.demos.DemoSelectionScreen
-import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
-import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
-import com.tunjid.demo.common.app.demos.LazyListDemoScreen
-import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
-import com.tunjid.demo.common.app.demos.LazyStickyHeaderGridDemoScreen
-import com.tunjid.demo.common.app.demos.LazyStickyHeaderListDemoScreen
-import com.tunjid.demo.common.app.demos.LazyStickyHeaderStaggeredGridDemoScreen
-import com.tunjid.demo.common.app.demos.PointerOffsetLazyGridDemoScreen
-import com.tunjid.demo.common.app.demos.PointerOffsetLazyListDemoScreen
-import com.tunjid.demo.common.app.demos.PointerOffsetLazyStaggeredGridDemoScreen
-import com.tunjid.demo.common.app.demos.SplitLayoutDemoScreen
 import com.tunjid.demo.common.app.demos.utilities.PaneSeparator
 import com.tunjid.demo.common.app.demos.utilities.isActive
 import com.tunjid.demo.common.ui.DemoAppState.Companion.rememberPanedNavHostState
@@ -91,7 +78,7 @@ fun App() {
                 SplitLayoutState(
                     orientation = Orientation.Horizontal,
                     maxCount = order.size,
-                    minSize = 120.dp,
+                    minSize = 10.dp,
                     keyAtIndex = { index ->
                         val indexDiff = order.size - visibleCount
                         order[index + indexDiff]
@@ -113,7 +100,13 @@ fun App() {
                 state = appState.rememberPanedNavHostState {
                     this
                         .paneModifierConfiguration {
-                            Modifier.fillMaxSize()
+                            Modifier
+                                .fillMaxSize()
+                                .constrainedSizePlacement(
+                                    orientation = Orientation.Horizontal,
+                                    minSize = 200.dp,
+                                    atStart = paneState.pane == ThreePane.Secondary,
+                                )
                         }
                         .threePanedNavHostConfiguration(
                             windowWidthState = derivedStateOf {
@@ -232,105 +225,8 @@ private fun demoAppNavHostConfiguration(
         )
     },
     strategyTransform = { currentScreen ->
-        when (currentScreen) {
-            Screen.Demos -> demoAppStrategy {
-                DemoSelectionScreen(
-                    screen = currentScreen,
-                    screens = remember { Screen.entries.filterNot(Screen.Demos::equals) },
-                    onScreenSelected = push,
-                )
-            }
-
-            Screen.LazyGridDemoScreen -> demoAppStrategy {
-                LazyGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.LazyListDemoScreen -> demoAppStrategy {
-                LazyListDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.LazyStickyHeaderListDemoScreen -> demoAppStrategy {
-                LazyStickyHeaderListDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.LazyStickyHeaderGridDemoScreen -> demoAppStrategy {
-                LazyStickyHeaderGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.LazyStickyHeaderStaggeredGridDemoScreen -> demoAppStrategy {
-                LazyStickyHeaderStaggeredGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.LazyStaggeredGridDemoScreen -> demoAppStrategy {
-                LazyStaggeredGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.DragToDismissDemoScreen -> demoAppStrategy {
-                DragToDismissDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.AlignmentInterpolationDemoScreen -> demoAppStrategy {
-                AlignmentInterpolationDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.ContentScaleInterpolationDemoScreen -> demoAppStrategy {
-                ContentScaleInterpolationDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop
-                )
-            }
-
-            Screen.PointerOffsetScrollStaggeredGridDemoScreen -> demoAppStrategy {
-                PointerOffsetLazyStaggeredGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop,
-                )
-            }
-
-            Screen.PointerOffsetScrollListDemoScreen -> demoAppStrategy {
-                PointerOffsetLazyListDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop,
-                )
-            }
-
-            Screen.PointerOffsetScrollGridDemoScreen -> demoAppStrategy {
-                PointerOffsetLazyGridDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop,
-                )
-            }
-
-            Screen.SplitLayoutDemoScreen -> demoAppStrategy {
-                SplitLayoutDemoScreen(
-                    screen = currentScreen,
-                    onBackPressed = pop,
-                )
-            }
+        demoAppStrategy {
+            currentScreen.demoUI(currentScreen, push, pop)
         }
     }
 )
