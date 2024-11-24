@@ -7,7 +7,9 @@ import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.AspectRatio
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.GridOn
+import androidx.compose.material.icons.filled.HorizontalDistribute
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -21,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.BackPreviewDemoScreen
+import com.tunjid.demo.common.app.demos.ConstrainedPlacementDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
 import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
@@ -116,13 +119,27 @@ enum class Screen(
     ),
     BackPreviewDemoScreen(
         title = "Back Preview Modifier",
-        description = "Preview previous navigation destinations according to the material spec.",
+        description = "Drag from the edges to preview previous navigation destinations according to the material spec.",
         icons = listOf(
             Icons.AutoMirrored.Filled.ArrowBack,
             Icons.Default.Visibility,
         ),
         demoUI = { currentScreen, _, pop ->
             BackPreviewDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ),
+    ConstrainedPlacementDemoScreen(
+        title = "Constrained Placement Modifier",
+        description = "Slide layouts out of frame at a minimum size.",
+        icons = listOf(
+            Icons.Default.Compress,
+            Icons.Default.HorizontalDistribute,
+        ),
+        demoUI = { currentScreen, _, pop ->
+            ConstrainedPlacementDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )

@@ -78,7 +78,7 @@ fun App() {
                 SplitLayoutState(
                     orientation = Orientation.Horizontal,
                     maxCount = order.size,
-                    minSize = 120.dp,
+                    minSize = 10.dp,
                     keyAtIndex = { index ->
                         val indexDiff = order.size - visibleCount
                         order[index + indexDiff]
