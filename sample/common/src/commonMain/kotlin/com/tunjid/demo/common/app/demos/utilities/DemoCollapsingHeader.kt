@@ -22,7 +22,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,8 +30,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.tunjid.composables.collapsingheader.CollapsingHeaderLayout
-import com.tunjid.composables.collapsingheader.CollapsingHeaderState
 import com.tunjid.composables.collapsingheader.CollapsingHeaderStatus
+import com.tunjid.composables.collapsingheader.rememberCollapsingHeaderState
 import com.tunjid.demo.common.ui.Screen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,13 +49,12 @@ internal fun DemoCollapsingHeader(
     val collapsedHeight = with(density) { 56.dp.toPx() } +
             WindowInsets.statusBars.getTop(density).toFloat() +
             WindowInsets.statusBars.getBottom(density).toFloat()
-    val headerState = remember {
-        CollapsingHeaderState(
-            collapsedHeight = collapsedHeight,
-            initialExpandedHeight = with(density) { 400.dp.toPx() },
-            decayAnimationSpec = splineBasedDecay(density)
-        )
-    }
+    val headerState = rememberCollapsingHeaderState(
+        collapsedHeight = collapsedHeight,
+        initialExpandedHeight = with(density) { 400.dp.toPx() },
+        decayAnimationSpec = splineBasedDecay(density)
+    )
+
     val animatedColor by animateColorAsState(
         item.color.copy(alpha = max(1f - headerState.progress, 0.6f))
     )
