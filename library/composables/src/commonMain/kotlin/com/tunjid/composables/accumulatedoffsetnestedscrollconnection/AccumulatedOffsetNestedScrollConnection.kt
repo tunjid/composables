@@ -1,4 +1,4 @@
-package com.tunjid.composables.accumulatedoffsetnestedscrollConnection
+package com.tunjid.composables.accumulatedoffsetnestedscrollconnection
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect

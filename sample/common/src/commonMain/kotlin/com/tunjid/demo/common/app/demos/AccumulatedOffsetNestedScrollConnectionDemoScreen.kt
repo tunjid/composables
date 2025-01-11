@@ -25,7 +25,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
-import com.tunjid.composables.accumulatedoffsetnestedscrollConnection.rememberAccumulatedOffsetNestedScrollConnection
+import com.tunjid.composables.accumulatedoffsetnestedscrollconnection.rememberAccumulatedOffsetNestedScrollConnection
 import com.tunjid.demo.common.app.demos.utilities.ListDemoItem
 import com.tunjid.demo.common.app.demos.utilities.pastelColors
 import com.tunjid.demo.common.ui.Screen
