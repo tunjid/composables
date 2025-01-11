@@ -32,9 +32,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -56,6 +60,50 @@ enum class CollapsingHeaderStatus {
 }
 
 /**
+ * remembers the state for managing the [CollapsingHeaderLayout] composable.
+ * @param collapsedHeight: the height of the header when collapsed.
+ * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
+ * measured. This should be an estimate, the expanded height is determined by the size of
+ * headerContent in [CollapsingHeaderLayout].
+ * @param thresholdFraction the fraction of the distance that must be covered between the
+ * [CollapsingHeaderStatus.Collapsed] and [CollapsingHeaderStatus.Expanded] states after which
+ * the header should transition to the next state.
+ * @param decayAnimationSpec the animation spec that will be used when flinging with a large enough
+ * velocity to reach or cross between expanded and collapsed states.
+ * @param snapAnimationSpec the animation spec used to animate between collapsed and expanded
+ * states.
+ */
+@Composable
+fun rememberCollapsingHeaderState(
+    collapsedHeight: Float,
+    initialExpandedHeight: Float,
+    thresholdFraction: Float = 0.5f,
+    decayAnimationSpec: DecayAnimationSpec<Float>,
+    snapAnimationSpec: AnimationSpec<Float> = tween(),
+    initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
+): CollapsingHeaderState {
+    var wasCollapsed by rememberSaveable {
+        mutableStateOf(initialStatus == CollapsingHeaderStatus.Collapsed)
+    }
+    return remember {
+        CollapsingHeaderState(
+            collapsedHeight = collapsedHeight,
+            initialExpandedHeight = initialExpandedHeight,
+            thresholdFraction = thresholdFraction,
+            decayAnimationSpec = decayAnimationSpec,
+            snapAnimationSpec = snapAnimationSpec,
+            initialStatus =
+            if (wasCollapsed) CollapsingHeaderStatus.Collapsed
+            else CollapsingHeaderStatus.Expanded,
+        )
+    }.also {
+        SideEffect {
+            wasCollapsed = it.progress > thresholdFraction
+        }
+    }
+}
+
+/**
  * State for managing the [CollapsingHeaderLayout] composable.
  * @param collapsedHeight: the height of the header when collapsed.
  * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
@@ -69,12 +117,12 @@ enum class CollapsingHeaderStatus {
  * @param snapAnimationSpec the animation spec used to animate between collapsed and expanded
  * states.
  */
-@Stable
 @OptIn(ExperimentalFoundationApi::class)
+@Stable
 class CollapsingHeaderState(
     collapsedHeight: Float,
     initialExpandedHeight: Float,
-    thresholdFraction: Float = 0.5f,
+    thresholdFraction: Float,
     decayAnimationSpec: DecayAnimationSpec<Float>,
     snapAnimationSpec: AnimationSpec<Float> = tween(),
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
@@ -260,7 +308,7 @@ private fun AnchoredDraggableState<CollapsingHeaderStatus>.nestedScrollConnectio
     object : NestedScrollConnection {
         override fun onPreScroll(
             available: Offset,
-            source: NestedScrollSource
+            source: NestedScrollSource,
         ): Offset = when (val delta = available.y) {
             in -Float.MAX_VALUE..-Float.MIN_VALUE -> dispatchRawDelta(delta).toOffset()
             else -> Offset.Zero
@@ -269,12 +317,12 @@ private fun AnchoredDraggableState<CollapsingHeaderStatus>.nestedScrollConnectio
         override fun onPostScroll(
             consumed: Offset,
             available: Offset,
-            source: NestedScrollSource
+            source: NestedScrollSource,
         ): Offset = dispatchRawDelta(delta = available.y).toOffset()
 
         override suspend fun onPostFling(
             consumed: Velocity,
-            available: Velocity
+            available: Velocity,
         ): Velocity {
             settle(velocity = available.y)
             return super.onPostFling(consumed, available)

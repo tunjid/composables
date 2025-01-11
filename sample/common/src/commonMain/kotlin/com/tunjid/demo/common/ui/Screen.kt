@@ -2,7 +2,9 @@ package com.tunjid.demo.common.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.automirrored.filled.ListAlt
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.AspectRatio
@@ -10,6 +12,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.HorizontalDistribute
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.OpenWith
 import androidx.compose.material.icons.filled.SortByAlpha
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.tunjid.demo.common.app.demos.AccumulatedOffsetNestedScrollConnectionDemoScreen
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.BackPreviewDemoScreen
 import com.tunjid.demo.common.app.demos.ConstrainedPlacementDemoScreen
@@ -272,6 +276,21 @@ enum class Screen(
         ),
         demoUI = { currentScreen, _, pop ->
             PointerOffsetLazyStaggeredGridDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ),
+    AccumulatedOffsetNestedScrollConnectionDemoScreen(
+        title = "Accumulated Offset Nested Scroll Connection",
+        description = "Scroll and watch UI elements react.",
+        icons = listOf(
+            Icons.Default.TouchApp,
+            Icons.Default.Add,
+            Icons.AutoMirrored.Filled.CompareArrows,
+        ),
+        demoUI = { currentScreen, _, pop ->
+            AccumulatedOffsetNestedScrollConnectionDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )
