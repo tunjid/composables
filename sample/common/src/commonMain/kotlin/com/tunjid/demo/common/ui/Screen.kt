@@ -12,15 +12,17 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.HorizontalDistribute
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.OpenInFull
 import androidx.compose.material.icons.filled.OpenWith
+import androidx.compose.material.icons.filled.PanTool
+import androidx.compose.material.icons.filled.Pinch
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material.icons.filled.SpaceDashboard
 import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.TouchApp
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,6 +33,7 @@ import com.tunjid.demo.common.app.demos.ConstrainedPlacementDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.DemoSelectionScreen
 import com.tunjid.demo.common.app.demos.DragToDismissDemoScreen
+import com.tunjid.demo.common.app.demos.GestureZoomDemoScreen
 import com.tunjid.demo.common.app.demos.LazyGridDemoScreen
 import com.tunjid.demo.common.app.demos.LazyListDemoScreen
 import com.tunjid.demo.common.app.demos.LazyStaggeredGridDemoScreen
@@ -87,6 +90,21 @@ enum class Screen(
         ),
         demoUI = { currentScreen, _, pop ->
             DragToDismissDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ),
+    GestureZoomDemoScreen(
+        title = "Gesture Zoom",
+        description = "Pinch to zoom and pan around a composable",
+        icons = listOf(
+            Icons.Default.Pinch,
+            Icons.Default.PanTool,
+            Icons.Default.ZoomIn,
+        ),
+        demoUI = { currentScreen, _, pop ->
+            GestureZoomDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )
