@@ -32,12 +32,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -81,27 +80,24 @@ fun rememberCollapsingHeaderState(
     decayAnimationSpec: DecayAnimationSpec<Float>,
     snapAnimationSpec: AnimationSpec<Float> = tween(),
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
-): CollapsingHeaderState {
-    var wasCollapsed by rememberSaveable {
-        mutableStateOf(initialStatus == CollapsingHeaderStatus.Collapsed)
-    }
-    return remember {
+): CollapsingHeaderState = rememberSaveable(
+    saver = CollapsingHeaderState.Saver(
+        collapsedHeight = collapsedHeight,
+        thresholdFraction = thresholdFraction,
+        snapAnimationSpec = snapAnimationSpec,
+        decayAnimationSpec = decayAnimationSpec,
+    ),
+    init = {
         CollapsingHeaderState(
             collapsedHeight = collapsedHeight,
             initialExpandedHeight = initialExpandedHeight,
             thresholdFraction = thresholdFraction,
             decayAnimationSpec = decayAnimationSpec,
             snapAnimationSpec = snapAnimationSpec,
-            initialStatus =
-            if (wasCollapsed) CollapsingHeaderStatus.Collapsed
-            else CollapsingHeaderStatus.Expanded,
+            initialStatus = initialStatus,
         )
-    }.also {
-        SideEffect {
-            wasCollapsed = it.progress > thresholdFraction
-        }
     }
-}
+)
 
 /**
  * State for managing the [CollapsingHeaderLayout] composable.
@@ -122,7 +118,7 @@ fun rememberCollapsingHeaderState(
 class CollapsingHeaderState(
     collapsedHeight: Float,
     initialExpandedHeight: Float,
-    thresholdFraction: Float,
+    private val thresholdFraction: Float,
     decayAnimationSpec: DecayAnimationSpec<Float>,
     snapAnimationSpec: AnimationSpec<Float> = tween(),
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
@@ -204,6 +200,34 @@ class CollapsingHeaderState(
     private fun currentDraggableAnchors() = DraggableAnchors {
         CollapsingHeaderStatus.Collapsed at collapsedHeight
         CollapsingHeaderStatus.Expanded at expandedHeight
+    }
+
+    companion object {
+        /**
+         * The default [Saver] implementation for [CollapsingHeaderState].
+         */
+        fun Saver(
+            collapsedHeight: Float,
+            thresholdFraction: Float,
+            snapAnimationSpec: AnimationSpec<Float>,
+            decayAnimationSpec: DecayAnimationSpec<Float>,
+        ) = listSaver<CollapsingHeaderState, Float>(
+            save = { headerState ->
+                listOf(headerState.expandedHeight, headerState.progress)
+            },
+            restore = { (expandedHeight, progress) ->
+                CollapsingHeaderState(
+                    collapsedHeight = collapsedHeight,
+                    initialExpandedHeight = expandedHeight,
+                    thresholdFraction = thresholdFraction,
+                    snapAnimationSpec = snapAnimationSpec,
+                    decayAnimationSpec = decayAnimationSpec,
+                    initialStatus =
+                    if (progress > thresholdFraction) CollapsingHeaderStatus.Collapsed
+                    else CollapsingHeaderStatus.Expanded,
+                )
+            }
+        )
     }
 }
 
