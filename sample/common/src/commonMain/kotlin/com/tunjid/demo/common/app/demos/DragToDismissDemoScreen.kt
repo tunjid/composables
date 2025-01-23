@@ -109,7 +109,7 @@ private fun ColorSelectionGrid(
                     item = item,
                     modifier = Modifier
                         .sharedElement(
-                            state = sharedTransitionScope.rememberSharedContentState(
+                            sharedContentState = sharedTransitionScope.rememberSharedContentState(
                                 key = item.id
                             ),
                             animatedVisibilityScope = animatedContentScope,
@@ -141,7 +141,7 @@ private fun DragToDismissContainer(
             modifier = Modifier
                 .offset { dragToDismissState.offset.round() }
                 .sharedElement(
-                    state = sharedTransitionScope.rememberSharedContentState(key = item.id),
+                    sharedContentState = sharedTransitionScope.rememberSharedContentState(key = item.id),
                     animatedVisibilityScope = animatedContentScope,
                 )
                 .align(Alignment.Center)
