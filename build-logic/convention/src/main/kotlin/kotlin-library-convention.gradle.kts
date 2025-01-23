@@ -38,7 +38,7 @@ plugins {
 }
 
 kotlin {
-    android()
+    androidTarget()
     jvm("desktop")
     sourceSets {
         all {
@@ -60,9 +60,6 @@ kotlin {
         }
     }
     configureKotlinJvm()
-    configurations.all {
-        coerceComposeVersion(this)
-    }
 }
 
 // a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273

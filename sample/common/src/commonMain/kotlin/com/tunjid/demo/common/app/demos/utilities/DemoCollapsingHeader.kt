@@ -1,7 +1,6 @@
 package com.tunjid.demo.common.app.demos.utilities
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -51,8 +50,7 @@ internal fun DemoCollapsingHeader(
             WindowInsets.statusBars.getBottom(density).toFloat()
     val headerState = rememberCollapsingHeaderState(
         collapsedHeight = collapsedHeight,
-        initialExpandedHeight = with(density) { 400.dp.toPx() },
-        decayAnimationSpec = splineBasedDecay(density)
+        initialExpandedHeight = with(density) { 400.dp.toPx() }
     )
 
     val animatedColor by animateColorAsState(
