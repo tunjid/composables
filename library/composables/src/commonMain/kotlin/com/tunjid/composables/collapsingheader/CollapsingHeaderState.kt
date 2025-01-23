@@ -17,12 +17,15 @@
 package com.tunjid.composables.collapsingheader
 
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.DecayAnimationSpec
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults.PositionalThreshold
+import androidx.compose.foundation.gestures.AnchoredDraggableDefaults.SnapAnimationSpec
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.TargetedFlingBehavior
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.rememberScrollableState
@@ -46,6 +49,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.util.packFloats
@@ -64,40 +69,46 @@ enum class CollapsingHeaderStatus {
  * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
  * measured. This should be an estimate, the expanded height is determined by the size of
  * headerContent in [CollapsingHeaderLayout].
- * @param thresholdFraction the fraction of the distance that must be covered between the
- * [CollapsingHeaderStatus.Collapsed] and [CollapsingHeaderStatus.Expanded] states after which
- * the header should transition to the next state.
- * @param decayAnimationSpec the animation spec that will be used when flinging with a large enough
- * velocity to reach or cross between expanded and collapsed states.
- * @param snapAnimationSpec the animation spec used to animate between collapsed and expanded
- * states.
  */
 @Composable
 fun rememberCollapsingHeaderState(
     collapsedHeight: Float,
     initialExpandedHeight: Float,
-    thresholdFraction: Float = 0.5f,
-    decayAnimationSpec: DecayAnimationSpec<Float>,
-    snapAnimationSpec: AnimationSpec<Float> = tween(),
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
 ): CollapsingHeaderState = rememberSaveable(
     saver = CollapsingHeaderState.Saver(
         collapsedHeight = collapsedHeight,
-        thresholdFraction = thresholdFraction,
-        snapAnimationSpec = snapAnimationSpec,
-        decayAnimationSpec = decayAnimationSpec,
     ),
     init = {
         CollapsingHeaderState(
             collapsedHeight = collapsedHeight,
             initialExpandedHeight = initialExpandedHeight,
-            thresholdFraction = thresholdFraction,
-            decayAnimationSpec = decayAnimationSpec,
-            snapAnimationSpec = snapAnimationSpec,
             initialStatus = initialStatus,
         )
     }
 )
+
+/**
+ * remembers the state for managing the [CollapsingHeaderLayout] composable.
+ * @param collapsedHeight: the height of the header when collapsed.
+ * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
+ * measured. This should be an estimate, the expanded height is determined by the size of
+ * headerContent in [CollapsingHeaderLayout].
+ */
+@Suppress("unused")
+@Composable
+fun rememberCollapsingHeaderState(
+    collapsedHeight: Density.() -> Float,
+    initialExpandedHeight: Density.() -> Float,
+    initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
+): CollapsingHeaderState {
+    val density = LocalDensity.current
+    return rememberCollapsingHeaderState(
+        collapsedHeight = density.collapsedHeight(),
+        initialExpandedHeight = density.initialExpandedHeight(),
+        initialStatus = initialStatus,
+    )
+}
 
 /**
  * State for managing the [CollapsingHeaderLayout] composable.
@@ -105,22 +116,11 @@ fun rememberCollapsingHeaderState(
  * @param initialExpandedHeight: the initial expanded height of the expanded header before it is
  * measured. This should be an estimate, the expanded height is determined by the size of
  * headerContent in [CollapsingHeaderLayout].
- * @param thresholdFraction the fraction of the distance that must be covered between the
- * [CollapsingHeaderStatus.Collapsed] and [CollapsingHeaderStatus.Expanded] states after which
- * the header should transition to the next state.
- * @param decayAnimationSpec the animation spec that will be used when flinging with a large enough
- * velocity to reach or cross between expanded and collapsed states.
- * @param snapAnimationSpec the animation spec used to animate between collapsed and expanded
- * states.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Stable
 class CollapsingHeaderState(
     collapsedHeight: Float,
     initialExpandedHeight: Float,
-    private val thresholdFraction: Float,
-    decayAnimationSpec: DecayAnimationSpec<Float>,
-    snapAnimationSpec: AnimationSpec<Float> = tween(),
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
 ) {
 
@@ -170,11 +170,7 @@ class CollapsingHeaderState(
 
     internal val anchoredDraggableState = AnchoredDraggableState(
         initialValue = initialStatus,
-        positionalThreshold = { distance: Float -> distance * thresholdFraction },
-        velocityThreshold = { 100f },
-        snapAnimationSpec = snapAnimationSpec,
-        decayAnimationSpec = decayAnimationSpec,
-        anchors = currentDraggableAnchors()
+        anchors = currentDraggableAnchors(),
     )
 
     /**
@@ -208,9 +204,6 @@ class CollapsingHeaderState(
          */
         fun Saver(
             collapsedHeight: Float,
-            thresholdFraction: Float,
-            snapAnimationSpec: AnimationSpec<Float>,
-            decayAnimationSpec: DecayAnimationSpec<Float>,
         ) = listSaver<CollapsingHeaderState, Float>(
             save = { headerState ->
                 listOf(headerState.expandedHeight, headerState.progress)
@@ -219,14 +212,37 @@ class CollapsingHeaderState(
                 CollapsingHeaderState(
                     collapsedHeight = collapsedHeight,
                     initialExpandedHeight = expandedHeight,
-                    thresholdFraction = thresholdFraction,
-                    snapAnimationSpec = snapAnimationSpec,
-                    decayAnimationSpec = decayAnimationSpec,
                     initialStatus =
-                    if (progress > thresholdFraction) CollapsingHeaderStatus.Collapsed
+                    if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
                     else CollapsingHeaderStatus.Expanded,
                 )
             }
+        )
+
+        /**
+         * Create and remember a [TargetedFlingBehavior] for use with [CollapsingHeaderLayout] that
+         * will find the appropriate [CollapsingHeaderStatus] based on the velocity
+         * and [positionalThreshold] when performing a fling, and settle to that state.
+         *
+         * @see [AnchoredDraggableDefaults.flingBehavior]
+         *
+         * @param state The state the fling will be performed on
+         * @param positionalThreshold The positional threshold, in px, to be used when calculating the
+         *   target state while a drag is in progress and when settling after the drag ends. This is the
+         *   distance from the start of a transition. It will be, depending on the direction of the
+         *   interaction, added or subtracted from/to the origin offset. It should always be a positive
+         *   value.
+         * @param animationSpec The animation spec used to perform the settling
+         */
+        @Composable
+        fun flingBehavior(
+            state: CollapsingHeaderState,
+            positionalThreshold: (totalDistance: Float) -> Float = PositionalThreshold,
+            animationSpec: AnimationSpec<Float> = SnapAnimationSpec,
+        ): TargetedFlingBehavior = AnchoredDraggableDefaults.flingBehavior(
+            state = state.anchoredDraggableState,
+            positionalThreshold = positionalThreshold,
+            animationSpec = animationSpec
         )
     }
 }
@@ -242,15 +258,20 @@ class CollapsingHeaderState(
  *
  * @param state the backing [CollapsingHeaderState]
  * @param modifier the modifier for the layout.
+ * @param flingBehavior Optionally configure how the header performs flings. By
+ *   default ir, this will snap to the collapsed or expanded states considering the velocity
+ *   thresholds and positional thresholds.
  * @param headerContent the composable to render in the header.
  * @param body the composable to render in the body. It should support nested scrolling.
  * @sample com.tunjid.demo.common.app.demos.utilities.DemoCollapsingHeader
  */
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 fun CollapsingHeaderLayout(
     state: CollapsingHeaderState,
     modifier: Modifier = Modifier,
+    flingBehavior: TargetedFlingBehavior = CollapsingHeaderState.flingBehavior(
+        state
+    ),
     headerContent: @Composable () -> Unit,
     body: @Composable () -> Unit,
 ) {
@@ -289,10 +310,14 @@ fun CollapsingHeaderLayout(
                 }
                 .anchoredDraggable(
                     state = state.anchoredDraggableState,
-                    orientation = Orientation.Vertical
+                    orientation = Orientation.Vertical,
+                    flingBehavior = flingBehavior,
                 )
                 .nestedScroll(
-                    connection = state.anchoredDraggableState.nestedScrollConnection(),
+                    connection = state.anchoredDraggableState.nestedScrollConnection(
+                        scrollableState = scrollableState,
+                        flingBehavior = flingBehavior,
+                    ),
                 ),
             content = {
                 body()
@@ -327,8 +352,10 @@ private val Anchors.collapsedHeight
 private val Anchors.expandedHeight
     get() = unpackFloat2(packedValue)
 
-@OptIn(ExperimentalFoundationApi::class)
-private fun AnchoredDraggableState<CollapsingHeaderStatus>.nestedScrollConnection() =
+private fun AnchoredDraggableState<CollapsingHeaderStatus>.nestedScrollConnection(
+    scrollableState: ScrollableState,
+    flingBehavior: FlingBehavior,
+) =
     object : NestedScrollConnection {
         override fun onPreScroll(
             available: Offset,
@@ -348,7 +375,11 @@ private fun AnchoredDraggableState<CollapsingHeaderStatus>.nestedScrollConnectio
             consumed: Velocity,
             available: Velocity,
         ): Velocity {
-            settle(velocity = available.y)
+            scrollableState.scroll {
+                with(flingBehavior) {
+                    performFling(initialVelocity = available.y)
+                }
+            }
             return super.onPostFling(consumed, available)
         }
     }
