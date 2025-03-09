@@ -51,6 +51,8 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                implementation(libs.androidx.collections)
+
                 implementation(libs.kotlinx.coroutines.core)
 
                 implementation(libs.jetbrains.compose.runtime)

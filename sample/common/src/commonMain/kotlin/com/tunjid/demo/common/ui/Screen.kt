@@ -5,6 +5,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AlignVerticalBottom
+import androidx.compose.material.icons.filled.AlignVerticalTop
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.AspectRatio
@@ -18,9 +20,12 @@ import androidx.compose.material.icons.filled.PanTool
 import androidx.compose.material.icons.filled.Pinch
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material.icons.filled.SpaceDashboard
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Swipe
 import androidx.compose.material.icons.filled.SwipeVertical
 import androidx.compose.material.icons.filled.TouchApp
+import androidx.compose.material.icons.filled.VerticalAlignBottom
+import androidx.compose.material.icons.filled.VerticalAlignTop
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.runtime.Composable
@@ -28,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.tunjid.demo.common.app.demos.AccumulatedOffsetNestedScrollConnectionDemoScreen
 import com.tunjid.demo.common.app.demos.AlignmentInterpolationDemoScreen
+import com.tunjid.demo.common.app.demos.ArrangementInterpolationDemoScreen
 import com.tunjid.demo.common.app.demos.BackPreviewDemoScreen
 import com.tunjid.demo.common.app.demos.ConstrainedPlacementDemoScreen
 import com.tunjid.demo.common.app.demos.ContentScaleInterpolationDemoScreen
@@ -134,6 +140,21 @@ enum class Screen(
         ),
         demoUI = { currentScreen, _, pop ->
             AlignmentInterpolationDemoScreen(
+                screen = currentScreen,
+                onBackPressed = pop,
+            )
+        },
+    ),
+    ArrangementInterpolationDemoScreen(
+        title = "Arrangement Interpolation",
+        description = "Select an arrangement to animate the items on the screen to match it.",
+        icons = listOf(
+            Icons.Default.VerticalAlignTop,
+            Icons.Default.VerticalAlignBottom,
+            Icons.Default.SwapHoriz,
+        ),
+        demoUI = { currentScreen, _, pop ->
+            ArrangementInterpolationDemoScreen(
                 screen = currentScreen,
                 onBackPressed = pop,
             )

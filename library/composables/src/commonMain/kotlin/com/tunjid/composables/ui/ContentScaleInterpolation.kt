@@ -1,20 +1,15 @@
 package com.tunjid.composables.ui
 
 import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.lerp
+import com.tunjid.composables.ui.Interpolator.Companion.rememberUpdatedInterpolator
 
 /**
  * Returns a [ContentScale] that animates smoothly between the initial value this method
@@ -29,74 +24,22 @@ import androidx.compose.ui.layout.lerp
 fun ContentScale.animate(
     animationSpec: FiniteAnimationSpec<Float> = spring(),
 ): ContentScale {
-    val updatedAnimationSpec by rememberUpdatedState(animationSpec)
-    var interpolation by remember {
-        mutableFloatStateOf(1f)
-    }
-    var previousScale by remember {
-        mutableStateOf(this)
-    }
-
-    val currentScale by remember {
-        mutableStateOf(this)
-    }.apply {
-        if (value != this@animate) {
-            previousScale = if (interpolation == 1f) {
-                // Value has changed, trigger an animation
-                value
-            } else {
-                // A previous animation has been interrupted. Capture the present state,
-                // and restart the animation.
-                lerp(
-                    fraction = interpolation,
-                    start = previousScale,
-                    stop = value,
-                )
-            }
-            // Reset the interpolation
-            interpolation = 0f
+    val interpolation = rememberUpdatedInterpolator(
+        value = this@animate,
+        animationSpec = animationSpec,
+        interpolatedSnapshot = { previous, current, fraction ->
+            lerpedContentScale(
+                start = { previous },
+                stop = { current },
+                fraction = { fraction },
+            )
         }
-        // Set the current value, this will also stop any call to lerp above from recomposing
-        value = this@animate
-    }
-
-    LaunchedEffect(currentScale) {
-        animate(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = updatedAnimationSpec,
-            block = { progress, _ ->
-                interpolation = progress
-            },
-        )
-    }
-
-    return remember {
-        object : ContentScale {
-            override fun computeScaleFactor(
-                srcSize: Size,
-                dstSize: Size,
-            ): ScaleFactor {
-                val start = previousScale.computeScaleFactor(
-                    srcSize = srcSize,
-                    dstSize = dstSize,
-                )
-                val stop = currentScale.computeScaleFactor(
-                    srcSize = srcSize,
-                    dstSize = dstSize,
-                )
-
-                return when (start) {
-                    stop -> stop
-                    else -> lerp(
-                        start = start,
-                        stop = stop,
-                        fraction = interpolation,
-                    )
-                }
-            }
-        }
-    }
+    )
+    return lerp(
+        interpolation.previous,
+        interpolation.current,
+        interpolation.interpolation,
+    )
 }
 
 /**
@@ -117,24 +60,36 @@ fun lerp(
     stop: ContentScale,
     fraction: Float,
 ): ContentScale {
-    val updatedFraction by rememberUpdatedState(fraction)
+    val updatedStart = rememberUpdatedState(start)
+    val updatedStop = rememberUpdatedState(stop)
+    val updatedFraction = rememberUpdatedState(fraction)
     return remember {
-        object : ContentScale {
-            override fun computeScaleFactor(
-                srcSize: Size,
-                dstSize: Size,
-            ): ScaleFactor =
-                lerp(
-                    start = start.computeScaleFactor(
-                        srcSize = srcSize,
-                        dstSize = dstSize,
-                    ),
-                    stop = stop.computeScaleFactor(
-                        srcSize = srcSize,
-                        dstSize = dstSize,
-                    ),
-                    fraction = updatedFraction,
-                )
-        }
+        lerpedContentScale(
+            start = updatedStart::value,
+            stop = updatedStop::value,
+            fraction = updatedFraction::value,
+        )
     }
+}
+
+private inline fun lerpedContentScale(
+    crossinline start: () -> ContentScale,
+    crossinline stop: () -> ContentScale,
+    crossinline fraction: () -> Float,
+) = object : ContentScale {
+    override fun computeScaleFactor(
+        srcSize: Size,
+        dstSize: Size,
+    ): ScaleFactor =
+        lerp(
+            start = start().computeScaleFactor(
+                srcSize = srcSize,
+                dstSize = dstSize,
+            ),
+            stop = stop().computeScaleFactor(
+                srcSize = srcSize,
+                dstSize = dstSize,
+            ),
+            fraction = fraction(),
+        )
 }
