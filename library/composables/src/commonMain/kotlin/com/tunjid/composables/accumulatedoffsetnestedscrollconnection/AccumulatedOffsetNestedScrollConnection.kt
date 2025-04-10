@@ -1,13 +1,16 @@
 package com.tunjid.composables.accumulatedoffsetnestedscrollconnection
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -49,6 +52,16 @@ fun rememberAccumulatedOffsetNestedScrollConnection(
             )
         }
     )
+    LaunchedEffect(density) {
+        snapshotFlow {
+            connection.offset.packedValue == connection.maxOffset.packedValue
+                    || connection.offset.packedValue == connection.minOffset.packedValue
+        }
+            .collect {
+                connection.maxOffset = density.maxOffset()
+                connection.minOffset = density.minOffset()
+            }
+    }
     return connection
 }
 
@@ -66,11 +79,14 @@ fun rememberAccumulatedOffsetNestedScrollConnection(
  */
 @Stable
 class AccumulatedOffsetNestedScrollConnection(
-    private val maxOffset: Offset,
-    private val minOffset: Offset,
+    maxOffset: Offset,
+    minOffset: Offset,
     private val invert: Boolean = false,
     initialOffset: Offset = Offset.Zero,
 ) : NestedScrollConnection {
+
+    var maxOffset by mutableStateOf(maxOffset)
+    var minOffset by mutableStateOf(minOffset)
 
     var offset by mutableStateOf(initialOffset)
         private set
