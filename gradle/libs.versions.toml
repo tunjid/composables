@@ -13,7 +13,7 @@ kotlin = "2.1.20"
 kotlinxCoroutines = "1.10.2"
 googleMaterial = "1.12.0"
 tunjidMutator = "1.1.0"
-tunjidTreeNav = "0.0.12"
+tunjidTreeNav = "0.0.22"
 turbine = "1.1.0"
 
 [libraries]
@@ -52,6 +52,7 @@ tunjid-mutator-coroutines-common = { group = "com.tunjid.mutator", name = "corou
 tunjid-mutator-coroutines-jvm = { group = "com.tunjid.mutator", name = "coroutines-jvm", version.ref = "tunjidMutator" }
 tunjid-treenav = { group = "com.tunjid.treenav", name = "treenav", version.ref = "tunjidTreeNav" }
 tunjid-treenav-compose = { group = "com.tunjid.treenav", name = "compose", version.ref = "tunjidTreeNav" }
+tunjid-treenav-compose-threepane = { group = "com.tunjid.treenav", name = "compose-threepane", version.ref = "tunjidTreeNav" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
