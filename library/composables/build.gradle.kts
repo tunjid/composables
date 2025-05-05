@@ -17,7 +17,9 @@
 plugins {
     kotlin("multiplatform")
     id("publishing-library-convention")
+    id("android-library-convention")
     id("kotlin-jvm-convention")
+    id("kotlin-library-convention")
     id("maven-publish")
     signing
     id("org.jetbrains.dokka")
@@ -25,29 +27,13 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-kotlin {
-    applyDefaultHierarchyTemplate()
-    js(IR) {
-        nodejs()
-        browser()
+android {
+    buildFeatures {
+        compose = true
     }
-    jvm {
-        withJava()
-        testRuns["test"].executionTask.configure {
-            useJUnit()
-        }
-    }
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64(),
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "composables"
-            isStatic = true
-        }
-    }
+}
 
+kotlin {
     sourceSets {
         commonMain {
             dependencies {
@@ -67,11 +53,6 @@ kotlin {
                 implementation(libs.cashapp.turbine)
             }
         }
-        val jvmMain by getting
-        val jvmTest by getting
-
-        val jsMain by getting
-        val jsTest by getting
 
         all {
             languageSettings.apply {
