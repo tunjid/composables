@@ -40,6 +40,7 @@ kotlin {
 
                 api(libs.tunjid.treenav)
                 api(libs.tunjid.treenav.compose)
+                api(libs.tunjid.treenav.compose.threepane)
             }
         }
         named("androidMain") {
