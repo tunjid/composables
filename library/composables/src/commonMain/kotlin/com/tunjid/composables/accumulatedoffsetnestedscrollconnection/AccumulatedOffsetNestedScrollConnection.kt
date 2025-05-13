@@ -3,7 +3,6 @@ package com.tunjid.composables.accumulatedoffsetnestedscrollconnection
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -37,8 +36,8 @@ import kotlin.math.min
 fun rememberAccumulatedOffsetNestedScrollConnection(
     maxOffset: Density.() -> Offset,
     minOffset: Density.() -> Offset,
-    invert: Boolean = false,
     initialOffset: Offset = Offset.Zero,
+    invert: Boolean = false,
 ): AccumulatedOffsetNestedScrollConnection {
     val density = LocalDensity.current
     val connection = rememberSaveable(
@@ -81,8 +80,8 @@ fun rememberAccumulatedOffsetNestedScrollConnection(
 class AccumulatedOffsetNestedScrollConnection(
     maxOffset: Offset,
     minOffset: Offset,
-    private val invert: Boolean = false,
     initialOffset: Offset = Offset.Zero,
+    private val invert: Boolean = false,
 ) : NestedScrollConnection {
 
     var maxOffset by mutableStateOf(maxOffset)
@@ -128,10 +127,14 @@ class AccumulatedOffsetNestedScrollConnection(
                         val1 = connection.minOffset.x,
                         val2 = connection.minOffset.y,
                     ),
+                    packFloats(
+                        val1 = connection.offset.x,
+                        val2 = connection.offset.y,
+                    ),
                     if (connection.invert) 1 else 0,
                 )
             },
-            restore = { (packedMaxOffset, packedMinOffset, invertLong) ->
+            restore = { (packedMaxOffset, packedMinOffset, packedInitialOffset, invertLong) ->
                 AccumulatedOffsetNestedScrollConnection(
                     maxOffset = Offset(
                         unpackFloat1(packedMaxOffset),
@@ -140,6 +143,10 @@ class AccumulatedOffsetNestedScrollConnection(
                     minOffset = Offset(
                         unpackFloat1(packedMinOffset),
                         unpackFloat2(packedMinOffset),
+                    ),
+                    initialOffset = Offset(
+                        unpackFloat1(packedInitialOffset),
+                        unpackFloat2(packedInitialOffset),
                     ),
                     invert = invertLong == 1L
                 )

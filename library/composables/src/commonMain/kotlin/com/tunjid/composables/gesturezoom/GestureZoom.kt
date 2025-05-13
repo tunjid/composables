@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -17,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
@@ -111,6 +114,9 @@ class GestureZoomState(
         private set
 
     var size by mutableStateOf(IntSize.Zero)
+        private set
+
+    var downPointerCount by mutableIntStateOf(0)
         private set
 
     val panOffset
@@ -294,6 +300,19 @@ class GestureZoomState(
          */
         fun Modifier.gestureZoomable(state: GestureZoomState): Modifier =
             this
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        // Count pointers while suspending till next pointer event
+                        // Scope is automatically managed and cancelled by the compose runtime
+                        while (true) {
+                            state.downPointerCount += when (awaitPointerEvent().type) {
+                                PointerEventType.Press -> 1
+                                PointerEventType.Release -> -1
+                                else -> 0
+                            }
+                        }
+                    }
+                }
                 .layout { measurable, constraints ->
                     val placeable = measurable.measure(
                         if (state.options.scale is Options.Scale.Layout) {

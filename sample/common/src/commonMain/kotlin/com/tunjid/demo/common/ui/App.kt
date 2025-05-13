@@ -63,11 +63,11 @@ import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.demo.common.app.demos.utilities.isActive
 import com.tunjid.demo.common.ui.AppState.Companion.rememberMultiPaneDisplayState
 import com.tunjid.treenav.StackNav
-import com.tunjid.treenav.backStack
 import com.tunjid.treenav.compose.MultiPaneDisplay
 import com.tunjid.treenav.compose.MultiPaneDisplayScope
 import com.tunjid.treenav.compose.MultiPaneDisplayState
 import com.tunjid.treenav.compose.moveablesharedelement.MovableSharedElementHostState
+import com.tunjid.treenav.compose.multiPaneDisplayBackstack
 import com.tunjid.treenav.compose.threepane.ThreePane
 import com.tunjid.treenav.compose.threepane.threePaneEntry
 import com.tunjid.treenav.compose.threepane.transforms.backPreviewTransform
@@ -75,9 +75,9 @@ import com.tunjid.treenav.compose.threepane.transforms.threePanedAdaptiveTransfo
 import com.tunjid.treenav.compose.threepane.transforms.threePanedMovableSharedElementTransform
 import com.tunjid.treenav.compose.transforms.Transform
 import com.tunjid.treenav.compose.transforms.paneModifierTransform
-import com.tunjid.treenav.current
 import com.tunjid.treenav.pop
 import com.tunjid.treenav.push
+import com.tunjid.treenav.requireCurrent
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -270,16 +270,8 @@ class AppState {
                 MultiPaneDisplayState(
                     panes = ThreePane.entries.toList(),
                     navigationState = navigationState,
-                    backStackTransform = { stackNav ->
-                        stackNav.backStack(
-                            includeCurrentDestinationChildren = true,
-                            placeChildrenBeforeParent = true,
-                        )
-                            .filterIsInstance<Screen>()
-                    },
-                    destinationTransform = {
-                        it.current()!!
-                    },
+                    backStackTransform = StackNav::multiPaneDisplayBackstack,
+                    destinationTransform = StackNav::requireCurrent,
                     entryProvider = {
                         threePaneEntry(
                             paneMapping = { destination ->
