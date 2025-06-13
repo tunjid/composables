@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -42,7 +43,7 @@ internal fun DemoCollapsingHeader(
     screen: Screen,
     item: ColorItem,
     onBackPressed: () -> Unit,
-    body: @Composable (collapsedHeight: Float) -> Unit,
+    body: @Composable BoxScope.() -> Unit,
 ) {
     val density = LocalDensity.current
     val collapsedHeight = with(density) { 56.dp.toPx() } +
@@ -102,7 +103,7 @@ internal fun DemoCollapsingHeader(
             }
         },
         body = {
-            body(collapsedHeight)
+            body()
         }
     )
 }
