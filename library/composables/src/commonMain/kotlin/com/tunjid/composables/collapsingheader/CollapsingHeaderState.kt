@@ -16,13 +16,17 @@
 
 package com.tunjid.composables.collapsingheader
 
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.gestures.animateToWithDecay
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.gestures.snapTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -32,6 +36,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -271,13 +277,12 @@ fun CollapsingHeaderLayout(
 ) {
     Box(
         modifier = modifier
-            .anchoredDraggable(
-                state = state.anchoredDraggableState,
+            .scrollable(
+                state = remember(state::scrollableState),
                 orientation = Orientation.Vertical,
-                flingBehavior = state.flingBehavior,
             )
             .nestedScroll(
-                connection = state.nestedScrollConnection(),
+                connection = remember(state::nestedScrollConnection),
             ),
         content = {
             Box(
@@ -336,6 +341,58 @@ private val Anchors.collapsedHeight
 
 private val Anchors.expandedHeight
     get() = unpackFloat2(packedValue)
+
+private fun CollapsingHeaderState.scrollableState() = object : ScrollableState {
+
+    private val isScrollingState = mutableStateOf(false)
+    private val isLastScrollForwardState = mutableStateOf(false)
+    private val isLastScrollBackwardState = mutableStateOf(false)
+
+    private val scrollScope = object : ScrollScope {
+        override fun scrollBy(pixels: Float): Float {
+            if (pixels.isNaN()) return 0f
+            val delta = anchoredDraggableState.dispatchRawDelta(pixels)
+
+            isLastScrollForwardState.value = delta > 0
+            isLastScrollBackwardState.value = delta < 0
+
+            return delta
+        }
+    }
+
+    override val isScrollInProgress: Boolean
+        get() = isScrollingState.value || anchoredDraggableState.isAnimationRunning
+
+    override val lastScrolledForward: Boolean
+        get() = isLastScrollForwardState.value
+
+    override val lastScrolledBackward: Boolean
+        get() = isLastScrollBackwardState.value
+
+    override val canScrollForward: Boolean
+        get() = progress != 0f
+
+    override val canScrollBackward: Boolean
+        get() = progress != 1f
+
+    override fun dispatchRawDelta(
+        delta: Float
+    ): Float = anchoredDraggableState.dispatchRawDelta(delta)
+
+    override suspend fun scroll(
+        scrollPriority: MutatePriority,
+        block: suspend ScrollScope.() -> Unit
+    ) {
+        anchoredDraggableState.anchoredDrag(scrollPriority) {
+            isScrollingState.value = true
+            try {
+                scrollScope.block()
+            } finally {
+                isScrollingState.value = false
+            }
+        }
+    }
+}
 
 private fun CollapsingHeaderState.nestedScrollConnection() =
     object : NestedScrollConnection {
