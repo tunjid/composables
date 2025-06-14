@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -25,12 +24,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import com.tunjid.composables.lazy.pendingScrollOffsetState
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
@@ -48,6 +51,8 @@ fun DemoSelectionScreen(
     val scrollbarState = gridState.scrollbarState(
         itemsAvailable = screens.size
     )
+    var pendingScrollOffset by gridState.pendingScrollOffsetState()
+    val density = LocalDensity.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -69,6 +74,7 @@ fun DemoSelectionScreen(
             ) {
                 items(
                     items = screens,
+                    key = Screen::id,
                     itemContent = { screen ->
                         DemoScreenItem(
                             screen = screen,
@@ -79,7 +85,15 @@ fun DemoSelectionScreen(
                                     vertical = 8.dp,
                                     horizontal = 16.dp,
                                 )
-                                .clickable { onScreenSelected(screen) },
+                                .clickable {
+                                    pendingScrollOffset = gridState.layoutInfo
+                                        .visibleItemsInfo
+                                        .first { it.key == screen.id }
+                                        .offset
+                                        .y
+                                        .toFloat() + with(density) { 8.dp.toPx() }
+                                    onScreenSelected(screen)
+                                },
                         )
                     }
                 )
@@ -98,7 +112,6 @@ fun DemoSelectionScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DemoScreenItem(
     screen: Screen,
