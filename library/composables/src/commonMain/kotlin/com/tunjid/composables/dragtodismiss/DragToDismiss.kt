@@ -109,7 +109,6 @@ fun rememberUpdatedDragToDismissState(
  *
  * @sample com.tunjid.demo.common.app.demos.DragToDismissContainer
  */
-@Composable
 fun Modifier.dragToDismiss(
     state: DragToDismissState,
     shouldDismiss: (Offset, Velocity) -> Boolean,
