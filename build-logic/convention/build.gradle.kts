@@ -39,4 +39,5 @@ dependencies {
     implementation(libs.android.gradlePlugin)
     implementation(libs.compose.compiler.plugin)
     implementation(libs.dokka.gradlePlugin)
+    implementation(libs.maven.publish.gradlePlugin)
 }

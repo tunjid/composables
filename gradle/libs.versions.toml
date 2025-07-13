@@ -1,20 +1,21 @@
 [versions]
-androidGradlePlugin = "8.9.2"
+androidGradlePlugin = "8.9.3"
 androidxActivity = "1.11.0-rc01"
-androidxAppCompat = "1.7.0"
+androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.3.4"
 androidxCore = "1.16.0"
 androidx-collections = "1.5.0"
 dokka = "2.0.0"
-jetbrainsCompose = "1.8.0"
+jetbrainsCompose = "1.8.2"
 jetbrainsComposeMaterialIcons = "1.7.3"
 junit4 = "4.13.2"
 kotlin = "2.1.20"
 kotlinxCoroutines = "1.10.2"
 googleMaterial = "1.12.0"
 tunjidMutator = "1.1.0"
-tunjidTreeNav = "0.0.25"
+tunjidTreeNav = "0.0.43"
 turbine = "1.1.0"
+mavenPublish = "0.33.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -46,6 +47,7 @@ kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+maven-publish-gradlePlugin = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "mavenPublish" }
 tunjid-mutator-core-common = { group = "com.tunjid.mutator", name = "core", version.ref = "tunjidMutator" }
 tunjid-mutator-core-jvm = { group = "com.tunjid.mutator", name = "core-jvm", version.ref = "tunjidMutator" }
 tunjid-mutator-coroutines-common = { group = "com.tunjid.mutator", name = "coroutines", version.ref = "tunjidMutator" }
