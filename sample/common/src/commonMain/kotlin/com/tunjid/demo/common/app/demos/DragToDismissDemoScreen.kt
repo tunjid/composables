@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import com.tunjid.composables.dragtodismiss.DragToDismissState
 import com.tunjid.composables.dragtodismiss.dragToDismiss
+import com.tunjid.composables.dragtodismiss.rememberUpdatedDragToDismissState
 import com.tunjid.demo.common.app.demos.utilities.ColorItem
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.app.demos.utilities.pastelColors
@@ -50,7 +51,7 @@ fun DragToDismissDemoScreen(
         modifier = Modifier.fillMaxSize()
     ) SharedTransitionLayout@{
         var selectedItem by remember { mutableStateOf<ColorItem?>(null) }
-        val dragToDismissState = remember { DragToDismissState() }
+        val dragToDismissState = rememberUpdatedDragToDismissState()
 
         Column(
             modifier = Modifier.fillMaxSize()
@@ -150,7 +151,7 @@ private fun DragToDismissContainer(
                 .aspectRatio(1f)
                 .dragToDismiss(
                     state = dragToDismissState,
-                    dragThresholdCheck = { offset, _ ->
+                    shouldDismiss = { offset, _ ->
                         offset.getDistanceSquared() > with(density) {
                             240.dp.toPx().let { it * it }
                         }
