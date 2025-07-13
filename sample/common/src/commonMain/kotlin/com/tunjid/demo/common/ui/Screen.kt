@@ -5,8 +5,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AlignVerticalBottom
-import androidx.compose.material.icons.filled.AlignVerticalTop
 import androidx.compose.material.icons.filled.Animation
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.AspectRatio
@@ -339,4 +337,9 @@ enum class Screen(
 
     override val id: String
         get() = title
+
+    override val children: List<Node>
+        get() = listOfNotNull(
+            Demos.takeUnless { Demos == this }
+        )
 }
