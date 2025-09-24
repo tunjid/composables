@@ -123,11 +123,7 @@ fun App(
                 ) {
                     val splitPaneState = remember {
                         SplitPaneState(
-                            paneNavigationState = paneNavigationState,
-                        )
-                    }.also {
-                        it.update(
-                            paneNavigationState = paneNavigationState,
+                            paneNavigationState = this::paneNavigationState,
                         )
                     }
                     CompositionLocalProvider(
@@ -275,31 +271,24 @@ class AppState {
 
 @Stable
 internal class SplitPaneState(
-    paneNavigationState: PaneNavigationState<ThreePane, Screen>,
+    paneNavigationState: () -> PaneNavigationState<ThreePane, Screen>,
 ) {
 
-    private var paneNavigationState by mutableStateOf(paneNavigationState)
-
     internal val filteredPaneOrder by derivedStateOf {
-        PaneRenderOrder.filter { paneNavigationState.destinationIn(it) != null }
+        PaneRenderOrder.filter { paneNavigationState().destinationIn(it) != null }
     }
 
     internal val splitLayoutState = SplitLayoutState(
         orientation = Orientation.Horizontal,
-        maxCount = filteredPaneOrder.size,
-        initialVisibleCount = filteredPaneOrder.size,
+        maxCount = 2,
         minSize = 10.dp,
+        visibleCount = {
+            filteredPaneOrder.size
+        },
         keyAtIndex = { index ->
             filteredPaneOrder[index]
         }
     )
-
-    fun update(
-        paneNavigationState: PaneNavigationState<ThreePane, Screen>
-    ) {
-        this.paneNavigationState = paneNavigationState
-        splitLayoutState.visibleCount = filteredPaneOrder.size
-    }
 }
 
 internal val LocalSplitPaneState = staticCompositionLocalOf<SplitPaneState> {
