@@ -1,5 +1,7 @@
 package com.tunjid.demo.common.app.demos
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateBounds
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -24,16 +26,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,7 @@ import com.tunjid.demo.common.app.demos.utilities.pastelColors
 import com.tunjid.demo.common.ui.Screen
 import kotlin.math.max
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SplitLayoutDemoScreen(
     screen: Screen,
@@ -51,6 +55,7 @@ fun SplitLayoutDemoScreen(
 ) {
     var columnCount by remember { mutableIntStateOf(SPLIT_COUNT) }
     var rowCount by remember { mutableIntStateOf(SPLIT_COUNT) }
+    var dragging by remember { mutableStateOf(false) }
     val columnKeys = remember { mutableStateListOf(0, 1, 2) }
     val rowKeys = remember { mutableStateListOf(0, 1, 2) }
 
@@ -72,87 +77,92 @@ fun SplitLayoutDemoScreen(
                 )
             }
         )
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(16.dp))
-        ) {
-            val columnSplitLayoutState = remember {
-                SplitLayoutState(
-                    maxCount = SPLIT_COUNT,
-                    orientation = Orientation.Horizontal,
-                    keyAtIndex = { columnKeys[it] },
-                )
-            }
-            LaunchedEffect(columnCount) {
-                columnSplitLayoutState.visibleCount = columnCount
-            }
-            SplitLayout(
-                state = columnSplitLayoutState,
-                modifier = Modifier.fillMaxSize(),
-                itemSeparators = { outerIndex, offset ->
-                    PaneSeparator(
-                        splitLayoutState = columnSplitLayoutState,
-                        index = outerIndex,
-                        offset = offset,
-                    )
-                },
-                itemContent = { columnIndex ->
-                    val rowSplitLayoutState = remember {
-                        SplitLayoutState(
-                            maxCount = SPLIT_COUNT,
-                            orientation = Orientation.Vertical,
-                            keyAtIndex = { rowKeys[it] },
-                        )
-                    }
-                    LaunchedEffect(rowCount) {
-                        rowSplitLayoutState.visibleCount = rowCount
-                    }
-                    SplitLayout(
-                        state = rowSplitLayoutState,
-                        modifier = Modifier.fillMaxSize(),
-                        itemSeparators = { innerIndex, offset ->
-                            PaneSeparator(
-                                splitLayoutState = rowSplitLayoutState,
-                                index = innerIndex,
-                                offset = offset,
-                            )
-                        },
-                        itemContent = { rowIndex ->
-                            var clickCount by remember { mutableIntStateOf(0) }
-                            Box(
-                                modifier = Modifier
-                                    .background(
-                                        color = pickColor(
-                                            outerIndex = columnKeys[columnIndex],
-                                            innerIndex = rowKeys[rowIndex],
-                                        )
-                                    )
-                                    .fillMaxSize()
-                                    .clickable(
-                                        indication = ripple(),
-                                        interactionSource = remember {
-                                            MutableInteractionSource()
-                                        },
-                                        onClick = {
-                                            ++clickCount
-                                            columnKeys.shuffle()
-                                            rowKeys.shuffle()
-                                        },
-                                    )
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .align(Alignment.Center),
-                                    text = "$clickCount",
-                                    color = Color.Black,
-                                )
-                            }
-                        }
+        LookaheadScope {
+            val itemModifier =
+                if (dragging) Modifier
+                else Modifier.animateBounds(this)
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+                    .clip(RoundedCornerShape(16.dp))
+            ) {
+                val columnSplitLayoutState = remember {
+                    SplitLayoutState(
+                        maxCount = SPLIT_COUNT,
+                        orientation = Orientation.Horizontal,
+                        visibleCount = { columnCount },
+                        keyAtIndex = { columnKeys[it] },
                     )
                 }
-            )
+                SplitLayout(
+                    state = columnSplitLayoutState,
+                    modifier = Modifier.fillMaxSize(),
+                    itemSeparators = { outerIndex, offset ->
+                        PaneSeparator(
+                            splitLayoutState = columnSplitLayoutState,
+                            index = outerIndex,
+                            offset = offset,
+                            onDragChanged = { dragging = it },
+                        )
+                    },
+                    itemContent = { columnIndex ->
+                        val rowSplitLayoutState = remember {
+                            SplitLayoutState(
+                                maxCount = SPLIT_COUNT,
+                                orientation = Orientation.Vertical,
+                                visibleCount = { rowCount },
+                                keyAtIndex = { rowKeys[it] },
+                            )
+                        }
+                        SplitLayout(
+                            state = rowSplitLayoutState,
+                            modifier = itemModifier
+                                .fillMaxSize(),
+                            itemSeparators = { innerIndex, offset ->
+                                PaneSeparator(
+                                    splitLayoutState = rowSplitLayoutState,
+                                    index = innerIndex,
+                                    offset = offset,
+                                    onDragChanged = { dragging = it },
+                                )
+                            },
+                            itemContent = { rowIndex ->
+                                var clickCount by remember { mutableIntStateOf(0) }
+                                Box(
+                                    modifier = itemModifier
+                                        .background(
+                                            color = pickColor(
+                                                outerIndex = columnKeys[columnIndex],
+                                                innerIndex = rowKeys[rowIndex],
+                                            )
+                                        )
+                                        .fillMaxSize()
+                                        .clickable(
+                                            indication = ripple(),
+                                            interactionSource = remember {
+                                                MutableInteractionSource()
+                                            },
+                                            onClick = {
+                                                ++clickCount
+                                                columnKeys.shuffle()
+                                                rowKeys.shuffle()
+                                            },
+                                        )
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .align(Alignment.Center),
+                                        text = "$clickCount",
+                                        color = Color.Black,
+                                    )
+                                }
+                            }
+                        )
+                    }
+                )
+            }
         }
     }
 }
@@ -163,6 +173,7 @@ private fun PaneSeparator(
     modifier: Modifier = Modifier,
     index: Int,
     offset: Dp,
+    onDragChanged: (Boolean) -> Unit,
 ) {
     val density = LocalDensity.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -191,6 +202,8 @@ private fun PaneSeparator(
                 state = draggableState,
                 orientation = splitLayoutState.orientation,
                 interactionSource = interactionSource,
+                onDragStarted = { onDragChanged(true) },
+                onDragStopped = { onDragChanged(false) },
             )
             .background(MaterialTheme.colorScheme.onSurface)
             .hoverable(interactionSource)

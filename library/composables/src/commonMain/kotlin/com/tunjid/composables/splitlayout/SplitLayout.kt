@@ -25,7 +25,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,8 +46,9 @@ import kotlin.math.abs
  *
  * @param orientation The orientation of the layout.
  * @param maxCount The maximum number of children in the layout.
- * @param initialVisibleCount The initial amount of children visible in the layout.
  * @param minSize The minimum size of a child in the layout.
+ * @param visibleCount The number of children that are currently visible in the layout. This
+ * lambda can be snapshot aware.
  * @param keyAtIndex Provides a key for the item at an index to identify its position in the
  * case of visibility changes of other indices. Defaults to the index of the item.
  */
@@ -56,8 +56,8 @@ import kotlin.math.abs
 class SplitLayoutState(
     val orientation: Orientation,
     val maxCount: Int,
-    initialVisibleCount: Int = maxCount,
     minSize: Dp = 80.dp,
+    internal val visibleCount: () -> Int = { maxCount },
     internal val keyAtIndex: SplitLayoutState.(Int) -> Any = { it },
 ) {
 
@@ -70,10 +70,8 @@ class SplitLayoutState(
      */
     val weightSum by derivedStateOf {
         checkVisibleCount()
-        (0..<visibleCount).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
+        (0..<visibleCount()).sumOf { weightMap.getValue(it).toDouble() }.toFloat()
     }
-
-    var visibleCount by mutableIntStateOf(initialVisibleCount)
 
     var minSize by mutableStateOf(minSize)
 
@@ -153,7 +151,7 @@ class SplitLayoutState(
     }
 
     private fun checkVisibleCount() {
-        check(visibleCount <= maxCount) {
+        check(visibleCount() <= maxCount) {
             "initialVisibleCount must be less than or equal to maxCount."
         }
     }
@@ -164,6 +162,7 @@ class SplitLayoutState(
         fun SplitLayoutState.Separators(
             separator: @Composable (paneIndex: Int, offset: Dp) -> Unit
         ) {
+            val visibleCount = visibleCount()
             if (visibleCount > 1)
                 for (index in 0..<visibleCount)
                     if (index != visibleCount - 1)
@@ -202,12 +201,13 @@ fun SplitLayout(
                 state.updateSize(it, density)
             },
     ) {
+        val visibleCount = state.visibleCount()
         when (state.orientation) {
             Orientation.Vertical -> Column(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.visibleCount) {
+                for (index in 0..<visibleCount) {
                     key(state.keyAtIndex(state, index)) {
                         Box(
                             modifier = Modifier
@@ -223,7 +223,7 @@ fun SplitLayout(
                 modifier = Modifier
                     .matchParentSize(),
             ) {
-                for (index in 0..<state.visibleCount) {
+                for (index in 0..<visibleCount) {
                     key(state.keyAtIndex(state, index)) {
                         Box(
                             modifier = Modifier
