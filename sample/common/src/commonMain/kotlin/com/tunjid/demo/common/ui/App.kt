@@ -287,7 +287,7 @@ internal class SplitPaneState(
         },
         keyAtIndex = { index ->
             filteredPaneOrder[index]
-        }
+        },
     )
 }
 
