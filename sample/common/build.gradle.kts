@@ -27,13 +27,13 @@ kotlin {
             dependencies {
                 api(project(":library:composables"))
 
-                implementation(libs.jetbrains.compose.runtime)
-                implementation(libs.jetbrains.compose.animation)
-                implementation(libs.jetbrains.compose.material3)
-                implementation(libs.jetbrains.compose.foundation.layout)
+                implementation(libs.compose.multiplatform.runtime)
+                implementation(libs.compose.multiplatform.animation)
+                implementation(libs.compose.multiplatform.material3)
+                implementation(libs.compose.multiplatform.foundation.layout)
+                implementation(libs.compose.multiplatform.material.icons.extended)
 
                 implementation(libs.kotlinx.coroutines.core)
-                implementation(libs.jetbrains.compose.material.icons.extended)
 
                 api(libs.tunjid.mutator.core.common)
                 api(libs.tunjid.mutator.coroutines.common)

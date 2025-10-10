@@ -34,7 +34,7 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.jetbrains.compose.gradlePlugin)
+    implementation(libs.compose.multiplatform.gradlePlugin)
     implementation(libs.kotlin.gradlePlugin)
     implementation(libs.android.gradlePlugin)
     implementation(libs.compose.compiler.plugin)
