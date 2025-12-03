@@ -1,22 +1,27 @@
 [versions]
-androidGradlePlugin = "8.9.3"
-androidxActivity = "1.11.0"
+androidGradlePlugin = "8.10.0"
+androidxActivity = "1.12.0"
 androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.17.0"
 androidx-collections = "1.5.0"
-dokka = "2.0.0"
-jetbrainsCompose = "1.9.0"
-jetbrainsComposeMaterialIcons = "1.7.3"
-jetbrainsComposeMaterial3 = "1.9.0-alpha03"
+dokka = "2.1.0"
+composeMultiplatform = "1.10.0-rc01"
+composeMultiplatformMaterialIcons = "1.7.3"
+composeMultiplatformMaterial3 = "1.10.0-alpha05"
+lifecycleMultiplatform = "2.10.0-alpha06"
 junit4 = "4.13.2"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 kotlinxCoroutines = "1.10.2"
 googleMaterial = "1.13.0"
 tunjidMutator = "1.1.0"
-tunjidTreeNav = "0.0.43"
+tunjidTreeNav = "0.0.45"
 turbine = "1.2.1"
-mavenPublish = "0.34.0"
+mavenPublish = "0.35.0"
+navigationEventComposeMultiplatform = "1.0.0-rc01"
+navigation3 = "1.0.0"
+navigation3Multiplatform = "1.0.0-alpha06"
+savedstateMultiplatform = "1.4.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -26,22 +31,33 @@ androidx-collections = { group = "androidx.collection", name = "collection", ver
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
 cashapp-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 compose-compiler-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
-compose-multiplatform-animation = { group = "org.jetbrains.compose.animation", name = "animation", version.ref = "jetbrainsCompose" }
-compose-multiplatform-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "jetbrainsCompose" }
-compose-multiplatform-foundation-layout = { group = "org.jetbrains.compose.foundation", name = "foundation-layout", version.ref = "jetbrainsCompose" }
-compose-multiplatform-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "jetbrainsCompose" }
-compose-multiplatform-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "jetbrainsComposeMaterial3" }
-compose-multiplatform-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "jetbrainsCompose" }
-compose-multiplatform-ui-test = { group = "org.jetbrains.compose.ui", name = "ui-test-junit4", version.ref = "jetbrainsCompose" }
-compose-multiplatform-ui-testManifest = { group = "org.jetbrains.compose.ui", name = "ui-test-manifest", version.ref = "jetbrainsCompose" }
-#compos-multiplatforme-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "jetbrainsCompose" }
-compose-multiplatform-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview-desktop", version.ref = "jetbrainsCompose" }
-compose-multiplatform-ui-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "jetbrainsCompose" }
-compose-multiplatform-ui-util = { group = "org.jetbrains.compose.ui", name = "ui-util", version.ref = "jetbrainsCompose" }
-compose-multiplatform-material-icons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "jetbrainsComposeMaterialIcons" }
-compose-multiplatform-material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "jetbrainsComposeMaterialIcons" }
+compose-multiplatform-animation = { group = "org.jetbrains.compose.animation", name = "animation", version.ref = "composeMultiplatform" }
+compose-multiplatform-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "composeMultiplatform" }
+compose-multiplatform-foundation-layout = { group = "org.jetbrains.compose.foundation", name = "foundation-layout", version.ref = "composeMultiplatform" }
+compose-multiplatform-gradlePlugin = { group = "org.jetbrains.compose", name = "compose-gradle-plugin", version.ref = "composeMultiplatform" }
+compose-multiplatform-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMultiplatformMaterial3" }
+compose-multiplatform-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui-test = { group = "org.jetbrains.compose.ui", name = "ui-test-junit4", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui-testManifest = { group = "org.jetbrains.compose.ui", name = "ui-test-manifest", version.ref = "composeMultiplatform" }
+#compos-multiplatforme-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview-desktop", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "composeMultiplatform" }
+compose-multiplatform-ui-util = { group = "org.jetbrains.compose.ui", name = "ui-util", version.ref = "composeMultiplatform" }
+compose-multiplatform-material-icons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version.ref = "composeMultiplatformMaterialIcons" }
+compose-multiplatform-material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "composeMultiplatformMaterialIcons" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "googleMaterial" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+lifecycle-multiplatform-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime", version.ref = "lifecycleMultiplatform" }
+lifecycle-multiplatform-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleMultiplatform" }
+lifecycle-multiplatform-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "lifecycleMultiplatform" }
+lifecycle-multiplatform-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleMultiplatform" }
+lifecycle-multiplatform-viewmodel-navigation3 = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycleMultiplatform" }
+lifecycle-multiplatform-viewmodel-savedstate = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycleMultiplatform" }
+navigation-event-multiplatform-compose = { group = "org.jetbrains.androidx.navigationevent", name = "navigationevent-compose", version.ref = "navigationEventComposeMultiplatform" }
+navigation-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
+navigation-multiplatform-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3Multiplatform" }
+savedstate-multiplatform-savedstate = { group = "org.jetbrains.androidx.savedstate", name = "savedstate", version.ref = "savedstateMultiplatform" }
+savedstate-multiplatform-compose = { group = "org.jetbrains.androidx.savedstate", name = "savedstate-compose", version.ref = "savedstateMultiplatform" }
 dokka-gradlePlugin = { group = "org.jetbrains.dokka", name = "dokka-gradle-plugin", version.ref = "dokka" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
@@ -65,5 +81,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrainsCompose" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 jetbrains-dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

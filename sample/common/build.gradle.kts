@@ -33,6 +33,13 @@ kotlin {
                 implementation(libs.compose.multiplatform.foundation.layout)
                 implementation(libs.compose.multiplatform.material.icons.extended)
 
+                implementation(libs.lifecycle.multiplatform.runtime)
+                implementation(libs.lifecycle.multiplatform.runtime.compose)
+
+                implementation(libs.navigation.runtime)
+                implementation(libs.navigation.multiplatform.ui)
+                implementation(libs.navigation.event.multiplatform.compose)
+
                 implementation(libs.kotlinx.coroutines.core)
 
                 api(libs.tunjid.mutator.core.common)
@@ -43,13 +50,5 @@ kotlin {
                 api(libs.tunjid.treenav.compose.threepane)
             }
         }
-        named("androidMain") {
-            dependencies {
-            }
-        }
     }
-}
-
-compose.experimental {
-    web.application {}
 }

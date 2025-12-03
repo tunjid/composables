@@ -16,16 +16,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +35,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.lazy.pendingScrollOffsetState
+import com.tunjid.composables.lazy.rememberLazyScrollableState
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
@@ -47,11 +49,21 @@ fun DemoSelectionScreen(
     screens: List<Screen>,
     onScreenSelected: (Screen) -> Unit
 ) {
-    val gridState = rememberLazyGridState()
+    var pendingScrollOffset by rememberSaveable { mutableIntStateOf(0) }
+    val gridState = rememberLazyScrollableState(
+        init = ::LazyGridState,
+        firstVisibleItemIndex = LazyGridState::firstVisibleItemIndex,
+        firstVisibleItemScrollOffset = LazyGridState::firstVisibleItemScrollOffset,
+        restore = { firstVisibleItemIndex, firstVisibleItemScrollOffset ->
+            LazyGridState(
+                firstVisibleItemIndex = firstVisibleItemIndex,
+                firstVisibleItemScrollOffset = firstVisibleItemScrollOffset + pendingScrollOffset,
+            )
+        },
+    )
     val scrollbarState = gridState.scrollbarState(
         itemsAvailable = screens.size
     )
-    var pendingScrollOffset by gridState.pendingScrollOffsetState()
     val density = LocalDensity.current
 
     Column(
@@ -90,8 +102,7 @@ fun DemoSelectionScreen(
                                         .visibleItemsInfo
                                         .first { it.key == screen.id }
                                         .offset
-                                        .y
-                                        .toFloat() + with(density) { 8.dp.toPx() }
+                                        .y + with(density) { 8.dp.roundToPx() }
                                     onScreenSelected(screen)
                                 },
                         )

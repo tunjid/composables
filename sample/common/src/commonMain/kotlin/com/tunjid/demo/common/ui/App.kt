@@ -16,7 +16,6 @@
 
 package com.tunjid.demo.common.ui
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animate
@@ -58,6 +57,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import com.tunjid.composables.backpreview.BackPreviewState
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
@@ -78,7 +78,6 @@ import com.tunjid.treenav.pop
 import com.tunjid.treenav.push
 import com.tunjid.treenav.requireCurrent
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App(
     appState: AppState = remember { AppState() },
@@ -236,6 +235,8 @@ class AppState {
         fun AppState.rememberMultiPaneDisplayState(
             decorators: List<PaneDecorator<StackNav, Screen, ThreePane>>,
         ): MultiPaneDisplayState<StackNav, Screen, ThreePane> {
+            val saveableStateHolderNavEntryDecorator =
+                rememberSaveableStateHolderNavEntryDecorator<Screen>()
             val displayState = remember {
                 MultiPaneDisplayState(
                     panes = ThreePane.entries.toList(),
@@ -245,6 +246,9 @@ class AppState {
                     popTransform = StackNav::pop,
                     onPopped = navigationState::value::set,
                     paneDecorators = decorators,
+                    navEntryDecorators = listOf(
+                        saveableStateHolderNavEntryDecorator,
+                    ),
                     entryProvider = {
                         threePaneEntry(
                             paneMapping = { destination ->
