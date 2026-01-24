@@ -5,6 +5,7 @@ androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.17.0"
 androidx-collections = "1.5.0"
+axion-release = "1.21.1"
 dokka = "2.1.0"
 composeMultiplatform = "1.10.0"
 composeMultiplatformMaterialIcons = "1.7.3"
@@ -29,6 +30,7 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat" }
 androidx-collections = { group = "androidx.collection", name = "collection", version.ref = "androidx-collections" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore" }
+axionRelease-gradlePlugin = { group = "pl.allegro.tech.build.axion-release", name = "pl.allegro.tech.build.axion-release.gradle.plugin", version.ref = "axion-release" }
 cashapp-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 compose-compiler-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 compose-multiplatform-animation = { group = "org.jetbrains.compose.animation", name = "animation", version.ref = "composeMultiplatform" }
@@ -77,6 +79,7 @@ tunjid-treenav-compose-threepane = { group = "com.tunjid.treenav", name = "compo
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
 androidx-benchmark = { id = "androidx.benchmark", version.ref = "androidxBenchmark" }
+axionRelease = { id = "pl.allegro.tech.build.axion-release", version.ref = "axion-release" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
