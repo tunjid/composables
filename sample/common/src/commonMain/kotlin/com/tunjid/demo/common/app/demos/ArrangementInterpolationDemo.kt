@@ -19,9 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -37,11 +37,11 @@ fun ArrangementInterpolationDemoScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         val horizontalArrangements = remember {
             listOf(
@@ -73,12 +73,12 @@ fun ArrangementInterpolationDemoScreen(
 
         Column(
             modifier = Modifier
-                .windowInsetsPadding(WindowInsets.navigationBars)
+                .windowInsetsPadding(WindowInsets.navigationBars),
         ) {
             HorizontalValues(
                 selected = horizontalArrangement,
                 horizontalArrangements = horizontalArrangements,
-                onArrangementSelected = { horizontalArrangement = it }
+                onArrangementSelected = { horizontalArrangement = it },
             )
             Row {
                 VerticalValues(
@@ -99,7 +99,7 @@ fun ArrangementInterpolationDemoScreen(
                     repeat(4) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = horizontalArrangement.animate()
+                            horizontalArrangement = horizontalArrangement.animate(),
                         ) {
                             (0..4).forEach {
                                 ColoredBox(index = it)
@@ -109,12 +109,10 @@ fun ArrangementInterpolationDemoScreen(
                 }
             }
         }
-
     }
 }
 
 @Composable
-
 private fun VerticalValues(
     selected: Arrangement.Vertical,
     verticalArrangements: List<Pair<String, Arrangement.Vertical>>,
@@ -122,15 +120,15 @@ private fun VerticalValues(
 ) {
     Column(
         modifier = Modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
         verticalArrangements.forEach {
             Text(
                 modifier = Modifier.clickable { onArrangementSelected(it.second) },
                 text = it.first,
                 textDecoration =
-                    if (it.second == selected) TextDecoration.Underline
-                    else TextDecoration.None,
+                if (it.second == selected) TextDecoration.Underline
+                else TextDecoration.None,
             )
         }
     }
@@ -144,15 +142,15 @@ private fun HorizontalValues(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         horizontalArrangements.forEach {
             Text(
                 modifier = Modifier.clickable { onArrangementSelected(it.second) },
                 text = it.first,
                 textDecoration =
-                    if (it.second == selected) TextDecoration.Underline
-                    else TextDecoration.None,
+                if (it.second == selected) TextDecoration.Underline
+                else TextDecoration.None,
             )
         }
     }
@@ -166,6 +164,6 @@ private fun ColoredBox(
     Box(
         modifier = modifier
             .background(pastelColors[index].color, RoundedCornerShape(8.dp))
-            .size(40.dp)
+            .size(40.dp),
     )
 }

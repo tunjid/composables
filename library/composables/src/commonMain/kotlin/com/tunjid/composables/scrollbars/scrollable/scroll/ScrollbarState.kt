@@ -16,7 +16,6 @@
 
 package com.tunjid.composables.scrollbars.scrollable.scroll
 
-
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect

@@ -67,7 +67,7 @@ fun rememberGestureZoomState(
             enabled = enabled,
             options = options,
         )
-    }
+    },
 )
 
 /**
@@ -122,7 +122,7 @@ class GestureZoomState(
     val panOffset
         get() = Offset(
             x = offsetX,
-            y = offsetY
+            y = offsetY,
         )
 
     // These offsets are separated instead of using a singular Offset() to prevent allocations
@@ -222,7 +222,7 @@ class GestureZoomState(
                 update = Offset(
                     x = offsetX + (pan.x * zoomScale * SLOW_MOVEMENT) + offsetXChange,
                     y = offsetY + (pan.y * zoomScale * SLOW_MOVEMENT) + offsetYChange,
-                )
+                ),
             )
         }
         // Store initial offset on pan
@@ -404,9 +404,9 @@ class GestureZoomState(
                             1f -> Options.Offset.Layout
                             else -> Options.Offset.None
                         },
-                    )
+                    ),
                 )
-            }
+            },
         )
     }
 }

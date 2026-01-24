@@ -53,7 +53,7 @@ fun LazyGridDemoScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             columns = GridCells.Adaptive(100.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(
                 items = pastelColors,
@@ -63,23 +63,22 @@ fun LazyGridDemoScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
-                            .clickable { selectedItem = item }
+                            .clickable { selectedItem = item },
                     )
-                }
+                },
             )
         }
         FastScrollbar(
             modifier = Modifier
                 .padding(
-                    WindowInsets.navigationBars.asPaddingValues()
+                    WindowInsets.navigationBars.asPaddingValues(),
                 )
                 .width(12.dp)
                 .align(Alignment.TopEnd),
             state = scrollbarState,
             scrollInProgress = gridState.isScrollInProgress,
             orientation = Orientation.Vertical,
-            onThumbMoved = gridState.rememberBasicScrollbarThumbMover()
+            onThumbMoved = gridState.rememberBasicScrollbarThumbMover(),
         )
     }
-
 }

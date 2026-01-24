@@ -60,7 +60,7 @@ fun SplitLayoutDemoScreen(
     val rowKeys = remember { mutableStateListOf(0, 1, 2) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
@@ -75,7 +75,7 @@ fun SplitLayoutDemoScreen(
                     label = { Text("Columns: $columnCount") },
                     onClick = { columnCount = toggleSplitCount(columnCount) },
                 )
-            }
+            },
         )
         LookaheadScope {
             val itemModifier =
@@ -86,7 +86,7 @@ fun SplitLayoutDemoScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp)),
             ) {
                 val columnSplitLayoutState = remember {
                     SplitLayoutState(
@@ -136,7 +136,7 @@ fun SplitLayoutDemoScreen(
                                             color = pickColor(
                                                 outerIndex = columnKeys[columnIndex],
                                                 innerIndex = rowKeys[rowIndex],
-                                            )
+                                            ),
                                         )
                                         .fillMaxSize()
                                         .clickable(
@@ -149,7 +149,7 @@ fun SplitLayoutDemoScreen(
                                                 columnKeys.shuffle()
                                                 rowKeys.shuffle()
                                             },
-                                        )
+                                        ),
                                 ) {
                                     Text(
                                         modifier = Modifier
@@ -158,9 +158,9 @@ fun SplitLayoutDemoScreen(
                                         color = Color.Black,
                                     )
                                 }
-                            }
+                            },
                         )
-                    }
+                    },
                 )
             }
         }
@@ -180,7 +180,7 @@ private fun PaneSeparator(
     val draggableState = rememberDraggableState {
         splitLayoutState.dragBy(
             index = index,
-            delta = with(density) { it.toDp() }
+            delta = with(density) { it.toDp() },
         )
     }
     Box(
@@ -211,13 +211,13 @@ private fun PaneSeparator(
                 (0..1).forEach {
                     splitLayoutState.setWeightAt(it, 0.5f)
                 }
-            }
+            },
     )
 }
 
 private fun pickColor(
     outerIndex: Int,
-    innerIndex: Int
+    innerIndex: Int,
 ) = pastelColors[((outerIndex * 2) + (innerIndex * 3)) % pastelColors.size].color
 
 private fun toggleSplitCount(value: Int) = max(

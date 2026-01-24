@@ -105,7 +105,7 @@ fun Modifier.pointerOffsetScroll(
 
         while (true) {
             state.scrollableState.scrollBy(
-                value = state.scrollAmount * state.scrollAmountMultiplier
+                value = state.scrollAmount * state.scrollAmountMultiplier,
             )
             delay(POINTER_SCROLL_DELAY_MS)
         }

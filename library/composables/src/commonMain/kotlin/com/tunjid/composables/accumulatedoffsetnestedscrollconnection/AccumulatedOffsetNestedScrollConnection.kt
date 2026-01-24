@@ -49,12 +49,12 @@ fun rememberAccumulatedOffsetNestedScrollConnection(
                 minOffset = density.minOffset(),
                 initialOffset = initialOffset,
             )
-        }
+        },
     )
     LaunchedEffect(density) {
         snapshotFlow {
-            connection.offset.packedValue == connection.maxOffset.packedValue
-                    || connection.offset.packedValue == connection.minOffset.packedValue
+            connection.offset.packedValue == connection.maxOffset.packedValue ||
+                connection.offset.packedValue == connection.minOffset.packedValue
         }
             .collect {
                 connection.maxOffset = density.maxOffset()
@@ -63,7 +63,6 @@ fun rememberAccumulatedOffsetNestedScrollConnection(
     }
     return connection
 }
-
 
 /**
  * A [NestedScrollConnection] that accumulates offsets during a nested scroll without
@@ -148,9 +147,9 @@ class AccumulatedOffsetNestedScrollConnection(
                         unpackFloat1(packedInitialOffset),
                         unpackFloat2(packedInitialOffset),
                     ),
-                    invert = invertLong == 1L
+                    invert = invertLong == 1L,
                 )
-            }
+            },
         )
     }
 }

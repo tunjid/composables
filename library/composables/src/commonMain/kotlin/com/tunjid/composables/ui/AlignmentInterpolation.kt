@@ -32,7 +32,7 @@ fun Alignment.animate(
                 stop = { current },
                 fraction = { fraction },
             )
-        }
+        },
     )
     return lerp(
         interpolation.previous,

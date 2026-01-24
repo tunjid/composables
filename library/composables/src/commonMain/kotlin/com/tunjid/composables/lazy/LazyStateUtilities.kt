@@ -16,10 +16,50 @@
 
 package com.tunjid.composables.lazy
 
-
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import kotlin.math.abs
+
+/**
+ * Remembers [LazyState] by saving two [Int] values from it via [rememberSaveable]:
+ *
+ * @param firstVisibleItemIndex The first visible item index in the LazyState
+ * and allows for modifying these values upon restoration.
+ * @param firstVisibleItemScrollOffset The scroll offset of the first visible item.
+ *
+ * Typically this is used to update the [firstVisibleItemIndex] or [firstVisibleItemScrollOffset]
+ * when the lazy state is restored.
+ *
+ * For example, consider an item that is scrolled to, and interacting with it causes the
+ * item composed to leave the composition. An [MutableIntState] can be written to with
+ * the item's current position, such that when returned to and the scrollable container is
+ * recomposed, the item interacted with can be recomposed with it firmly in focus
+ * as defined by the value written into a previously saved [MutableIntState].
+ */
+@Composable
+inline fun <LazyState : ScrollableState> rememberLazyScrollableState(
+    noinline init: () -> LazyState,
+    crossinline firstVisibleItemIndex: LazyState.() -> Int,
+    crossinline firstVisibleItemScrollOffset: LazyState.() -> Int,
+    crossinline restore: (firstVisibleItemIndex: Int, firstVisibleItemScrollOffset: Int) -> LazyState,
+): LazyState = rememberSaveable(
+    saver = listSaver(
+        save = { lazyScrollableState ->
+            listOf(
+                lazyScrollableState.firstVisibleItemIndex(),
+                lazyScrollableState.firstVisibleItemScrollOffset(),
+            )
+        },
+        restore = { (firstVisibleItemIndex, firstVisibleItemScrollOffset) ->
+            restore(firstVisibleItemIndex, firstVisibleItemScrollOffset)
+        },
+    ),
+    init = init,
+)
 
 /**
  * Linearly interpolates the index for the first item in [visibleItems] to smoothly match the
@@ -62,7 +102,6 @@ inline fun <LazyState : ScrollableState, LazyStateItem> LazyState.interpolatedFi
 
     return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
 }
-
 
 /**
  * Linearly interpolates the index for the item at [index] in [visibleItems] to smoothly match the
@@ -111,6 +150,7 @@ internal inline fun <LazyState : ScrollableState, LazyStateItem> interpolatedInd
 
     return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
 }
+
 /**
  * Returns the percentage of an item that is currently visible in the view port.
  * @param itemSize the size of the item

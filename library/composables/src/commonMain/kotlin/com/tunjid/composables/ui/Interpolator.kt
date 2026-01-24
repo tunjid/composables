@@ -70,4 +70,3 @@ internal class Interpolator<T> private constructor(
         }
     }
 }
-

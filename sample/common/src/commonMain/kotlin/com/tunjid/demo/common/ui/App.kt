@@ -16,7 +16,6 @@
 
 package com.tunjid.demo.common.ui
 
-import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animate
@@ -58,6 +57,7 @@ import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import com.tunjid.composables.backpreview.BackPreviewState
 import com.tunjid.composables.splitlayout.SplitLayout
 import com.tunjid.composables.splitlayout.SplitLayoutState
@@ -78,7 +78,6 @@ import com.tunjid.treenav.pop
 import com.tunjid.treenav.push
 import com.tunjid.treenav.requireCurrent
 
-@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun App(
     appState: AppState = remember { AppState() },
@@ -91,13 +90,13 @@ fun App(
                 val density = LocalDensity.current
                 val movableSharedElementHostState = remember {
                     MovableSharedElementHostState<ThreePane, Screen>(
-                        sharedTransitionScope = this
+                        sharedTransitionScope = this,
                     )
                 }
                 val windowWidth = rememberUpdatedState(
                     with(density) {
                         LocalWindowInfo.current.containerSize.width.toDp()
-                    }
+                    },
                 )
                 MultiPaneDisplay(
                     modifier = Modifier
@@ -107,18 +106,18 @@ fun App(
                             listOf(
                                 threePaneAdaptiveDecorator(
                                     secondaryPaneBreakPoint = mutableStateOf(
-                                        SecondaryPaneMinWidthBreakpointDp
+                                        SecondaryPaneMinWidthBreakpointDp,
                                     ),
                                     tertiaryPaneBreakPoint = mutableStateOf(
-                                        TertiaryPaneMinWidthBreakpointDp
+                                        TertiaryPaneMinWidthBreakpointDp,
                                     ),
                                     windowWidthState = windowWidth,
                                 ),
                                 threePaneMovableSharedElementDecorator(
-                                    movableSharedElementHostState = movableSharedElementHostState
+                                    movableSharedElementHostState = movableSharedElementHostState,
                                 ),
                             )
-                        }
+                        },
                     ),
                 ) {
                     val splitPaneState = remember {
@@ -127,7 +126,7 @@ fun App(
                         )
                     }
                     CompositionLocalProvider(
-                        LocalSplitPaneState provides splitPaneState
+                        LocalSplitPaneState provides splitPaneState,
                     ) {
                         SplitLayout(
                             state = splitPaneState.splitLayoutState,
@@ -144,7 +143,7 @@ fun App(
                             },
                             itemContent = { index ->
                                 Destination(splitPaneState.filteredPaneOrder[index])
-                            }
+                            },
                         )
                     }
                 }
@@ -166,7 +165,7 @@ private fun PaneSeparator(
     val draggableState = rememberDraggableState {
         splitLayoutState.dragBy(
             index = index,
-            delta = with(density) { it.toDp() }
+            delta = with(density) { it.toDp() },
         )
     }
     val active = interactionSource.isActive()
@@ -181,7 +180,7 @@ private fun PaneSeparator(
             )
             .hoverable(interactionSource)
             .width(PaneSeparatorTouchTargetWidthDp)
-            .fillMaxHeight()
+            .fillMaxHeight(),
     ) {
         Box(
             modifier = Modifier
@@ -189,12 +188,12 @@ private fun PaneSeparator(
                 .background(
                     color = animateColorAsState(
                         if (active) MaterialTheme.colorScheme.onSurfaceVariant
-                        else MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface,
                     ).value,
                     shape = RoundedCornerShape(PaneSeparatorActiveWidthDp),
                 )
                 .width(animateDpAsState(if (active) PaneSeparatorActiveWidthDp else 1.dp).value)
-                .height(PaneSeparatorActiveWidthDp)
+                .height(PaneSeparatorActiveWidthDp),
         )
     }
     LaunchedEffect(Unit) {
@@ -202,7 +201,7 @@ private fun PaneSeparator(
             initialValue = 0f,
             targetValue = 1f,
             animationSpec = tween(1000),
-            block = { value, _ -> alpha = value }
+            block = { value, _ -> alpha = value },
         )
     }
 }
@@ -212,8 +211,8 @@ class AppState {
     private val navigationState = mutableStateOf(
         StackNav(
             name = "demo app",
-            children = listOf(Screen.Demos)
-        )
+            children = listOf(Screen.Demos),
+        ),
     )
 
     private val paneInteractionSourceList = mutableStateListOf<MutableInteractionSource>()
@@ -236,6 +235,8 @@ class AppState {
         fun AppState.rememberMultiPaneDisplayState(
             decorators: List<PaneDecorator<StackNav, Screen, ThreePane>>,
         ): MultiPaneDisplayState<StackNav, Screen, ThreePane> {
+            val saveableStateHolderNavEntryDecorator =
+                rememberSaveableStateHolderNavEntryDecorator<Screen>()
             val displayState = remember {
                 MultiPaneDisplayState(
                     panes = ThreePane.entries.toList(),
@@ -245,6 +246,9 @@ class AppState {
                     popTransform = StackNav::pop,
                     onPopped = navigationState::value::set,
                     paneDecorators = decorators,
+                    navEntryDecorators = listOf(
+                        saveableStateHolderNavEntryDecorator,
+                    ),
                     entryProvider = {
                         threePaneEntry(
                             paneMapping = { destination ->

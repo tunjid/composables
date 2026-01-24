@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.round
 @Composable
 fun ListDemoItem(
     item: ColorItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
@@ -40,7 +40,7 @@ fun ListDemoItem(
                 .background(
                     color = item.color,
                     shape = RoundedCornerShape(100.dp),
-                )
+                ),
 
         )
         Spacer(modifier = Modifier.size(24.dp))
@@ -51,19 +51,19 @@ fun ListDemoItem(
 @Composable
 fun GridDemoItem(
     item: ColorItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .background(color = item.color)
+                    .background(color = item.color),
             )
             Text(
                 modifier = Modifier
@@ -92,7 +92,7 @@ fun ItemHeader(
             .padding(
                 horizontal = 16.dp,
                 vertical = 4.dp,
-            )
+            ),
     ) {
         Text(
             text = char.toString(),
@@ -120,13 +120,13 @@ fun ColorDot(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.onSurface,
                 shape = CircleShape,
-            )
+            ),
     )
 }
 
 fun List<ColorItem>.charFor(
     key: Any?,
-    contentType: Any?
+    contentType: Any?,
 ): Char = when (contentType) {
     is ContentType.Header -> {
         val headerItemKey = key as? String

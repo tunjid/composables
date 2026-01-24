@@ -137,7 +137,7 @@ class SplitLayoutState(
         val newWeight = (newSize / size) * weightSum
         return setWeightAt(
             index = index,
-            weight = newWeight
+            weight = newWeight,
         )
     }
 
@@ -160,13 +160,14 @@ class SplitLayoutState(
 
         @Composable
         fun SplitLayoutState.Separators(
-            separator: @Composable (paneIndex: Int, offset: Dp) -> Unit
+            separator: @Composable (paneIndex: Int, offset: Dp) -> Unit,
         ) {
             val visibleCount = visibleCount()
             if (visibleCount > 1)
-                for (index in 0..<visibleCount)
+                for (index in 0..<visibleCount) {
                     if (index != visibleCount - 1)
                         separator(index, offsetAt(index))
+                }
         }
 
         fun SplitLayoutState.updateSize(size: IntSize, density: Density) {
@@ -211,7 +212,7 @@ fun SplitLayout(
                     key(state.keyAtIndex(state, index)) {
                         Box(
                             modifier = Modifier
-                                .weight(state.weightAt(index))
+                                .weight(state.weightAt(index)),
                         ) {
                             itemContent(index)
                         }
@@ -227,7 +228,7 @@ fun SplitLayout(
                     key(state.keyAtIndex(state, index)) {
                         Box(
                             modifier = Modifier
-                                .weight(state.weightAt(index))
+                                .weight(state.weightAt(index)),
                         ) {
                             itemContent(index)
                         }
@@ -238,4 +239,3 @@ fun SplitLayout(
         state.Separators(itemSeparators)
     }
 }
-

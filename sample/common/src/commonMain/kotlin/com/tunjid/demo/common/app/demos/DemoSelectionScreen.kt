@@ -16,16 +16,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +35,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.tunjid.composables.lazy.pendingScrollOffsetState
+import com.tunjid.composables.lazy.rememberLazyScrollableState
 import com.tunjid.composables.scrollbars.scrollable.grid.rememberBasicScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.grid.scrollbarState
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
@@ -45,23 +47,33 @@ import com.tunjid.demo.common.ui.Screen
 fun DemoSelectionScreen(
     screen: Screen,
     screens: List<Screen>,
-    onScreenSelected: (Screen) -> Unit
+    onScreenSelected: (Screen) -> Unit,
 ) {
-    val gridState = rememberLazyGridState()
-    val scrollbarState = gridState.scrollbarState(
-        itemsAvailable = screens.size
+    var pendingScrollOffset by rememberSaveable { mutableIntStateOf(0) }
+    val gridState = rememberLazyScrollableState(
+        init = ::LazyGridState,
+        firstVisibleItemIndex = LazyGridState::firstVisibleItemIndex,
+        firstVisibleItemScrollOffset = LazyGridState::firstVisibleItemScrollOffset,
+        restore = { firstVisibleItemIndex, firstVisibleItemScrollOffset ->
+            LazyGridState(
+                firstVisibleItemIndex = firstVisibleItemIndex,
+                firstVisibleItemScrollOffset = firstVisibleItemScrollOffset + pendingScrollOffset,
+            )
+        },
     )
-    var pendingScrollOffset by gridState.pendingScrollOffsetState()
+    val scrollbarState = gridState.scrollbarState(
+        itemsAvailable = screens.size,
+    )
     val density = LocalDensity.current
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
         )
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             LazyVerticalGrid(
                 state = gridState,
@@ -70,7 +82,7 @@ fun DemoSelectionScreen(
                     vertical = 16.dp,
                 ),
                 columns = GridCells.Adaptive(400.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(
                     items = screens,
@@ -90,12 +102,11 @@ fun DemoSelectionScreen(
                                         .visibleItemsInfo
                                         .first { it.key == screen.id }
                                         .offset
-                                        .y
-                                        .toFloat() + with(density) { 8.dp.toPx() }
+                                        .y + with(density) { 8.dp.roundToPx() }
                                     onScreenSelected(screen)
                                 },
                         )
-                    }
+                    },
                 )
             }
             FastScrollbar(
@@ -106,7 +117,7 @@ fun DemoSelectionScreen(
                 state = scrollbarState,
                 scrollInProgress = gridState.isScrollInProgress,
                 orientation = Orientation.Vertical,
-                onThumbMoved = gridState.rememberBasicScrollbarThumbMover()
+                onThumbMoved = gridState.rememberBasicScrollbarThumbMover(),
             )
         }
     }
@@ -117,24 +128,22 @@ private fun DemoScreenItem(
     screen: Screen,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         FlowRow(
             modifier = Modifier
                 .size(60.dp)
                 .background(
                     color = remember { pastelColors.random().color },
-                    shape = RoundedCornerShape(60.dp)
+                    shape = RoundedCornerShape(60.dp),
                 )
                 .padding(4.dp)
                 .rotate(
                     if (screen.icons.size == 2) 45f
-                    else 0f
+                    else 0f,
                 ),
             horizontalArrangement = Arrangement.Center,
             verticalArrangement = Arrangement.Center,
@@ -149,8 +158,8 @@ private fun DemoScreenItem(
                         .padding(horizontal = 2.dp)
                         .rotate(
                             if (screen.icons.size == 2) -45f
-                            else 0f
-                        )
+                            else 0f,
+                        ),
                 )
             }
         }
@@ -158,14 +167,13 @@ private fun DemoScreenItem(
             Text(
                 text = screen.title,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
+                modifier = Modifier,
             )
             Text(
                 text = screen.description,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
 }
-

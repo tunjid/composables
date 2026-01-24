@@ -50,11 +50,11 @@ fun LazyStickyHeaderStaggeredGridDemoScreen(
     }
     val staggeredGridState = rememberLazyStaggeredGridState()
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         StickyHeaderStaggeredGrid(
             state = staggeredGridState,
@@ -68,7 +68,7 @@ fun LazyStickyHeaderStaggeredGridDemoScreen(
                     backgroundColor = selectedItem.color,
                     modifier = Modifier.padding(horizontal = 8.dp),
                 )
-            }
+            },
         ) {
             LazyVerticalStaggeredGrid(
                 state = staggeredGridState,
@@ -90,7 +90,7 @@ fun LazyStickyHeaderStaggeredGridDemoScreen(
                         content = {
                             ItemHeader(
                                 char = char,
-                                backgroundColor = selectedItem.color
+                                backgroundColor = selectedItem.color,
                             )
                         },
                     )
@@ -104,17 +104,18 @@ fun LazyStickyHeaderStaggeredGridDemoScreen(
                                 modifier = Modifier
                                     .padding(vertical = 6.dp)
                                     .fillMaxWidth()
-                                    .aspectRatio(remember {
-                                        val step = (-1..4).random() * 2
-                                        1f + (step / 10f)
-                                    })
-                                    .clickable { selectedItem = item }
+                                    .aspectRatio(
+                                        remember {
+                                            val step = (-1..4).random() * 2
+                                            1f + (step / 10f)
+                                        },
+                                    )
+                                    .clickable { selectedItem = item },
                             )
-                        }
+                        },
                     )
                 }
             }
-
         }
     }
 }

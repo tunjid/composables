@@ -35,7 +35,7 @@ fun Arrangement.Horizontal.animate(
                 stop = { current },
                 fraction = { fraction },
             )
-        }
+        },
     )
     return lerp(
         interpolation.previous,
@@ -66,7 +66,7 @@ fun Arrangement.Vertical.animate(
                 stop = { current },
                 fraction = { fraction },
             )
-        }
+        },
     )
     return lerp(
         interpolation.previous,

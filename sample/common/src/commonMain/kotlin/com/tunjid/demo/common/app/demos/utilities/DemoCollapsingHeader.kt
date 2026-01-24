@@ -33,10 +33,10 @@ import com.tunjid.composables.collapsingheader.CollapsingHeaderLayout
 import com.tunjid.composables.collapsingheader.CollapsingHeaderStatus
 import com.tunjid.composables.collapsingheader.rememberCollapsingHeaderState
 import com.tunjid.demo.common.ui.Screen
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.roundToInt
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun DemoCollapsingHeader(
@@ -47,15 +47,15 @@ internal fun DemoCollapsingHeader(
 ) {
     val density = LocalDensity.current
     val collapsedHeight = with(density) { 56.dp.toPx() } +
-            WindowInsets.statusBars.getTop(density).toFloat() +
-            WindowInsets.statusBars.getBottom(density).toFloat()
+        WindowInsets.statusBars.getTop(density).toFloat() +
+        WindowInsets.statusBars.getBottom(density).toFloat()
     val headerState = rememberCollapsingHeaderState(
         collapsedHeight = collapsedHeight,
-        initialExpandedHeight = with(density) { 400.dp.toPx() }
+        initialExpandedHeight = with(density) { 400.dp.toPx() },
     )
 
     val animatedColor by animateColorAsState(
-        item.color.copy(alpha = max(1f - headerState.progress, 0.6f))
+        item.color.copy(alpha = max(1f - headerState.progress, 0.6f)),
     )
     val scope = rememberCoroutineScope { Dispatchers.Main.immediate }
     CollapsingHeaderLayout(
@@ -67,7 +67,7 @@ internal fun DemoCollapsingHeader(
                         scope.launch {
                             headerState.animateTo(
                                 if (headerState.progress > 0.5f) CollapsingHeaderStatus.Expanded
-                                else CollapsingHeaderStatus.Collapsed
+                                else CollapsingHeaderStatus.Collapsed,
                             )
                         }
                     },
@@ -75,11 +75,11 @@ internal fun DemoCollapsingHeader(
                         scope.launch {
                             headerState.snapTo(
                                 if (headerState.progress > 0.5f) CollapsingHeaderStatus.Expanded
-                                else CollapsingHeaderStatus.Collapsed
+                                else CollapsingHeaderStatus.Collapsed,
                             )
                         }
                     },
-                )
+                ),
             ) {
                 Spacer(
                     Modifier
@@ -88,23 +88,23 @@ internal fun DemoCollapsingHeader(
                         .offset {
                             IntOffset(
                                 x = 0,
-                                y = -headerState.translation.roundToInt()
+                                y = -headerState.translation.roundToInt(),
                             )
                         }
-                        .background(animatedColor)
+                        .background(animatedColor),
                 )
                 DemoTopAppBar(
                     screen = screen,
                     onBackPressed = onBackPressed,
                     modifier = Modifier.onSizeChanged {
                         headerState.collapsedHeight = it.height.toFloat()
-                    }
+                    },
                 )
             }
         },
         body = {
             body()
-        }
+        },
     )
 }
 
@@ -128,7 +128,7 @@ fun DemoTopAppBar(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = null,
                     )
-                }
+                },
             )
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),

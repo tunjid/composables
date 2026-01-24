@@ -35,16 +35,16 @@ fun AlignmentInterpolationDemoScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.navigationBars)
+                .windowInsetsPadding(WindowInsets.navigationBars),
         ) {
             val alignments = remember {
                 listOf(
@@ -69,7 +69,7 @@ fun AlignmentInterpolationDemoScreen(
                         .align(alignment)
                         .padding(40.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .clickable { selectedAlignment = alignment }
+                        .clickable { selectedAlignment = alignment },
                 )
             }
             ColoredBox(
@@ -80,10 +80,10 @@ fun AlignmentInterpolationDemoScreen(
                             spring(
                                 dampingRatio = Spring.DampingRatioHighBouncy,
                                 stiffness = Spring.StiffnessVeryLow,
-                            )
-                        )
+                            ),
+                        ),
                     )
-                    .padding(40.dp)
+                    .padding(40.dp),
             )
         }
     }
@@ -99,7 +99,7 @@ private fun ColoredBox(
             .size(80.dp)
             .background(
                 color = color,
-                shape = RoundedCornerShape(16.dp)
-            )
+                shape = RoundedCornerShape(16.dp),
+            ),
     )
 }

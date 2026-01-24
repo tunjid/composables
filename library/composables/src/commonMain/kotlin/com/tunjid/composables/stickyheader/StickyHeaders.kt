@@ -16,7 +16,6 @@
 
 package com.tunjid.composables.stickyheader
 
-
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
@@ -47,7 +46,7 @@ internal inline fun <LazyState : ScrollableState, LazyItem> StickyHeaderLayout(
     crossinline lazyItemHeight: @DisallowComposableCalls LazyItem.() -> Int,
     crossinline isStickyHeaderItem: @DisallowComposableCalls LazyItem.() -> Boolean,
     stickyHeader: @Composable (LazyItem?) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(modifier = modifier.clipToBounds()) {
         content()
@@ -82,21 +81,21 @@ internal inline fun <LazyState : ScrollableState, LazyItem> StickyHeaderLayout(
         val canShowStickyHeader by remember {
             derivedStateOf(
                 policy = structuralEqualityPolicy(),
-                calculation = { headerOffset > Int.MIN_VALUE }
+                calculation = { headerOffset > Int.MIN_VALUE },
             )
         }
         Box(
             modifier = Modifier.offset {
                 IntOffset(
                     x = 0,
-                    y = headerOffset
+                    y = headerOffset,
                 )
-            }
+            },
         ) {
             val firstVisibleItem by remember {
                 derivedStateOf(
                     policy = itemMutationPolicy,
-                    calculation = { lazyState.lazyItems().firstOrNull() }
+                    calculation = { lazyState.lazyItems().firstOrNull() },
                 )
             }
             if (canShowStickyHeader) stickyHeader(firstVisibleItem)

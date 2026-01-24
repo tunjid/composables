@@ -48,28 +48,28 @@ fun DragToDismissDemoScreen(
     onBackPressed: () -> Unit,
 ) {
     SharedTransitionLayout(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) SharedTransitionLayout@{
         var selectedItem by remember { mutableStateOf<ColorItem?>(null) }
         val dragToDismissState = rememberUpdatedDragToDismissState()
 
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             DemoTopAppBar(
                 screen = screen,
-                onBackPressed = onBackPressed
+                onBackPressed = onBackPressed,
             )
             AnimatedContent(
                 targetState = selectedItem,
                 modifier = Modifier.fillMaxSize(),
-                transitionSpec = { fadeIn().togetherWith(fadeOut()) }
+                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
             ) { currentItem ->
                 when (currentItem) {
                     null -> ColorSelectionGrid(
                         sharedTransitionScope = this@SharedTransitionLayout,
                         animatedContentScope = this@AnimatedContent,
-                        onItemSelected = { selectedItem = it }
+                        onItemSelected = { selectedItem = it },
                     )
 
                     else -> DragToDismissContainer(
@@ -100,7 +100,7 @@ private fun ColorSelectionGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         columns = GridCells.Adaptive(100.dp),
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         items(
             items = pastelColors,
@@ -111,15 +111,15 @@ private fun ColorSelectionGrid(
                     modifier = Modifier
                         .sharedElement(
                             sharedContentState = sharedTransitionScope.rememberSharedContentState(
-                                key = item.id
+                                key = item.id,
                             ),
                             animatedVisibilityScope = animatedContentScope,
                         )
                         .fillMaxWidth()
                         .aspectRatio(1f)
-                        .clickable { onItemSelected(item) }
+                        .clickable { onItemSelected(item) },
                 )
-            }
+            },
         )
     }
 }
@@ -134,7 +134,7 @@ private fun DragToDismissContainer(
     onItemSelected: (ColorItem?) -> Unit,
 ) = with(sharedTransitionScope) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         val density = LocalDensity.current
         DemoItem(
@@ -160,7 +160,7 @@ private fun DragToDismissContainer(
                         onItemSelected(null)
                     },
                 )
-                .clickable { onItemSelected(null) }
+                .clickable { onItemSelected(null) },
         )
     }
 }
@@ -176,7 +176,7 @@ private fun DemoItem(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = item.color)
+                .background(color = item.color),
         )
     }
 }

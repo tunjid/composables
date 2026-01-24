@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.round
 import com.tunjid.demo.common.ui.App
 import com.tunjid.demo.common.ui.AppState
 import com.tunjid.demo.common.ui.AppTheme
-import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.flow.Flow
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
                                 progress = backEvent.progress
                                 pointerOffset = Offset(
                                     x = backEvent.touchX,
-                                    y = backEvent.touchY
+                                    y = backEvent.touchY,
                                 ).round()
                             }
                         }

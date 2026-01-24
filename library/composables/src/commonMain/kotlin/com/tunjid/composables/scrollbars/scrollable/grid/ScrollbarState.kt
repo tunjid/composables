@@ -33,9 +33,9 @@ import com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.sumOf
 import com.tunjid.composables.scrollbars.scrollbarStateValue
 import com.tunjid.composables.valueOf
+import kotlin.math.min
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
-import kotlin.math.min
 
 /**
  * Remembers a function to react to [Scrollbar] thumb position displacements for a [LazyGridState]

@@ -41,16 +41,16 @@ fun ContentScaleInterpolationDemoScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             val contentScales = remember {
                 listOf(
@@ -66,19 +66,20 @@ fun ContentScaleInterpolationDemoScreen(
             var selectedContentScale by remember { mutableStateOf(contentScales.first().second) }
 
             BeachScene(
-                contentScale = selectedContentScale
+                contentScale = selectedContentScale,
             )
             ContentScaleSelection(
                 contentScales = contentScales,
                 selectedContentScale = selectedContentScale,
-                onContentScaleSelected = { selectedContentScale = it })
+                onContentScaleSelected = { selectedContentScale = it },
+            )
         }
     }
 }
 
 @Composable
 private fun BeachScene(
-    contentScale: ContentScale
+    contentScale: ContentScale,
 ) {
     Image(
         imageVector = BeachScene,
@@ -91,7 +92,7 @@ private fun BeachScene(
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.onSurface,
-            )
+            ),
     )
 }
 
@@ -120,7 +121,7 @@ private fun ContentScaleSelection(
                     vertical = 4.dp,
                     horizontal = 8.dp,
                 )
-                    .clickable { onContentScaleSelected(contentScale) }
+                    .clickable { onContentScaleSelected(contentScale) },
             )
         }
     }
@@ -131,7 +132,7 @@ private val BeachScene: ImageVector = ImageVector.Builder(
     defaultWidth = 500.dp,
     defaultHeight = 300.dp,
     viewportWidth = 500f,
-    viewportHeight = 300f
+    viewportHeight = 300f,
 ).apply {
     skyPath()
     sandPath()
@@ -160,7 +161,7 @@ private fun ImageVector.Builder.skyPath() {
         strokeLineCap = StrokeCap.Butt,
         strokeLineJoin = StrokeJoin.Miter,
         strokeLineMiter = 1.0f,
-        pathFillType = PathFillType.NonZero
+        pathFillType = PathFillType.NonZero,
     ) {
         moveTo(0f, 0f)
         horizontalLineTo(500f)
@@ -181,7 +182,7 @@ private fun ImageVector.Builder.sandPath() {
         strokeLineCap = StrokeCap.Butt,
         strokeLineJoin = StrokeJoin.Miter,
         strokeLineMiter = 1.0f,
-        pathFillType = PathFillType.NonZero
+        pathFillType = PathFillType.NonZero,
     ) {
         moveTo(0f, 200f)
         curveTo(100f, 180f, 200f, 190f, 300f, 170f)
@@ -202,7 +203,7 @@ private fun ImageVector.Builder.sunPath() {
         strokeLineCap = StrokeCap.Butt,
         strokeLineJoin = StrokeJoin.Miter,
         strokeLineMiter = 1.0f,
-        pathFillType = PathFillType.NonZero
+        pathFillType = PathFillType.NonZero,
     ) {
         moveTo(460f, 70f)
         arcTo(50f, 50f, 0f, isMoreThanHalf = false, isPositiveArc = true, 410f, 120f)
@@ -233,7 +234,7 @@ private fun ImageVector.Builder.beachHutGroup(
             strokeLineCap = StrokeCap.Butt,
             strokeLineJoin = StrokeJoin.Miter,
             strokeLineMiter = 1.0f,
-            pathFillType = PathFillType.NonZero
+            pathFillType = PathFillType.NonZero,
         ) {
             moveTo(0f, 0f)
             curveTo(30f, -20f, 60f, -10f, 90f, 0f)
@@ -250,7 +251,7 @@ private fun ImageVector.Builder.beachHutGroup(
             strokeLineCap = StrokeCap.Butt,
             strokeLineJoin = StrokeJoin.Miter,
             strokeLineMiter = 1.0f,
-            pathFillType = PathFillType.NonZero
+            pathFillType = PathFillType.NonZero,
         ) {
             moveTo(10f, 10f)
             horizontalLineTo(30f)
@@ -268,7 +269,7 @@ private fun ImageVector.Builder.beachHutGroup(
             strokeLineCap = StrokeCap.Butt,
             strokeLineJoin = StrokeJoin.Miter,
             strokeLineMiter = 1.0f,
-            pathFillType = PathFillType.NonZero
+            pathFillType = PathFillType.NonZero,
         ) {
             moveTo(60f, 10f)
             arcTo(10f, 10f, 0f, isMoreThanHalf = false, isPositiveArc = true, 50f, 20f)
@@ -278,4 +279,3 @@ private fun ImageVector.Builder.beachHutGroup(
         }
     }
 }
-

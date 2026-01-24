@@ -40,7 +40,6 @@ fun LazyListDemoScreen(
     val listState = rememberLazyListState()
     val scrollbarState = listState.scrollbarState(itemsAvailable = pastelColors.size)
 
-
     DemoCollapsingHeader(
         screen = screen,
         item = selectedItem,
@@ -50,7 +49,7 @@ fun LazyListDemoScreen(
             state = listState,
             contentPadding = WindowInsets.navigationBars.asPaddingValues(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(
                 items = pastelColors,
@@ -63,15 +62,15 @@ fun LazyListDemoScreen(
                             .padding(
                                 horizontal = 8.dp,
                                 vertical = 4.dp,
-                            )
+                            ),
                     )
-                }
+                },
             )
         }
         FastScrollbar(
             modifier = Modifier
                 .padding(
-                    WindowInsets.navigationBars.asPaddingValues()
+                    WindowInsets.navigationBars.asPaddingValues(),
                 )
                 .fillMaxHeight()
                 .width(12.dp)
@@ -79,7 +78,7 @@ fun LazyListDemoScreen(
             state = scrollbarState,
             scrollInProgress = listState.isScrollInProgress,
             orientation = Orientation.Vertical,
-            onThumbMoved = listState.rememberBasicScrollbarThumbMover()
+            onThumbMoved = listState.rememberBasicScrollbarThumbMover(),
         )
     }
 }

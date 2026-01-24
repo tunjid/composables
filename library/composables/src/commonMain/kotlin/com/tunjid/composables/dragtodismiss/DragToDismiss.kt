@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 class DragToDismissState(
     internal val coroutineScope: CoroutineScope,
     enabled: Boolean = true,
-    animationSpec: AnimationSpec<Offset> = DefaultDragToDismissSpring
+    animationSpec: AnimationSpec<Offset> = DefaultDragToDismissSpring,
 ) {
     /**
      * Whether or not drag to dismiss is available.
@@ -140,12 +140,12 @@ fun Modifier.dragToDismiss(
                             targetValue = Offset.Zero,
                             initialVelocity = Offset(
                                 x = velocity.x,
-                                y = velocity.y
+                                y = velocity.y,
                             ),
                             animationSpec = state.animationSpec,
                             block = { value, _ ->
                                 dragBy(value - state.offset)
-                            }
+                            },
                         )
                     }
                     // Notify that it has been reset.
@@ -158,7 +158,7 @@ fun Modifier.dragToDismiss(
                 }
             }
         }
-    }
+    },
 )
 
 private val DefaultDragToDismissSpring = spring<Offset>()

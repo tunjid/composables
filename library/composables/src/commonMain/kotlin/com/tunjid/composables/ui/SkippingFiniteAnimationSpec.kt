@@ -32,7 +32,7 @@ private class SkipSpec<T>(
     private val shouldSkipToEnd: () -> Boolean,
 ) : FiniteAnimationSpec<T> {
     override fun <V : AnimationVector> vectorize(
-        converter: TwoWayConverter<T, V>
+        converter: TwoWayConverter<T, V>,
     ): VectorizedFiniteAnimationSpec<V> = SkipVectorizedFiniteAnimationSpec(
         backing = backing.vectorize(converter),
         shouldSkipToEnd = shouldSkipToEnd,
@@ -48,7 +48,7 @@ private class SkipVectorizedFiniteAnimationSpec<V : AnimationVector>(
     override fun getDurationNanos(
         initialValue: V,
         targetValue: V,
-        initialVelocity: V
+        initialVelocity: V,
     ): Long = backing.getDurationNanos(
         initialValue = initialValue,
         targetValue = targetValue,
@@ -59,7 +59,7 @@ private class SkipVectorizedFiniteAnimationSpec<V : AnimationVector>(
         playTimeNanos: Long,
         initialValue: V,
         targetValue: V,
-        initialVelocity: V
+        initialVelocity: V,
     ): V {
         return if (shouldSkipToEnd()) targetValue
         else backing.getValueFromNanos(
@@ -74,7 +74,7 @@ private class SkipVectorizedFiniteAnimationSpec<V : AnimationVector>(
         playTimeNanos: Long,
         initialValue: V,
         targetValue: V,
-        initialVelocity: V
+        initialVelocity: V,
     ): V {
         return if (shouldSkipToEnd()) targetValue
         else backing.getVelocityFromNanos(

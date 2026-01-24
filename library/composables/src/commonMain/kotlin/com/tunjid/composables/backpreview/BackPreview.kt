@@ -44,7 +44,7 @@ class BackPreviewState(
  * @param state The backing state driving the preview.
  */
 fun Modifier.backPreview(
-    state: BackPreviewState
+    state: BackPreviewState,
 ): Modifier = layout { measurable, constraints ->
     val touchOffset = state.pointerOffset
     val progress = state.progress
@@ -61,7 +61,7 @@ fun Modifier.backPreview(
             minWidth = (constraints.minWidth * scale).roundToInt(),
             maxHeight = (constraints.maxHeight * scale).roundToInt(),
             minHeight = (constraints.minHeight * scale).roundToInt(),
-        )
+        ),
     )
     if (progress.isNaN()) return@layout layout(placeable.width, placeable.height) {
         placeable.place(0, 0)
@@ -74,10 +74,12 @@ fun Modifier.backPreview(
     val spaceOnEachSide = (paneWidth - scaledWidth) / 2
     val margin = (BACK_PREVIEW_PADDING * progress).dp.roundToPx()
 
-    val xOffset = ((spaceOnEachSide - margin) * when {
-        state.atStart -> 1
-        else -> -1
-    }).toInt()
+    val xOffset = (
+        (spaceOnEachSide - margin) * when {
+            state.atStart -> 1
+            else -> -1
+        }
+        ).toInt()
 
     val maxYShift = ((paneHeight / 20) - BACK_PREVIEW_PADDING)
     val isOrientedHorizontally = paneWidth > paneHeight
