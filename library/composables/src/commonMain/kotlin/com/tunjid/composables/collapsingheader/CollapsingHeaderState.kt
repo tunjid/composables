@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,16 +47,21 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.offset
 import androidx.compose.ui.util.packFloats
 import androidx.compose.ui.util.unpackFloat1
 import androidx.compose.ui.util.unpackFloat2
+import androidx.compose.ui.zIndex
+import com.tunjid.composables.collapsingheader.CollapsingHeaderState.Companion.saver
 import kotlin.jvm.JvmInline
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 enum class CollapsingHeaderStatus {
@@ -83,7 +89,7 @@ fun rememberCollapsingHeaderState(
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
     flingBehavior: FlingBehavior? = null,
 ): CollapsingHeaderState = rememberSaveable(
-    saver = CollapsingHeaderState.saver(
+    saver = saver(
         collapsedHeight = collapsedHeight,
         flingBehavior = flingBehavior,
     ),
@@ -183,6 +189,16 @@ class CollapsingHeaderState(
         }
 
     /**
+     * The zIndex of the header
+     */
+    var headerZIndex by mutableFloatStateOf(0f)
+
+    /**
+     * The zIndex of the body
+     */
+    var bodyZIndex by mutableFloatStateOf(0f)
+
+    /**
      * The distance the header has been collapsed from its expanded height.
      */
     val translation: Float get() = expandedHeight - anchoredDraggableState.requireOffset()
@@ -212,6 +228,43 @@ class CollapsingHeaderState(
      */
     suspend fun snapTo(status: CollapsingHeaderStatus) {
         anchoredDraggableState.snapTo(status)
+    }
+
+    @Stable
+    internal fun layoutHeader(
+        measureScope: MeasureScope,
+        measurable: Measurable,
+        constraints: Constraints,
+    ): MeasureResult = with(measureScope) {
+        val placeable = measurable.measure(constraints)
+        expandedHeight = placeable.height.toFloat()
+        layout(placeable.height, placeable.height) {
+            placeable.place(0, 0)
+        }
+    }
+
+    @Stable
+    internal fun layoutBody(
+        measureScope: MeasureScope,
+        measurable: Measurable,
+        constraints: Constraints,
+    ): MeasureResult = with(measureScope) {
+        val adjustment = collapsedHeight.toInt()
+
+        val actualConstraints = constraints
+            .offset(vertical = -adjustment)
+
+        val placeable = measurable.measure(actualConstraints)
+
+        layout(
+            width = placeable.width,
+            height = placeable.height + adjustment,
+        ) {
+            placeable.place(
+                x = 0,
+                y = expandedHeight.toInt() - translation.roundToInt(),
+            )
+        }
     }
 
     private fun updateAnchors() = anchoredDraggableState.updateAnchors(
@@ -244,8 +297,8 @@ class CollapsingHeaderState(
                     initialExpandedHeight = expandedHeight,
                     snapThreshold = snapThreshold,
                     initialStatus =
-                    if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
-                    else CollapsingHeaderStatus.Expanded,
+                        if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
+                        else CollapsingHeaderStatus.Expanded,
                     flingBehavior = flingBehavior,
                 )
             },
@@ -285,29 +338,19 @@ fun CollapsingHeaderLayout(
                 connection = remember(state::nestedScrollConnection),
             ),
         content = {
+            // There's a dependency here. The header needs to be measured before the body,
+            // so it is placed in the parent Box first and measured first.
             Box(
                 modifier = Modifier
-                    .onSizeChanged { state.expandedHeight = it.height.toFloat() },
+                    .zIndex(state.headerZIndex)
+                    .layout(state::layoutHeader),
             ) {
                 headerContent()
             }
             Box(
-                modifier = Modifier
-                    .layout { measurable, constraints ->
-                        val placeable = measurable.measure(constraints)
-                        layout(
-                            width = placeable.width,
-                            height = max(
-                                a = 0,
-                                b = placeable.height - state.collapsedHeight.roundToInt(),
-                            ),
-                        ) {
-                            placeable.place(
-                                x = 0,
-                                y = state.anchoredDraggableState.offset.roundToInt(),
-                            )
-                        }
-                    },
+                Modifier
+                    .zIndex(state.bodyZIndex)
+                    .layout(state::layoutBody),
             ) {
                 body()
             }

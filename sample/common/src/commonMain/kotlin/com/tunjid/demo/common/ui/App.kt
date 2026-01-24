@@ -64,10 +64,10 @@ import com.tunjid.composables.splitlayout.SplitLayoutState
 import com.tunjid.demo.common.app.demos.utilities.isActive
 import com.tunjid.demo.common.ui.AppState.Companion.rememberMultiPaneDisplayState
 import com.tunjid.treenav.StackNav
+import com.tunjid.treenav.compose.MovableSharedElementHostState
 import com.tunjid.treenav.compose.MultiPaneDisplay
 import com.tunjid.treenav.compose.MultiPaneDisplayState
 import com.tunjid.treenav.compose.PaneNavigationState
-import com.tunjid.treenav.compose.moveablesharedelement.MovableSharedElementHostState
 import com.tunjid.treenav.compose.multiPaneDisplayBackstack
 import com.tunjid.treenav.compose.panedecorators.PaneDecorator
 import com.tunjid.treenav.compose.threepane.ThreePane
