@@ -45,7 +45,7 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                     x = 0f,
                     y = -statusBarInsets.run {
                         getTop(this@maxOffset) + getBottom(this@maxOffset)
-                    } - ToolbarHeight.toPx()
+                    } - ToolbarHeight.toPx(),
                 )
             },
         )
@@ -59,12 +59,11 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                     x = 0f,
                     y = navigationBarInsets.run {
                         getTop(this@maxOffset) + getBottom(this@maxOffset)
-                    } + BottomNavHeight.toPx()
+                    } + BottomNavHeight.toPx(),
                 )
             },
             minOffset = { Offset.Zero },
         )
-
 
     Scaffold(
         modifier = Modifier
@@ -84,12 +83,12 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Back",
                             )
-                        }
+                        },
                     )
                 },
                 title = {
                     Text(text = screen.title)
-                }
+                },
             )
         },
         content = { paddingValues ->
@@ -108,9 +107,9 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                                 .padding(
                                     horizontal = 8.dp,
                                     vertical = 4.dp,
-                                )
+                                ),
                         )
-                    }
+                    },
                 )
             }
         },
@@ -123,9 +122,9 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                 content = {
                     Text(
                         modifier = Modifier.padding(16.dp),
-                        text = "Button"
+                        text = "Button",
                     )
-                }
+                },
             )
         },
         bottomBar = {
@@ -134,10 +133,9 @@ fun AccumulatedOffsetNestedScrollConnectionDemoScreen(
                     bottomNavAccumulatedOffsetNestedScrollConnection.offset.round()
                 },
                 content = {
-
                 },
             )
-        }
+        },
     )
 }
 

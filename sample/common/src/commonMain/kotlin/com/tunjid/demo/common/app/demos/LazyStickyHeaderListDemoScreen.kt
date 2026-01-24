@@ -45,11 +45,11 @@ fun LazyStickyHeaderListDemoScreen(
     }
     val listState = rememberLazyListState()
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         StickyHeaderList(
             state = listState,
@@ -62,13 +62,13 @@ fun LazyStickyHeaderListDemoScreen(
                     char = distinctPastelColors.charFor(key, contentType),
                     backgroundColor = selectedItem.color,
                 )
-            }
+            },
         ) {
             LazyColumn(
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = WindowInsets.navigationBars.asPaddingValues(),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 groupedPastelColors.forEach { (char, items) ->
                     item(
@@ -77,7 +77,7 @@ fun LazyStickyHeaderListDemoScreen(
                         content = {
                             ItemHeader(
                                 char = char,
-                                backgroundColor = selectedItem.color
+                                backgroundColor = selectedItem.color,
                             )
                         },
                     )
@@ -94,13 +94,12 @@ fun LazyStickyHeaderListDemoScreen(
                                     .padding(
                                         horizontal = 8.dp,
                                         vertical = 4.dp,
-                                    )
+                                    ),
                             )
-                        }
+                        },
                     )
                 }
             }
-
         }
     }
 }

@@ -49,7 +49,7 @@ fun StickyHeaderStaggeredGrid(
     modifier: Modifier = Modifier,
     isStickyHeaderItem: @DisallowComposableCalls (LazyStaggeredGridItemInfo) -> Boolean,
     stickyHeader: @Composable (index: Int, key: Any?, contentType: Any?) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     StickyHeaderLayout(
         lazyState = state,
@@ -58,12 +58,12 @@ fun StickyHeaderStaggeredGrid(
             object : SnapshotMutationPolicy<LazyStaggeredGridItemInfo?> {
                 override fun equivalent(
                     a: LazyStaggeredGridItemInfo?,
-                    b: LazyStaggeredGridItemInfo?
+                    b: LazyStaggeredGridItemInfo?,
                 ): Boolean =
                     a != null && b != null &&
-                            a.key == b.key &&
-                            a.contentType == b.contentType &&
-                            a.index == b.index
+                        a.key == b.key &&
+                        a.contentType == b.contentType &&
+                        a.index == b.index
             }
         },
         viewportStart = { layoutInfo.viewportStartOffset },
@@ -76,7 +76,7 @@ fun StickyHeaderStaggeredGrid(
             if (itemInfo != null) stickyHeader(
                 itemInfo.index,
                 itemInfo.key,
-                itemInfo.contentType
+                itemInfo.contentType,
             )
         },
         content = content,

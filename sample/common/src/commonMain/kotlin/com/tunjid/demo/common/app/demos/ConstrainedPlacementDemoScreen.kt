@@ -43,15 +43,15 @@ fun ConstrainedPlacementDemoScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             var orientation by remember { mutableStateOf(Orientation.Vertical) }
             AnimatedContent(
@@ -59,7 +59,7 @@ fun ConstrainedPlacementDemoScreen(
                 modifier = Modifier
                     .fillMaxWidth(0.625f)
                     .aspectRatio(1f)
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
             ) { selectedOrientation ->
                 val splitLayoutState = remember {
                     SplitLayoutState(
@@ -94,17 +94,16 @@ fun ConstrainedPlacementDemoScreen(
                                     Orientation.Vertical -> Orientation.Horizontal
                                     Orientation.Horizontal -> Orientation.Vertical
                                 }
-                            }
+                            },
                     )
                 }
-
             }
             Box(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth()
                     .aspectRatio(1f)
-                    .border(PaneSeparatorTouchTargetWidthDp, MaterialTheme.colorScheme.onSurface)
+                    .border(PaneSeparatorTouchTargetWidthDp, MaterialTheme.colorScheme.onSurface),
             )
         }
     }
@@ -122,7 +121,7 @@ private fun PaneSeparator(
     val draggableState = rememberDraggableState {
         splitLayoutState.dragBy(
             index = index,
-            delta = with(density) { it.toDp() }
+            delta = with(density) { it.toDp() },
         )
     }
     Box(
@@ -151,7 +150,7 @@ private fun PaneSeparator(
                 (0..1).forEach {
                     splitLayoutState.setWeightAt(it, 0.5f)
                 }
-            }
+            },
     )
 }
 

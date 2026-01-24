@@ -54,7 +54,7 @@ fun LazyStaggeredGridDemoScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalItemSpacing = 8.dp,
             columns = StaggeredGridCells.Adaptive(100.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             items(
                 items = pastelColors,
@@ -63,19 +63,21 @@ fun LazyStaggeredGridDemoScreen(
                         item = item,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(remember {
-                                val step = (-1..4).random() * 2
-                                1f + (step / 10f)
-                            })
-                            .clickable { selectedItem = item }
+                            .aspectRatio(
+                                remember {
+                                    val step = (-1..4).random() * 2
+                                    1f + (step / 10f)
+                                },
+                            )
+                            .clickable { selectedItem = item },
                     )
-                }
+                },
             )
         }
         FastScrollbar(
             modifier = Modifier
                 .padding(
-                    WindowInsets.navigationBars.asPaddingValues()
+                    WindowInsets.navigationBars.asPaddingValues(),
                 )
                 .fillMaxHeight()
                 .width(12.dp)
@@ -83,7 +85,7 @@ fun LazyStaggeredGridDemoScreen(
             state = scrollbarState,
             scrollInProgress = staggeredGridState.isScrollInProgress,
             orientation = Orientation.Vertical,
-            onThumbMoved = staggeredGridState.rememberBasicScrollbarThumbMover()
+            onThumbMoved = staggeredGridState.rememberBasicScrollbarThumbMover(),
         )
     }
 }

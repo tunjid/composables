@@ -67,11 +67,11 @@ fun PointerOffsetLazyGridDemoScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         Box(
             modifier = Modifier
@@ -104,9 +104,9 @@ fun PointerOffsetLazyGridDemoScreen(
                         onDrag = { change, _ ->
                             if (selectedItem == null) return@detectDragGesturesAfterLongPress
                             pointerOffsetScrollState.currentOffset = change.position
-                        }
+                        },
                     )
-                }
+                },
         ) {
             LazyVerticalGrid(
                 state = gridState,
@@ -128,9 +128,9 @@ fun PointerOffsetLazyGridDemoScreen(
                             item = item,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .aspectRatio(1f)
+                                .aspectRatio(1f),
                         )
-                    }
+                    },
                 )
             }
 

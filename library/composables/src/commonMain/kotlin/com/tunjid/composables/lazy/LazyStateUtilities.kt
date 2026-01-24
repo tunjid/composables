@@ -16,7 +16,6 @@
 
 package com.tunjid.composables.lazy
 
-
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
@@ -24,7 +23,6 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.snapshotFlow
 import kotlin.math.abs
-
 
 /**
  * Remembers [LazyState] by saving two [Int] values from it via [rememberSaveable]:
@@ -58,9 +56,9 @@ inline fun <LazyState : ScrollableState> rememberLazyScrollableState(
         },
         restore = { (firstVisibleItemIndex, firstVisibleItemScrollOffset) ->
             restore(firstVisibleItemIndex, firstVisibleItemScrollOffset)
-        }
+        },
     ),
-    init = init
+    init = init,
 )
 
 /**
@@ -104,7 +102,6 @@ inline fun <LazyState : ScrollableState, LazyStateItem> LazyState.interpolatedFi
 
     return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
 }
-
 
 /**
  * Linearly interpolates the index for the item at [index] in [visibleItems] to smoothly match the
@@ -153,6 +150,7 @@ internal inline fun <LazyState : ScrollableState, LazyStateItem> interpolatedInd
 
     return firstItemIndex + ((nextItemIndex - firstItemIndex) * offsetPercentage)
 }
+
 /**
  * Returns the percentage of an item that is currently visible in the view port.
  * @param itemSize the size of the item

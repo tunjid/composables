@@ -48,7 +48,7 @@ fun PaneSeparator(
     val draggableState = rememberDraggableState {
         splitLayoutState.dragBy(
             index = index,
-            delta = with(density) { it.toDp() }
+            delta = with(density) { it.toDp() },
         )
     }
     val active = interactionSource.isActive()
@@ -63,7 +63,7 @@ fun PaneSeparator(
             )
             .hoverable(interactionSource)
             .width(PaneSeparatorTouchTargetWidthDp)
-            .fillMaxHeight()
+            .fillMaxHeight(),
     ) {
         Box(
             modifier = Modifier
@@ -71,12 +71,12 @@ fun PaneSeparator(
                 .background(
                     color = animateColorAsState(
                         if (active) MaterialTheme.colorScheme.onSurfaceVariant
-                        else MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface,
                     ).value,
                     shape = RoundedCornerShape(PaneSeparatorActiveWidthDp),
                 )
                 .width(animateDpAsState(if (active) PaneSeparatorActiveWidthDp else 1.dp).value)
-                .height(PaneSeparatorActiveWidthDp)
+                .height(PaneSeparatorActiveWidthDp),
         )
     }
     LaunchedEffect(Unit) {
@@ -84,7 +84,7 @@ fun PaneSeparator(
             initialValue = 0f,
             targetValue = 1f,
             animationSpec = tween(1000),
-            block = { value, _ -> alpha = value }
+            block = { value, _ -> alpha = value },
         )
     }
 }

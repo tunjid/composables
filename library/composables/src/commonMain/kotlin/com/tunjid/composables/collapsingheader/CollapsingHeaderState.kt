@@ -38,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -60,7 +59,8 @@ import kotlin.math.max
 import kotlin.math.roundToInt
 
 enum class CollapsingHeaderStatus {
-    Collapsed, Expanded
+    Collapsed,
+    Expanded,
 }
 
 /**
@@ -83,7 +83,7 @@ fun rememberCollapsingHeaderState(
     initialStatus: CollapsingHeaderStatus = CollapsingHeaderStatus.Expanded,
     flingBehavior: FlingBehavior? = null,
 ): CollapsingHeaderState = rememberSaveable(
-    saver = CollapsingHeaderState.Saver(
+    saver = CollapsingHeaderState.saver(
         collapsedHeight = collapsedHeight,
         flingBehavior = flingBehavior,
     ),
@@ -94,7 +94,7 @@ fun rememberCollapsingHeaderState(
             snapThreshold = snapThreshold,
             initialStatus = initialStatus,
         )
-    }
+    },
 )
 
 /**
@@ -152,8 +152,8 @@ class CollapsingHeaderState(
     private var anchors by mutableLongStateOf(
         Anchors(
             collapsedHeight = collapsedHeight,
-            expandedHeight = initialExpandedHeight
-        ).packedValue
+            expandedHeight = initialExpandedHeight,
+        ).packedValue,
     )
 
     /**
@@ -164,7 +164,7 @@ class CollapsingHeaderState(
         internal set(value) {
             anchors = Anchors(
                 collapsedHeight = collapsedHeight,
-                expandedHeight = value
+                expandedHeight = value,
             ).packedValue
             updateAnchors()
         }
@@ -177,7 +177,7 @@ class CollapsingHeaderState(
         set(value) {
             anchors = Anchors(
                 collapsedHeight = value,
-                expandedHeight = expandedHeight
+                expandedHeight = expandedHeight,
             ).packedValue
             updateAnchors()
         }
@@ -215,7 +215,7 @@ class CollapsingHeaderState(
     }
 
     private fun updateAnchors() = anchoredDraggableState.updateAnchors(
-        currentDraggableAnchors()
+        currentDraggableAnchors(),
     )
 
     private fun currentDraggableAnchors() = DraggableAnchors {
@@ -225,9 +225,9 @@ class CollapsingHeaderState(
 
     companion object {
         /**
-         * The default [Saver] implementation for [CollapsingHeaderState].
+         * The default [saver] implementation for [CollapsingHeaderState].
          */
-        fun Saver(
+        fun saver(
             collapsedHeight: Float,
             flingBehavior: FlingBehavior?,
         ) = listSaver<CollapsingHeaderState, Float>(
@@ -244,11 +244,11 @@ class CollapsingHeaderState(
                     initialExpandedHeight = expandedHeight,
                     snapThreshold = snapThreshold,
                     initialStatus =
-                        if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
-                        else CollapsingHeaderStatus.Expanded,
+                    if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
+                    else CollapsingHeaderStatus.Expanded,
                     flingBehavior = flingBehavior,
                 )
-            }
+            },
         )
     }
 }
@@ -304,17 +304,16 @@ fun CollapsingHeaderLayout(
                         ) {
                             placeable.place(
                                 x = 0,
-                                y = state.anchoredDraggableState.offset.roundToInt()
+                                y = state.anchoredDraggableState.offset.roundToInt(),
                             )
                         }
-                    }
+                    },
             ) {
                 body()
             }
-        }
+        },
     )
 }
-
 
 /**
  * Packed float class to use [mutableLongStateOf] to hold state for expanded and collapsed heights.
@@ -337,7 +336,6 @@ private fun Anchors(
 
 private val Anchors.collapsedHeight
     get() = unpackFloat1(packedValue)
-
 
 private val Anchors.expandedHeight
     get() = unpackFloat2(packedValue)
@@ -376,12 +374,12 @@ private fun CollapsingHeaderState.scrollableState() = object : ScrollableState {
         get() = progress != 1f
 
     override fun dispatchRawDelta(
-        delta: Float
+        delta: Float,
     ): Float = anchoredDraggableState.dispatchRawDelta(delta)
 
     override suspend fun scroll(
         scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit
+        block: suspend ScrollScope.() -> Unit,
     ) {
         anchoredDraggableState.anchoredDrag(scrollPriority) {
             isScrollingState.value = true
@@ -414,20 +412,20 @@ private fun CollapsingHeaderState.nestedScrollConnection() =
 
         override suspend fun onPostFling(
             consumed: Velocity,
-            available: Velocity
+            available: Velocity,
         ): Velocity {
             val currentValue = anchoredDraggableState.currentValue
 
             if (available.y > 0 && currentValue == CollapsingHeaderStatus.Collapsed) {
                 return animateToStatusWithVelocity(
                     available = available,
-                    status = CollapsingHeaderStatus.Expanded
+                    status = CollapsingHeaderStatus.Expanded,
                 )
             }
             if (available.y < 0 && currentValue == CollapsingHeaderStatus.Expanded) {
                 return animateToStatusWithVelocity(
                     available = available,
-                    status = CollapsingHeaderStatus.Collapsed
+                    status = CollapsingHeaderStatus.Collapsed,
                 )
             }
 
@@ -436,7 +434,7 @@ private fun CollapsingHeaderState.nestedScrollConnection() =
             if (hasNoInertia && progress < snapThreshold) {
                 return animateToStatusWithVelocity(
                     available = available,
-                    status = CollapsingHeaderStatus.Expanded
+                    status = CollapsingHeaderStatus.Expanded,
                 )
             }
             if (hasNoInertia && progress > 1 - snapThreshold) {
@@ -457,7 +455,7 @@ private fun CollapsingHeaderState.nestedScrollConnection() =
             y = anchoredDraggableState.animateToWithDecay(
                 targetValue = status,
                 velocity = available.y,
-            )
+            ),
         )
     }
 

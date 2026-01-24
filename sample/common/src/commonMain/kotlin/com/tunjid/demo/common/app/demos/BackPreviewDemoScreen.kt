@@ -33,24 +33,24 @@ fun BackPreviewDemoScreen(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         var layoutSize by remember { mutableStateOf(IntSize.Zero) }
         val backPreviewState = remember { BackPreviewState() }
         Box(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxSize(),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .onSizeChanged { layoutSize = it }
                     .backPreview(state = backPreviewState)
-                    .background(pastelColors.first().color.copy(alpha = 0.6f))
+                    .background(pastelColors.first().color.copy(alpha = 0.6f)),
             )
             MockPredictiveBackGestureArea(
                 backPreviewState = backPreviewState,
@@ -77,7 +77,7 @@ private fun BoxScope.MockPredictiveBackGestureArea(
             .background(pastelColors.first().color.copy(alpha = 0.4f))
             .align(
                 if (reverseDirection) Alignment.TopEnd
-                else Alignment.TopStart
+                else Alignment.TopStart,
             )
             .fillMaxHeight()
             .width(60.dp)
@@ -95,7 +95,6 @@ private fun BoxScope.MockPredictiveBackGestureArea(
                     backPreviewState.progress = Float.NaN
                 },
                 reverseDirection = reverseDirection,
-            )
+            ),
     )
 }
-

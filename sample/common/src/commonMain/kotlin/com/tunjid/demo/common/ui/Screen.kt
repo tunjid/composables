@@ -340,6 +340,6 @@ enum class Screen(
 
     override val children: List<Node>
         get() = listOfNotNull(
-            Demos.takeUnless { Demos == this }
+            Demos.takeUnless { Demos == this },
         )
 }

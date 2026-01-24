@@ -47,7 +47,7 @@ fun StickyHeaderGrid(
     modifier: Modifier = Modifier,
     isStickyHeaderItem: @DisallowComposableCalls (LazyGridItemInfo) -> Boolean,
     stickyHeader: @Composable (index: Int, key: Any?, contentType: Any?) -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     StickyHeaderLayout(
         lazyState = state,
@@ -56,12 +56,12 @@ fun StickyHeaderGrid(
             object : SnapshotMutationPolicy<LazyGridItemInfo?> {
                 override fun equivalent(
                     a: LazyGridItemInfo?,
-                    b: LazyGridItemInfo?
+                    b: LazyGridItemInfo?,
                 ): Boolean =
                     a != null && b != null &&
-                            a.key == b.key &&
-                            a.contentType == b.contentType &&
-                            a.index == b.index
+                        a.key == b.key &&
+                        a.contentType == b.contentType &&
+                        a.index == b.index
             }
         },
         viewportStart = { layoutInfo.viewportStartOffset },
@@ -74,7 +74,7 @@ fun StickyHeaderGrid(
             if (itemInfo != null) stickyHeader(
                 itemInfo.index,
                 itemInfo.key,
-                itemInfo.contentType
+                itemInfo.contentType,
             )
         },
         content = content,

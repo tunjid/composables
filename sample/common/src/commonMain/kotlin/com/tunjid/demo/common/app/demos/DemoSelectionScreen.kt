@@ -47,7 +47,7 @@ import com.tunjid.demo.common.ui.Screen
 fun DemoSelectionScreen(
     screen: Screen,
     screens: List<Screen>,
-    onScreenSelected: (Screen) -> Unit
+    onScreenSelected: (Screen) -> Unit,
 ) {
     var pendingScrollOffset by rememberSaveable { mutableIntStateOf(0) }
     val gridState = rememberLazyScrollableState(
@@ -62,18 +62,18 @@ fun DemoSelectionScreen(
         },
     )
     val scrollbarState = gridState.scrollbarState(
-        itemsAvailable = screens.size
+        itemsAvailable = screens.size,
     )
     val density = LocalDensity.current
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
         )
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             LazyVerticalGrid(
                 state = gridState,
@@ -82,7 +82,7 @@ fun DemoSelectionScreen(
                     vertical = 16.dp,
                 ),
                 columns = GridCells.Adaptive(400.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(
                     items = screens,
@@ -106,7 +106,7 @@ fun DemoSelectionScreen(
                                     onScreenSelected(screen)
                                 },
                         )
-                    }
+                    },
                 )
             }
             FastScrollbar(
@@ -117,7 +117,7 @@ fun DemoSelectionScreen(
                 state = scrollbarState,
                 scrollInProgress = gridState.isScrollInProgress,
                 orientation = Orientation.Vertical,
-                onThumbMoved = gridState.rememberBasicScrollbarThumbMover()
+                onThumbMoved = gridState.rememberBasicScrollbarThumbMover(),
             )
         }
     }
@@ -128,24 +128,22 @@ private fun DemoScreenItem(
     screen: Screen,
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         FlowRow(
             modifier = Modifier
                 .size(60.dp)
                 .background(
                     color = remember { pastelColors.random().color },
-                    shape = RoundedCornerShape(60.dp)
+                    shape = RoundedCornerShape(60.dp),
                 )
                 .padding(4.dp)
                 .rotate(
                     if (screen.icons.size == 2) 45f
-                    else 0f
+                    else 0f,
                 ),
             horizontalArrangement = Arrangement.Center,
             verticalArrangement = Arrangement.Center,
@@ -160,8 +158,8 @@ private fun DemoScreenItem(
                         .padding(horizontal = 2.dp)
                         .rotate(
                             if (screen.icons.size == 2) -45f
-                            else 0f
-                        )
+                            else 0f,
+                        ),
                 )
             }
         }
@@ -169,14 +167,13 @@ private fun DemoScreenItem(
             Text(
                 text = screen.title,
                 style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier
+                modifier = Modifier,
             )
             Text(
                 text = screen.description,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
+                modifier = Modifier,
             )
         }
     }
 }
-

@@ -137,5 +137,7 @@ private fun scrollbarThumbColor(
 }
 
 private enum class ThumbState {
-    Active, Inactive, Dormant
+    Active,
+    Inactive,
+    Dormant,
 }

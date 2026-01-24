@@ -67,11 +67,11 @@ fun PointerOffsetLazyListDemoScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         Box(
             modifier = Modifier
@@ -104,9 +104,9 @@ fun PointerOffsetLazyListDemoScreen(
                         onDrag = { change, _ ->
                             if (selectedItem == null) return@detectDragGesturesAfterLongPress
                             pointerOffsetScrollState.currentOffset = change.position
-                        }
+                        },
                     )
-                }
+                },
         ) {
             LazyColumn(
                 state = listState,
@@ -117,7 +117,7 @@ fun PointerOffsetLazyListDemoScreen(
                     .add(WindowInsets.navigationBars)
                     .asPaddingValues(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
             ) {
                 items(
                     items = mutableColors,
@@ -130,9 +130,9 @@ fun PointerOffsetLazyListDemoScreen(
                                 .padding(
                                     horizontal = 8.dp,
                                     vertical = 4.dp,
-                                )
+                                ),
                         )
-                    }
+                    },
                 )
             }
 

@@ -90,13 +90,13 @@ fun App(
                 val density = LocalDensity.current
                 val movableSharedElementHostState = remember {
                     MovableSharedElementHostState<ThreePane, Screen>(
-                        sharedTransitionScope = this
+                        sharedTransitionScope = this,
                     )
                 }
                 val windowWidth = rememberUpdatedState(
                     with(density) {
                         LocalWindowInfo.current.containerSize.width.toDp()
-                    }
+                    },
                 )
                 MultiPaneDisplay(
                     modifier = Modifier
@@ -106,18 +106,18 @@ fun App(
                             listOf(
                                 threePaneAdaptiveDecorator(
                                     secondaryPaneBreakPoint = mutableStateOf(
-                                        SecondaryPaneMinWidthBreakpointDp
+                                        SecondaryPaneMinWidthBreakpointDp,
                                     ),
                                     tertiaryPaneBreakPoint = mutableStateOf(
-                                        TertiaryPaneMinWidthBreakpointDp
+                                        TertiaryPaneMinWidthBreakpointDp,
                                     ),
                                     windowWidthState = windowWidth,
                                 ),
                                 threePaneMovableSharedElementDecorator(
-                                    movableSharedElementHostState = movableSharedElementHostState
+                                    movableSharedElementHostState = movableSharedElementHostState,
                                 ),
                             )
-                        }
+                        },
                     ),
                 ) {
                     val splitPaneState = remember {
@@ -126,7 +126,7 @@ fun App(
                         )
                     }
                     CompositionLocalProvider(
-                        LocalSplitPaneState provides splitPaneState
+                        LocalSplitPaneState provides splitPaneState,
                     ) {
                         SplitLayout(
                             state = splitPaneState.splitLayoutState,
@@ -143,7 +143,7 @@ fun App(
                             },
                             itemContent = { index ->
                                 Destination(splitPaneState.filteredPaneOrder[index])
-                            }
+                            },
                         )
                     }
                 }
@@ -165,7 +165,7 @@ private fun PaneSeparator(
     val draggableState = rememberDraggableState {
         splitLayoutState.dragBy(
             index = index,
-            delta = with(density) { it.toDp() }
+            delta = with(density) { it.toDp() },
         )
     }
     val active = interactionSource.isActive()
@@ -180,7 +180,7 @@ private fun PaneSeparator(
             )
             .hoverable(interactionSource)
             .width(PaneSeparatorTouchTargetWidthDp)
-            .fillMaxHeight()
+            .fillMaxHeight(),
     ) {
         Box(
             modifier = Modifier
@@ -188,12 +188,12 @@ private fun PaneSeparator(
                 .background(
                     color = animateColorAsState(
                         if (active) MaterialTheme.colorScheme.onSurfaceVariant
-                        else MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurface,
                     ).value,
                     shape = RoundedCornerShape(PaneSeparatorActiveWidthDp),
                 )
                 .width(animateDpAsState(if (active) PaneSeparatorActiveWidthDp else 1.dp).value)
-                .height(PaneSeparatorActiveWidthDp)
+                .height(PaneSeparatorActiveWidthDp),
         )
     }
     LaunchedEffect(Unit) {
@@ -201,7 +201,7 @@ private fun PaneSeparator(
             initialValue = 0f,
             targetValue = 1f,
             animationSpec = tween(1000),
-            block = { value, _ -> alpha = value }
+            block = { value, _ -> alpha = value },
         )
     }
 }
@@ -211,8 +211,8 @@ class AppState {
     private val navigationState = mutableStateOf(
         StackNav(
             name = "demo app",
-            children = listOf(Screen.Demos)
-        )
+            children = listOf(Screen.Demos),
+        ),
     )
 
     private val paneInteractionSourceList = mutableStateListOf<MutableInteractionSource>()

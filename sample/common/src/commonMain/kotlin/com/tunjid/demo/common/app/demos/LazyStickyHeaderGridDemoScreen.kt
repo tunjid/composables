@@ -50,11 +50,11 @@ fun LazyStickyHeaderGridDemoScreen(
     }
     val gridState = rememberLazyGridState()
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
         StickyHeaderGrid(
             state = gridState,
@@ -68,7 +68,7 @@ fun LazyStickyHeaderGridDemoScreen(
                     backgroundColor = selectedItem.color,
                     modifier = Modifier.padding(horizontal = 8.dp),
                 )
-            }
+            },
         ) {
             LazyVerticalGrid(
                 state = gridState,
@@ -105,13 +105,12 @@ fun LazyStickyHeaderGridDemoScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .aspectRatio(1f)
-                                    .clickable { selectedItem = item }
+                                    .clickable { selectedItem = item },
                             )
-                        }
+                        },
                     )
                 }
             }
-
         }
     }
 }

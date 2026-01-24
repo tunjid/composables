@@ -38,9 +38,9 @@ import com.tunjid.composables.gesturezoom.GestureZoomState.Companion.gestureZoom
 import com.tunjid.composables.gesturezoom.rememberGestureZoomState
 import com.tunjid.demo.common.app.demos.utilities.DemoTopAppBar
 import com.tunjid.demo.common.ui.Screen
-import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.math.min
+import kotlinx.coroutines.launch
 
 @Composable
 fun GestureZoomDemoScreen(
@@ -48,11 +48,11 @@ fun GestureZoomDemoScreen(
     onBackPressed: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         DemoTopAppBar(
             screen = screen,
-            onBackPressed = onBackPressed
+            onBackPressed = onBackPressed,
         )
 
         val icons = remember {
@@ -69,13 +69,13 @@ fun GestureZoomDemoScreen(
         }
 
         HorizontalPager(
-            state = rememberPagerState { icons.size }
+            state = rememberPagerState { icons.size },
         ) {
             val zoomState = rememberGestureZoomState(
                 options = GestureZoomState.Options(
                     scale = GestureZoomState.Options.Scale.Layout,
                     offset = GestureZoomState.Options.Offset.None,
-                )
+                ),
             )
             val coroutineScope = rememberCoroutineScope()
             var absMaxPanOffset by remember { mutableStateOf(Offset.Zero) }
@@ -101,11 +101,11 @@ fun GestureZoomDemoScreen(
                             with(zoomState.panOffset) {
                                 Offset(
                                     x =
-                                        if (x < 0) max(x, -absMaxPanOffset.x)
-                                        else min(x, absMaxPanOffset.x),
+                                    if (x < 0) max(x, -absMaxPanOffset.x)
+                                    else min(x, absMaxPanOffset.x),
                                     y =
-                                        if (y < 0) max(y, -absMaxPanOffset.y)
-                                        else min(y, absMaxPanOffset.y),
+                                    if (y < 0) max(y, -absMaxPanOffset.y)
+                                    else min(y, absMaxPanOffset.y),
                                 ).round()
                             }
                         }
@@ -118,7 +118,7 @@ fun GestureZoomDemoScreen(
                                         zoomState.panOffset + Offset(
                                             x = if (positiveX) 50f else -50f,
                                             y = if (positiveY) 50f else -50f,
-                                        )
+                                        ),
                                     )
                                 },
                                 onDoubleTap = {
@@ -128,7 +128,7 @@ fun GestureZoomDemoScreen(
                                 },
                                 onLongPress = {
                                     zoomState.updateZoomScale(updatedScale = 1f)
-                                }
+                                },
                             )
                         },
                     contentDescription = null,
