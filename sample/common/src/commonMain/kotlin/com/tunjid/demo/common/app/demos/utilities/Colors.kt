@@ -56,7 +56,7 @@ private val colors = listOf(
     ColorItem("Beige", Color(0xFFE8E8C9), 45),
 )
 
-val pastelColors = (0..<1)
+val pastelColors = (0..<6)
     .map { colors }
     .flatMapIndexed { index: Int, items: List<ColorItem> ->
         items.mapIndexed { innerIndex, item ->
