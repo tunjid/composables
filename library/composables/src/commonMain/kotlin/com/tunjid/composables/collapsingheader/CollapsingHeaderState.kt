@@ -297,8 +297,8 @@ class CollapsingHeaderState(
                     initialExpandedHeight = expandedHeight,
                     snapThreshold = snapThreshold,
                     initialStatus =
-                        if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
-                        else CollapsingHeaderStatus.Expanded,
+                    if (progress > 0.5f) CollapsingHeaderStatus.Collapsed
+                    else CollapsingHeaderStatus.Expanded,
                     flingBehavior = flingBehavior,
                 )
             },
