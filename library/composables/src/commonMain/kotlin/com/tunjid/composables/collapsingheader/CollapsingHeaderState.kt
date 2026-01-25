@@ -238,7 +238,10 @@ class CollapsingHeaderState(
     ): MeasureResult = with(measureScope) {
         val placeable = measurable.measure(constraints)
         expandedHeight = placeable.height.toFloat()
-        layout(placeable.height, placeable.height) {
+        layout(
+            width = placeable.width,
+            height = placeable.height,
+        ) {
             placeable.place(0, 0)
         }
     }
