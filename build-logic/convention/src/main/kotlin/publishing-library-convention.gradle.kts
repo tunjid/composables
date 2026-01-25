@@ -113,11 +113,13 @@ mavenPublishing {
 }
 
 signing {
-    val localProperties = rootProject.ext.get("localProps") as? java.util.Properties
-        ?: return@signing
+    val signingKey = project.providers
+        .gradleProperty("signingInMemoryKey")
+        .orNull
 
-    val signingKey = localProperties.getProperty("signingKey")
-    val signingPassword = localProperties.getProperty("signingPassword")
+    val signingPassword = project.providers
+        .gradleProperty("signingInMemoryKeyPassword")
+        .orNull
 
     if (signingKey != null && signingPassword != null) {
         useInMemoryPgpKeys(signingKey, signingPassword)
