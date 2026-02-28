@@ -36,7 +36,6 @@ kotlin {
                 implementation(libs.lifecycle.multiplatform.runtime)
                 implementation(libs.lifecycle.multiplatform.runtime.compose)
 
-                implementation(libs.navigation.runtime)
                 implementation(libs.navigation.multiplatform.ui)
                 implementation(libs.navigation.event.multiplatform.compose)
 

@@ -1,28 +1,27 @@
 [versions]
 androidGradlePlugin = "8.13.2"
-androidxActivity = "1.12.2"
+androidxActivity = "1.12.4"
 androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.17.0"
 androidx-collections = "1.5.0"
 axion-release = "1.21.1"
 dokka = "2.1.0"
-composeMultiplatform = "1.10.0"
+composeMultiplatform = "1.11.0-alpha03"
 composeMultiplatformMaterialIcons = "1.7.3"
-composeMultiplatformMaterial3 = "1.10.0-alpha05"
-lifecycleMultiplatform = "2.10.0-alpha07"
+composeMultiplatformMaterial3 = "1.11.0-alpha03"
+lifecycleMultiplatform = "2.10.0-alpha08"
 junit4 = "4.13.2"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 kotlinxCoroutines = "1.10.2"
 ktlint-cli = "1.8.0"
 googleMaterial = "1.13.0"
-tunjidMutator = "1.1.0"
-tunjidTreeNav = "0.0.48"
+tunjidMutator = "1.2.0"
+tunjidTreeNav = "0.0.51"
 turbine = "1.2.1"
 mavenPublish = "0.35.0"
-navigationEventComposeMultiplatform = "1.0.0"
-navigation3 = "1.0.0"
-navigation3Multiplatform = "1.0.0-alpha06"
+navigationEventComposeMultiplatform = "1.0.1"
+navigation3Multiplatform = "1.1.0-alpha03"
 savedstateMultiplatform = "1.4.0"
 spotless = "8.2.0"
 
@@ -59,7 +58,6 @@ lifecycle-multiplatform-viewmodel-compose = { group = "org.jetbrains.androidx.li
 lifecycle-multiplatform-viewmodel-navigation3 = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycleMultiplatform" }
 lifecycle-multiplatform-viewmodel-savedstate = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "lifecycleMultiplatform" }
 navigation-event-multiplatform-compose = { group = "org.jetbrains.androidx.navigationevent", name = "navigationevent-compose", version.ref = "navigationEventComposeMultiplatform" }
-navigation-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
 navigation-multiplatform-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3Multiplatform" }
 savedstate-multiplatform-savedstate = { group = "org.jetbrains.androidx.savedstate", name = "savedstate", version.ref = "savedstateMultiplatform" }
 savedstate-multiplatform-compose = { group = "org.jetbrains.androidx.savedstate", name = "savedstate-compose", version.ref = "savedstateMultiplatform" }
