@@ -23,7 +23,7 @@ kotlin {
     applyDefaultHierarchyTemplate()
     androidLibrary {
         namespace = "com.tunjid.composables.${project.name}"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 23
     }
     jvm {
