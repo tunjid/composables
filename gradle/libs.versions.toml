@@ -1,11 +1,11 @@
 [versions]
-androidGradlePlugin = "9.2.1"
+androidGradlePlugin = "9.3.1"
 androidxActivity = "1.13.0"
 androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.19.0"
 androidx-collections = "1.6.0"
-axion-release = "1.21.1"
+axion-release = "1.21.2"
 dokka = "2.2.0"
 composeMultiplatform = "1.11.0"
 composeMultiplatformMaterialIcons = "1.7.3"
@@ -19,11 +19,11 @@ googleMaterial = "1.14.0"
 tunjidMutator = "2.0.0"
 tunjidTreeNav = "0.0.57"
 turbine = "1.2.1"
-mavenPublish = "0.36.0"
+mavenPublish = "0.37.0"
 navigationEventComposeMultiplatform = "1.1.0"
 navigation3Multiplatform = "1.1.1"
 savedstateMultiplatform = "1.4.0"
-spotless = "8.4.0"
+spotless = "8.8.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
