@@ -23,7 +23,7 @@ mavenPublish = "0.37.0"
 navigationEventComposeMultiplatform = "1.1.0"
 navigation3Multiplatform = "1.1.1"
 savedstateMultiplatform = "1.4.0"
-spotless = "8.8.0"
+spotless = "8.9.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
