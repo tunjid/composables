@@ -5,7 +5,7 @@ androidxAppCompat = "1.7.1"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.19.0"
 androidx-collections = "1.6.0"
-axion-release = "1.21.2"
+axion-release = "1.21.3"
 dokka = "2.2.0"
 composeMultiplatform = "1.11.0"
 composeMultiplatformMaterialIcons = "1.7.3"
@@ -23,7 +23,7 @@ mavenPublish = "0.37.0"
 navigationEventComposeMultiplatform = "1.1.0"
 navigation3Multiplatform = "1.1.1"
 savedstateMultiplatform = "1.4.0"
-spotless = "8.8.0"
+spotless = "8.9.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
