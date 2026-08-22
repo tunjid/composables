@@ -1,7 +1,7 @@
 [versions]
 androidGradlePlugin = "9.3.1"
 androidxActivity = "1.13.0"
-androidxAppCompat = "1.7.1"
+androidxAppCompat = "1.8.0"
 androidxBenchmark = "1.4.1"
 androidxCore = "1.19.0"
 androidx-collections = "1.6.0"
