@@ -236,13 +236,24 @@ class CollapsingHeaderState(
         measurable: Measurable,
         constraints: Constraints,
     ): MeasureResult = with(measureScope) {
-        val placeable = measurable.measure(constraints)
+        // Measure with an unbounded height so a header taller than the viewport (e.g. in landscape)
+        // reports its true expanded height. Measuring against the incoming constraints would coerce
+        // placeable.height down to the viewport, clamping the collapsing scroll extent.
+        val placeable = measurable.measure(
+            constraints.copy(maxHeight = Constraints.Infinity),
+        )
         expandedHeight = placeable.height.toFloat()
         layout(
             width = placeable.width,
             height = placeable.height,
         ) {
-            placeable.place(0, 0)
+            placeable.place(
+                x = 0,
+                y = when {
+                    placeable.height > constraints.maxHeight -> (placeable.height - constraints.maxHeight) / 2
+                    else -> 0
+                },
+            )
         }
     }
 
