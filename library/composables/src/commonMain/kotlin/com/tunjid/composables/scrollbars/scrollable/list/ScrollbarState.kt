@@ -32,6 +32,7 @@ import com.tunjid.composables.scrollbars.ScrollbarState
 import com.tunjid.composables.scrollbars.scrollable.rememberScrollbarThumbMover
 import com.tunjid.composables.scrollbars.scrollable.sumOf
 import com.tunjid.composables.scrollbars.scrollbarStateValue
+import com.tunjid.composables.valueOf
 import kotlin.math.min
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
@@ -73,7 +74,15 @@ fun LazyListState.scrollbarState(
     itemsAvailable: Int,
     itemIndex: (LazyListItemInfo) -> Int = LazyListItemInfo::index,
 ): ScrollbarState {
-    val state = remember { ScrollbarState() }
+    val state = remember(this) {
+        ScrollbarState(
+            viewportSizePx = {
+                layoutInfo.orientation.valueOf(
+                    intSize = layoutInfo.viewportSize,
+                )
+            },
+        )
+    }
     LaunchedEffect(this, itemsAvailable) {
         snapshotFlow {
             if (itemsAvailable == 0) return@snapshotFlow null

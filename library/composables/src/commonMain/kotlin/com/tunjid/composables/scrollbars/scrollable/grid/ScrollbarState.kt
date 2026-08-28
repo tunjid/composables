@@ -74,7 +74,15 @@ fun LazyGridState.scrollbarState(
     itemsAvailable: Int,
     itemIndex: (LazyGridItemInfo) -> Int = LazyGridItemInfo::index,
 ): ScrollbarState {
-    val state = remember { ScrollbarState() }
+    val state = remember(this) {
+        ScrollbarState(
+            viewportSizePx = {
+                layoutInfo.orientation.valueOf(
+                    intSize = layoutInfo.viewportSize,
+                )
+            },
+        )
+    }
     LaunchedEffect(this, itemsAvailable) {
         snapshotFlow {
             if (itemsAvailable == 0) return@snapshotFlow null

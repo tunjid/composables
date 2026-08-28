@@ -51,7 +51,11 @@ fun ScrollState.rememberScrollbarThumbMover(): (Float) -> Unit {
  */
 @Composable
 fun ScrollState.scrollbarState(): ScrollbarState {
-    val state = remember { ScrollbarState() }
+    val state = remember(this) {
+        ScrollbarState(
+            viewportSizePx = ::viewportSize,
+        )
+    }
     LaunchedEffect(this) {
         snapshotFlow {
             scrollbarStateValue(
