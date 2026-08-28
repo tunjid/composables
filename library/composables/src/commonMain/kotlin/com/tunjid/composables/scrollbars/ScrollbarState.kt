@@ -16,6 +16,7 @@
 
 package com.tunjid.composables.scrollbars
 
+import androidx.compose.foundation.ScrollIndicatorState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -72,7 +73,9 @@ private const val SCROLLBAR_PRESS_DELAY_MS = 10L
 private const val SCROLLBAR_PRESS_DELTA_PCT = 0.02f
 
 @Stable
-class ScrollbarState {
+class ScrollbarState private constructor(
+    private val viewportSizePx: () -> Int,
+) : ScrollIndicatorState {
     private var packedValue by mutableLongStateOf(0L)
 
     internal fun onScroll(stateValue: ScrollbarStateValue) {
@@ -96,6 +99,30 @@ class ScrollbarState {
      */
     val thumbTrackSizePercent
         get() = 1f - thumbSizePercent
+
+    override val viewportSize: Int
+        get() = if (thumbSizePercent > 0f) viewportSizePx() else Int.MAX_VALUE
+
+    override val contentSize: Int
+        get() = if (thumbSizePercent > 0f) {
+            (viewportSizePx() / thumbSizePercent).roundToInt()
+        } else {
+            Int.MAX_VALUE
+        }
+
+    override val scrollOffset: Int
+        get() {
+            if (thumbSizePercent <= 0f) return Int.MAX_VALUE
+            val track = thumbTrackSizePercent
+            if (track <= 0f) return 0
+            val progress = (thumbMovedPercent / track).coerceIn(0f, 1f)
+            return (progress * (contentSize - viewportSize)).roundToInt()
+        }
+
+    internal companion object {
+        internal operator fun invoke(viewportSizePx: () -> Int): ScrollbarState =
+            ScrollbarState(viewportSizePx)
+    }
 }
 
 /**
@@ -215,7 +242,7 @@ fun Scrollbar(
                             withTimeout(viewConfiguration.longPressTimeoutMillis) {
                                 tryAwaitRelease()
                             }
-                        } catch (e: TimeoutCancellationException) {
+                        } catch (_: TimeoutCancellationException) {
                             // Start the press triggered scroll
                             val initialPress = PressInteraction.Press(offset)
                             interactionSource?.tryEmit(initialPress)
