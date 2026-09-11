@@ -10,22 +10,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.layout
+import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.node.DelegatingNode
+import androidx.compose.ui.node.LayoutModifierNode
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.roundToIntSize
+import com.tunjid.composables.gesturezoom.GestureZoomState.Companion.Saver
 import com.tunjid.composables.gesturezoom.GestureZoomState.Companion.gestureZoomable
 import com.tunjid.composables.gesturezoom.GestureZoomState.Options
 import kotlin.math.roundToInt
@@ -55,7 +60,7 @@ fun rememberGestureZoomState(
     enabled: Boolean = true,
     options: Options = DefaultOptions,
 ): GestureZoomState = rememberSaveable(
-    saver = GestureZoomState.Saver,
+    saver = Saver,
     init = {
         GestureZoomState(
             maxScale = maxScale,
@@ -298,66 +303,113 @@ class GestureZoomState(
          *
          * @param state state containing metadata about the gesture.
          */
-        fun Modifier.gestureZoomable(state: GestureZoomState): Modifier =
-            this
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        // Count pointers while suspending till next pointer event
-                        // Scope is automatically managed and cancelled by the compose runtime
-                        while (true) {
-                            state.downPointerCount += when (awaitPointerEvent().type) {
-                                PointerEventType.Press -> 1
-                                PointerEventType.Release -> -1
-                                else -> 0
+        fun Modifier.gestureZoomable(
+            state: GestureZoomState,
+        ) = this then GestureZoomElement(state) then transformable(
+            canPan = { state.zoomScale != DEFAULT_ZOOM_OUT_SCALE },
+            state = state.transformableState,
+            enabled = state.enabled,
+        )
+
+        private class GestureZoomElement(
+            val state: GestureZoomState,
+        ) : ModifierNodeElement<GestureZoomNode>() {
+            override fun create(): GestureZoomNode =
+                GestureZoomNode(state)
+
+            override fun update(node: GestureZoomNode) {
+                node.state = state
+            }
+
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other === null) return false
+                if (this::class != other::class) return false
+
+                other as GestureZoomElement
+
+                return state == other.state
+            }
+
+            override fun hashCode(): Int = state.hashCode()
+
+            override fun InspectorInfo.inspectableProperties() {
+                name = "gestureZoom"
+                properties["state"] = state
+            }
+        }
+
+        private class GestureZoomNode(
+            var state: GestureZoomState,
+        ) : DelegatingNode(),
+            LayoutModifierNode {
+
+            init {
+                delegate(
+                    SuspendingPointerInputModifierNode {
+                        awaitPointerEventScope {
+                            // Count pointers while suspending till next pointer event
+                            // Scope is automatically managed and cancelled by the compose runtime
+                            while (true) {
+                                state.downPointerCount += when (awaitPointerEvent().type) {
+                                    PointerEventType.Press -> 1
+                                    PointerEventType.Release -> -1
+                                    else -> 0
+                                }
                             }
+                        }
+                    },
+                )
+            }
+
+            override fun MeasureScope.measure(
+                measurable: Measurable,
+                constraints: Constraints,
+            ): MeasureResult {
+                val placeable = measurable.measure(
+                    if (state.options.scale is Options.Scale.Layout) {
+                        Constraints(
+                            minWidth = (constraints.minWidth * state.zoomScale).roundToInt(),
+                            maxWidth = (constraints.maxWidth * state.zoomScale).roundToInt(),
+                            minHeight = (constraints.minHeight * state.zoomScale).roundToInt(),
+                            maxHeight = (constraints.maxHeight * state.zoomScale).roundToInt(),
+                        )
+                    } else {
+                        constraints
+                    },
+                )
+                state.size = if (state.options.scale is Options.Scale.Layout) {
+                    Size(
+                        width = placeable.width / state.zoomScale,
+                        height = placeable.height / state.zoomScale,
+                    ).roundToIntSize()
+                } else {
+                    IntSize(placeable.width, placeable.height)
+                }
+
+                val (x, y) = if (state.options.offset is Options.Offset.Layout) {
+                    state.panOffset.round()
+                } else {
+                    IntOffset.Zero
+                }
+
+                return layout(placeable.width, placeable.height) {
+                    placeable.placeRelativeWithLayer(
+                        x = x,
+                        y = y,
+                    ) {
+                        if (state.options.scale is Options.Scale.GraphicsLayer) {
+                            scaleX = state.zoomScale
+                            scaleY = state.zoomScale
+                        }
+                        if (state.options.offset is Options.Offset.GraphicsLayer) {
+                            translationX = state.offsetX
+                            translationY = state.offsetY
                         }
                     }
                 }
-                .layout { measurable, constraints ->
-                    val placeable = measurable.measure(
-                        if (state.options.scale is Options.Scale.Layout) {
-                            Constraints(
-                                minWidth = (constraints.minWidth * state.zoomScale).roundToInt(),
-                                maxWidth = (constraints.maxWidth * state.zoomScale).roundToInt(),
-                                minHeight = (constraints.minHeight * state.zoomScale).roundToInt(),
-                                maxHeight = (constraints.maxHeight * state.zoomScale).roundToInt(),
-                            )
-                        } else {
-                            constraints
-                        },
-                    )
-                    state.size = if (state.options.scale is Options.Scale.Layout) {
-                        Size(
-                            width = placeable.width / state.zoomScale,
-                            height = placeable.height / state.zoomScale,
-                        ).roundToIntSize()
-                    } else {
-                        IntSize(placeable.width, placeable.height)
-                    }
-
-                    val (x, y) = if (state.options.offset is Options.Offset.Layout) {
-                        state.panOffset.round()
-                    } else {
-                        IntOffset.Zero
-                    }
-
-                    layout(placeable.width, placeable.height) {
-                        placeable.placeRelative(x = x, y = y)
-                    }
-                }.transformable(
-                    canPan = { state.zoomScale != DEFAULT_ZOOM_OUT_SCALE },
-                    state = state.transformableState,
-                    enabled = state.enabled,
-                ).graphicsLayer {
-                    if (state.options.scale is Options.Scale.GraphicsLayer) {
-                        scaleX = state.zoomScale
-                        scaleY = state.zoomScale
-                    }
-                    if (state.options.offset is Options.Offset.GraphicsLayer) {
-                        translationX = state.offsetX
-                        translationY = state.offsetY
-                    }
-                }
+            }
+        }
 
         /**
          * The default [Saver] implementation for [GestureZoomState].
