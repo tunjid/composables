@@ -575,6 +575,11 @@ private val DefaultOptions = Options(
     offset = Options.Offset.GraphicsLayer,
 )
 
+// The following methods are needed bc the existing AwaitPointerEventScope utility methods
+// discard the pointer input change when consumed. Since Modifier.transformable is used
+// to actually detect the transforms, these helpers are needed to passively track the pointer
+// so they can be fed to the velocity tracker for inertial pans.
+
 private suspend fun AwaitPointerEventScope.dragEvenIfConsumed(
     pointerId: PointerId,
     onDrag: (PointerInputChange) -> Unit,
@@ -591,11 +596,6 @@ private suspend fun AwaitPointerEventScope.dragEvenIfConsumed(
         pointer = change.id
     }
 }
-
-// The following methods are needed bc the existing AwaitPointerEventScope utility methods
-// discard the pointer input change when consumed. Since Modifier.transformable is used
-// to actually detect the transforms, these helpers are needed to passively track the pointer
-// so they can be fed to the velocity tracker for inertial pans.
 
 /**
  * @see awaitDragOrCancellation
