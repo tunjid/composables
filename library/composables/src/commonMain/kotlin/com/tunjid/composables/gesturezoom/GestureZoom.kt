@@ -5,7 +5,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.splineBasedDecay
-import androidx.compose.foundation.MutatorMutex
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.TransformableState
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -33,6 +33,7 @@ import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
 import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
 import androidx.compose.ui.input.pointer.positionChangedIgnoreConsumed
 import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
@@ -109,7 +110,8 @@ fun rememberGestureZoomState(
  * @param minScale the minimum zoom scale allowed.
  * @param anchorZoomScale the zoom scale that when passed, enables pan gestures. This allows
  * for pan gestures to be seen by other gesture handlers at [anchorZoomScale].
- * @param enabled whether or not the gesture is enabled.
+ * @param enabled whether the gesture is enabled.
+ * @param panWithInertia whether panning has inertia.
  * @param options configuration options for pinch to zoom behavior.
  */
 @Stable
@@ -132,10 +134,6 @@ class GestureZoomState(
             "minScale must be less than max scale"
         }
     }
-
-    // Ensure only one driver of gesture values
-    private val transformMutatorMutex = MutatorMutex()
-
     var enabled by mutableStateOf(enabled)
 
     var panWithInertia by mutableStateOf(panWithInertia)
@@ -164,13 +162,11 @@ class GestureZoomState(
     // Remember the initial offset
     private var initialOffset by mutableStateOf(Offset(0f, 0f))
 
-    private val transformableState = TransformableState { zoom, pan, _ ->
-        transformMutatorMutex.tryMutate {
-            onEvent(
-                pan = pan,
-                zoom = zoom,
-            )
-        }
+    private val transformableState = TransformableState { _, zoom, pan, _ ->
+        onEvent(
+            pan = pan,
+            zoom = zoom,
+        )
     }
 
     /**
@@ -181,11 +177,14 @@ class GestureZoomState(
      */
     fun updateZoomScale(
         updatedScale: Float,
-    ) = transformMutatorMutex.tryMutate {
+    ): Boolean {
         require(updatedScale in minScale..maxScale) {
             "Updated scale is not in the min and max scale range"
         }
+        if (transformableState.isTransformInProgress) return false
         this.zoomScale = updatedScale
+        coercePanOffset(panOffset)
+        return true
     }
 
     /**
@@ -196,8 +195,10 @@ class GestureZoomState(
      */
     fun updatePan(
         updatedPan: Offset,
-    ) = transformMutatorMutex.tryMutate {
+    ): Boolean {
+        if (transformableState.isTransformInProgress) return false
         coercePanOffset(updatedPan)
+        return true
     }
 
     /**
@@ -209,7 +210,8 @@ class GestureZoomState(
      */
     suspend fun toggleZoom(
         newScale: Float = Float.NaN,
-    ) = transformMutatorMutex.mutate {
+        priority: MutatePriority = MutatePriority.Default,
+    ) = transformableState.transform(priority) {
         val startingScale = zoomScale
         val finalScale = when {
             !newScale.isNaN() && newScale != startingScale -> newScale
@@ -449,51 +451,57 @@ class GestureZoomState(
 
                 while (true) {
                     var lastPointerCount = 0
+                    var draggedPastSlop = false
 
                     awaitPointerEventScope {
-                        val downId = awaitFirstDown(
+                        val down = awaitFirstDown(
                             pass = PointerEventPass.Initial,
                             requireUnconsumed = false,
-                        ).id
+                        )
                         animationJob?.cancel()
                         velocityTracker.resetTracking()
 
-                        if (state.panWithInertia && state.isZoomed) dragEvenIfConsumed(downId) { change ->
+                        if (state.panWithInertia && state.isZoomed) dragEvenIfConsumed(down.id) { change ->
                             when {
                                 lastPointerCount == 1 && state.downPointerCount > 1 -> {
                                     velocityTracker.resetTracking()
                                 }
                                 state.downPointerCount == 1 -> {
-                                    velocityTracker.addPosition(
-                                        change.uptimeMillis,
-                                        change.position,
-                                    )
+                                    velocityTracker.addPointerInputChange(change)
+                                    if (!draggedPastSlop &&
+                                        (change.position - down.position).getDistance() > viewConfiguration.touchSlop
+                                    ) draggedPastSlop = true
                                 }
                             }
                             lastPointerCount = state.downPointerCount
                         }
                     }
 
-                    if (!state.panWithInertia || !state.isZoomed) continue
+                    if (!draggedPastSlop || !state.panWithInertia || !state.isZoomed) continue
 
                     // No longer receiving touch events. Prepare the animation.
                     val velocity = velocityTracker.calculateVelocity()
                         .let { Offset(it.x, it.y) }
 
                     animationJob = coroutineScope.launch {
-                        AnimationState(
-                            typeConverter = Offset.VectorConverter,
-                            initialValue = state.panOffset,
-                            initialVelocity = velocity,
-                        )
-                            .animateDecay(
+                        state.transformableState.transform(MutatePriority.UserInput) {
+                            var last = Offset.Zero
+                            AnimationState(
+                                typeConverter = Offset.VectorConverter,
+                                initialValue = Offset.Zero,
+                                initialVelocity = velocity,
+                            ).animateDecay(
                                 animationSpec = splineBasedDecay(
                                     this@maybeProcessInertialPans,
                                 ),
                                 block = {
-                                    state.coercePanOffset(value)
+                                    val before = state.panOffset
+                                    transformBy(panChange = value - last)
+                                    last = value
+                                    if (state.panOffset == before) cancelAnimation()
                                 },
                             )
+                        }
                     }
                 }
             }
@@ -584,9 +592,9 @@ private suspend fun AwaitPointerEventScope.dragEvenIfConsumed(
     }
 }
 
-// The following methods are needed by the existing AwaitPointerEventScope utility methods
+// The following methods are needed bc the existing AwaitPointerEventScope utility methods
 // discard the pointer input change when consumed. Since Modifier.transformable is used
-// to actually detect the transforms, these helper are needed to passively track the pointer
+// to actually detect the transforms, these helpers are needed to passively track the pointer
 // so they can be fed to the velocity tracker for inertial pans.
 
 /**

@@ -1,5 +1,6 @@
 package com.tunjid.demo.common.app.demos
 
+import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -124,7 +125,9 @@ fun GestureZoomDemoScreen(
                                 },
                                 onDoubleTap = {
                                     coroutineScope.launch {
-                                        zoomState.toggleZoom()
+                                        zoomState.toggleZoom(
+                                            priority = MutatePriority.UserInput,
+                                        )
                                     }
                                 },
                                 onLongPress = {
