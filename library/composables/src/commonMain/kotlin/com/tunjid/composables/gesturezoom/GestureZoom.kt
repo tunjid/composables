@@ -1,8 +1,14 @@
 package com.tunjid.composables.gesturezoom
 
+import androidx.compose.animation.core.AnimationState
+import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.animateDecay
+import androidx.compose.animation.splineBasedDecay
 import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.gestures.TransformableState
+import androidx.compose.foundation.gestures.awaitDragOrCancellation
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -16,8 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.input.pointer.AwaitPointerEventScope
+import androidx.compose.ui.input.pointer.PointerEvent
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerId
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.SuspendingPointerInputModifierNode
+import androidx.compose.ui.input.pointer.changedToUpIgnoreConsumed
+import androidx.compose.ui.input.pointer.positionChangedIgnoreConsumed
+import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
@@ -30,14 +45,19 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.roundToIntSize
+import androidx.compose.ui.util.fastFirstOrNull
 import com.tunjid.composables.gesturezoom.GestureZoomState.Companion.Saver
 import com.tunjid.composables.gesturezoom.GestureZoomState.Companion.gestureZoomable
 import com.tunjid.composables.gesturezoom.GestureZoomState.Options
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Remembers a [GestureZoomState] for driving gesture based zoom with
- * [GestureZoomState.gestureZoomable].
+ * [gestureZoomable].
  *
  * @param zoomScale the starting zoom scale of the [GestureZoomState].
  * @param offsetX the starting pan offset of the state on the x axis.
@@ -46,7 +66,8 @@ import kotlin.math.roundToInt
  * @param minScale the minimum zoom scale allowed.
  * @param anchorZoomScale the zoom scale that when passed, enables pan gestures. This allows
  * for pan gestures to be seen by other gesture handlers at [anchorZoomScale].
- * @param enabled whether or not the gesture is enabled.
+ * @param enabled whether the gesture is enabled.
+ * @param panWithInertia whether panning has inertia.
  * @param options configuration options for pinch to zoom behavior.
  */
 @Composable
@@ -58,6 +79,7 @@ fun rememberGestureZoomState(
     minScale: Float = DEFAULT_ZOOM_OUT_SCALE,
     anchorZoomScale: Float = zoomScale,
     enabled: Boolean = true,
+    panWithInertia: Boolean = false,
     options: Options = DefaultOptions,
 ): GestureZoomState = rememberSaveable(
     saver = Saver,
@@ -70,6 +92,7 @@ fun rememberGestureZoomState(
             offsetY = offsetY,
             anchorZoomScale = anchorZoomScale,
             enabled = enabled,
+            panWithInertia = panWithInertia,
             options = options,
         )
     },
@@ -95,6 +118,7 @@ class GestureZoomState(
     offsetX: Float = 0f,
     offsetY: Float = 0f,
     enabled: Boolean = true,
+    panWithInertia: Boolean = false,
     private val maxScale: Float = DEFAULT_MAX_ZOOM_IN_SCALE,
     private val minScale: Float = DEFAULT_ZOOM_OUT_SCALE,
     private val anchorZoomScale: Float = zoomScale,
@@ -113,6 +137,8 @@ class GestureZoomState(
     private val transformMutatorMutex = MutatorMutex()
 
     var enabled by mutableStateOf(enabled)
+
+    var panWithInertia by mutableStateOf(panWithInertia)
 
     // Mutable state variables to hold scale and offset values
     var zoomScale by mutableFloatStateOf(zoomScale)
@@ -306,7 +332,7 @@ class GestureZoomState(
         fun Modifier.gestureZoomable(
             state: GestureZoomState,
         ) = this then GestureZoomElement(state) then transformable(
-            canPan = { state.zoomScale != DEFAULT_ZOOM_OUT_SCALE },
+            canPan = { state.isZoomed },
             state = state.transformableState,
             enabled = state.enabled,
         )
@@ -347,15 +373,22 @@ class GestureZoomState(
             init {
                 delegate(
                     SuspendingPointerInputModifierNode {
-                        awaitPointerEventScope {
-                            // Count pointers while suspending till next pointer event
-                            // Scope is automatically managed and cancelled by the compose runtime
-                            while (true) {
-                                state.downPointerCount += when (awaitPointerEvent().type) {
-                                    PointerEventType.Press -> 1
-                                    PointerEventType.Release -> -1
-                                    else -> 0
+                        coroutineScope {
+                            launch(start = CoroutineStart.UNDISPATCHED) {
+                                awaitPointerEventScope {
+                                    // Count pointers while suspending till next pointer event
+                                    // Scope is automatically managed and cancelled by the compose runtime
+                                    while (true) {
+                                        state.downPointerCount += when (awaitPointerEvent().type) {
+                                            PointerEventType.Press -> 1
+                                            PointerEventType.Release -> -1
+                                            else -> 0
+                                        }
+                                    }
                                 }
+                            }
+                            launch {
+                                maybeProcessInertialPans()
                             }
                         }
                     },
@@ -409,6 +442,61 @@ class GestureZoomState(
                     }
                 }
             }
+
+            private suspend fun PointerInputScope.maybeProcessInertialPans() {
+                val velocityTracker = VelocityTracker()
+                var animationJob: Job? = null
+
+                while (true) {
+                    var lastPointerCount = 0
+
+                    awaitPointerEventScope {
+                        val downId = awaitFirstDown(
+                            pass = PointerEventPass.Initial,
+                            requireUnconsumed = false,
+                        ).id
+                        animationJob?.cancel()
+                        velocityTracker.resetTracking()
+
+                        if (state.panWithInertia && state.isZoomed) dragEvenIfConsumed(downId) { change ->
+                            when {
+                                lastPointerCount == 1 && state.downPointerCount > 1 -> {
+                                    velocityTracker.resetTracking()
+                                }
+                                state.downPointerCount == 1 -> {
+                                    velocityTracker.addPosition(
+                                        change.uptimeMillis,
+                                        change.position,
+                                    )
+                                }
+                            }
+                            lastPointerCount = state.downPointerCount
+                        }
+                    }
+
+                    if (!state.panWithInertia || !state.isZoomed) continue
+
+                    // No longer receiving touch events. Prepare the animation.
+                    val velocity = velocityTracker.calculateVelocity()
+                        .let { Offset(it.x, it.y) }
+
+                    animationJob = coroutineScope.launch {
+                        AnimationState(
+                            typeConverter = Offset.VectorConverter,
+                            initialValue = state.panOffset,
+                            initialVelocity = velocity,
+                        )
+                            .animateDecay(
+                                animationSpec = splineBasedDecay(
+                                    this@maybeProcessInertialPans,
+                                ),
+                                block = {
+                                    state.coercePanOffset(value)
+                                },
+                            )
+                    }
+                }
+            }
         }
 
         /**
@@ -424,6 +512,7 @@ class GestureZoomState(
                     gestureZoomState.minScale,
                     gestureZoomState.anchorZoomScale,
                     if (gestureZoomState.enabled) 1f else 0f,
+                    if (gestureZoomState.panWithInertia) 1f else 0f,
                     when (gestureZoomState.options.scale) {
                         Options.Scale.GraphicsLayer -> 2f
                         Options.Scale.Layout -> 1f
@@ -445,13 +534,14 @@ class GestureZoomState(
                     minScale = values[4],
                     anchorZoomScale = values[5],
                     enabled = values[6] == 1f,
+                    panWithInertia = values[7] == 1f,
                     options = Options(
-                        scale = when (values[7]) {
+                        scale = when (values[8]) {
                             2f -> Options.Scale.GraphicsLayer
                             1f -> Options.Scale.Layout
                             else -> Options.Scale.None
                         },
-                        offset = when (values[8]) {
+                        offset = when (values[9]) {
                             2f -> Options.Offset.GraphicsLayer
                             1f -> Options.Offset.Layout
                             else -> Options.Offset.None
@@ -463,6 +553,9 @@ class GestureZoomState(
     }
 }
 
+val GestureZoomState.isZoomed
+    get() = zoomScale != DEFAULT_ZOOM_OUT_SCALE
+
 private const val DEFAULT_ZOOM_OUT_SCALE = 1f
 private const val DEFAULT_ZOOM_IN_SCALE = 2f
 private const val DEFAULT_MAX_ZOOM_IN_SCALE = 4f
@@ -473,3 +566,63 @@ private val DefaultOptions = Options(
     scale = Options.Scale.GraphicsLayer,
     offset = Options.Offset.GraphicsLayer,
 )
+
+private suspend fun AwaitPointerEventScope.dragEvenIfConsumed(
+    pointerId: PointerId,
+    onDrag: (PointerInputChange) -> Unit,
+): Boolean {
+    var pointer = pointerId
+    while (true) {
+        val change = awaitDragOrCancellationEvenIfConsumed(pointer) ?: return false
+
+        if (change.changedToUpIgnoreConsumed()) {
+            return true
+        }
+
+        onDrag(change)
+        pointer = change.id
+    }
+}
+
+// The following methods are needed by the existing AwaitPointerEventScope utility methods
+// discard the pointer input change when consumed. Since Modifier.transformable is used
+// to actually detect the transforms, these helper are needed to passively track the pointer
+// so they can be fed to the velocity tracker for inertial pans.
+
+/**
+ * @see awaitDragOrCancellation
+ */
+private suspend fun AwaitPointerEventScope.awaitDragOrCancellationEvenIfConsumed(
+    pointerId: PointerId,
+): PointerInputChange? {
+    if (currentEvent.isPointerUp(pointerId)) {
+        return null // The pointer has already been lifted, so the gesture is canceled
+    }
+    val change = awaitDragOrUpEvenIfConsumed(pointerId) { it.positionChangedIgnoreConsumed() }
+    return change
+}
+
+private fun PointerEvent.isPointerUp(pointerId: PointerId): Boolean =
+    changes.fastFirstOrNull { it.id == pointerId }?.pressed != true
+
+private suspend inline fun AwaitPointerEventScope.awaitDragOrUpEvenIfConsumed(
+    pointerId: PointerId,
+    hasDragged: (PointerInputChange) -> Boolean,
+): PointerInputChange? {
+    var pointer = pointerId
+    while (true) {
+        val event = awaitPointerEvent()
+        val dragEvent = event.changes.fastFirstOrNull { it.id == pointer } ?: return null
+        if (dragEvent.changedToUpIgnoreConsumed()) {
+            val otherDown = event.changes.fastFirstOrNull { it.pressed }
+            if (otherDown == null) {
+                // This is the last "up"
+                return dragEvent
+            } else {
+                pointer = otherDown.id
+            }
+        } else if (hasDragged(dragEvent)) {
+            return dragEvent
+        }
+    }
+}

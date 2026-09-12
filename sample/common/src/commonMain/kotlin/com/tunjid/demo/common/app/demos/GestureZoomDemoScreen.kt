@@ -72,6 +72,7 @@ fun GestureZoomDemoScreen(
             state = rememberPagerState { icons.size },
         ) {
             val zoomState = rememberGestureZoomState(
+                panWithInertia = true,
                 options = GestureZoomState.Options(
                     scale = GestureZoomState.Options.Scale.Layout,
                     offset = GestureZoomState.Options.Offset.None,
